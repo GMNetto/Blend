@@ -7,14 +7,21 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <title>Blend</title>
+    <script src="index.js" type="text/javascript"></script> 
+    <title>Blend Login</title>
 </head>
 <body>
+    <div class="alert alert-success" id="success" role="alert"  style="display: none">
+        <strong>Success</strong> 
+      </div>
+    <div class="alert alert-danger" role="alert" style="display:none">
+        <strong>Incorrect Login/Password</strong> Change a few things up and try submitting again.
+    </div>
 <div class="container">
 
     <img src="res/images/blend_logo_02.jpg" class="img-responsive logo">
 
-    <form class="form-signin">
+    <form class="form-signin" id="login-form">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="" type="email">
@@ -22,10 +29,12 @@
         <input id="inputPassword" class="form-control" placeholder="Password" required="" type="password">
         <div class="checkbox">
             <label>
+                <!-- not sure how to implement this functionality. Would have to save session state -->
                 <input value="remember-me" type="checkbox"> Remember me
             </label>
         </div>
-        <button class="btn btn-lg btn-default btn-block" type="submit">Sign in</button>
+        <a href="http://localhost:8080/signup">Don't have an account? Sign Up</a>
+        <button class="btn btn-lg btn-default btn-block" type="submit" onclick="login()">Sign in</button>
     </form>
 
 </div> <!-- /container -->
