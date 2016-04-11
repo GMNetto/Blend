@@ -121,45 +121,14 @@ app.post('/newuser', function(request, response){
     });
     
 });
-app.post('/newitem', requireLogin, function(request, response){
-    var user = request.body.username;
-    var name = request.body.name;
-    var price = request.body.price;
-    var period = request.body.period;
-    var periodHours = 720;//month, which is about 30 days
-    if(period==="Hour"){
-        periodHours = 1;
-    }
-    if(period==="Day"){
-        periodHours = 24;
-    }
-    if(period==="Week"){
-        periodHours = 148;
-    }
-    var condition = request.body.condition;
-    var description = request.body.description;
-    var image = request.body.image;
-    connection.query('SELECT * from User WHERE Username = ?', [user], function (err,rows) {
-        if(err){
-            
-        }
-        else{
-            var userid = rows[0].idUser;
-            connection.query('INSERT INTO Item VALUES(?,?,?,?,?,?,?,?)', [null,name, condition, userid,price,description,periodHours,image], function (err) {
-                    if(err){
-                        console.log(err);
-                    } 
-            });
-        }
-    });
-});
+
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
     //console.log(request);
     console.log(request.file);
     var image = request.file.filename;
     console.log(request.body);
-    var user = request.body.username;
+    var user = request.session.user;
     var name = request.body.itemName;
     var price = request.body.price;
     var period = request.body.period;
@@ -182,7 +151,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         
     });
     **/
-    connection.query('SELECT * from User WHERE Username = ?', [user], function (err,rows) {
+    connection.query('SELECT * from User WHERE idUser = ?', [user], function (err,rows) {
         if(err){
             
         }
@@ -254,7 +223,6 @@ app.post('/login', function(request, response){
                 }
              }
         }
-        //response.redirect('/search');
     });
 });
 app.get('/:itemId', requireLogin, function(request, response){
