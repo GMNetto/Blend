@@ -74,17 +74,16 @@ app.use(express.static('bootstrap'));
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
 // dunno if this works:http://stackoverflow.com/questions/21128451/express-cant-upload-file-req-files-is-undefined
-
 connection.query('select count(*) from User', function (err, rows, fields) {
     if(err) console.log('ERROR');
     else console.log(rows);
 });
 
 app.get('/', function(request, response) {
+    console.log(request.session.user);
     response.render("index.html");
 });
 app.get('/signup', function(request, response) {
-    //request.session.user = 'b';
     response.render("signup.html");
 });
 
@@ -93,6 +92,7 @@ app.get('/search', requireLogin, function(request, response){
 });
 
 app.get('/lend', requireLogin, function(request, response) {
+    console.log(request.session.user);
     response.render("lend.html");
 });
 
@@ -212,11 +212,28 @@ app.get('/logout', function(req, res){
     res.redirect('/');
 });
 
+function getUser(username, callback){
+    connection.query('Select * from User where username=?',[username], function(err, result){
+        if(err){
+            console.log("No user");
+        }else{
+            console.log(username);
+            console.log("##########################")
+            console.log(result);
+            user = result
+            console.log("############################")
+            console.log(result.length);
+            return callback(user[0]);
+        }
+    });
+}
+
+
 app.post('/login', function(request, response){
+    console.log(request.session.user);
     var uname = request.body.email;
     var pw = request.body.password;
     console.log("Received login request");
-    //request.session.user = 'b';
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
         if(err){
             console.log('Adding new user failed');
@@ -227,30 +244,19 @@ app.post('/login', function(request, response){
             if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
                 if(bCrypt.compareSync(pw,rows[0].password)){
-                    //response.send();
                     console.log("FOUND ROW");
-		    var u = getUser(uname);
-                    //request.session.regenerate(function(err){
-                    request.session.user = 'a';
+                    //request.session.user = "a";
+		    var u = getUser(uname, function(u){
+                        console.log("returned id " + u.idUser);
+			request.session.user = u.idUser;
+                        response.redirect('/search')                      
+                     });
                 }
              }
         }
-        console.log('3################3');
-        response.redirect('/search');
+        //response.redirect('/search');
     });
 });
-
-function getUser(username){
-    connection.query('Select * from User where username=?',[username], function(err, result){
-        if(err){
-            console.log("No user");
-        }else{
-            //console.log(result);
-            return {};        
-        }
-    });
-}
-
 app.get('/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
@@ -303,6 +309,22 @@ function requireLogin (req, res, next) {
     next();
   }
 };
+
+function User(idUser, username, password, email, phone, lender_rating, borrow_rating, profile_url, first_name, last_name, address, latitude, longitude){
+    this.idUser = idUser,
+    this.username = username,
+    this.password = password, 
+    this.email = email,
+    this.phone = phone,
+    this.lender_rating = lender_rating,
+    this.borrow_rating = borrow_rating,
+    this.profile_url = profile_url,
+    this.first_name = first_name,
+    this.last_name = last_name,
+    this.address = address,
+    this.latitude = latiture,
+    this.longitude = longitude
+}
 
 var server = https.createServer({
   key: fs.readFileSync('private.key'),
