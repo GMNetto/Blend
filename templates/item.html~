@@ -44,7 +44,7 @@
         <p id="itemDescription">{{description}}</p>
         <p id="owner"></p>
 	</div>
-    <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+    <nav class="navbar navbar-default" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <ul class="nav navbar-nav">

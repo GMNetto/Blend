@@ -185,18 +185,23 @@ function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err){
             console.log("No user");
-        }else{
-            console.log(username);
-            console.log("##########################")
-            console.log(result);
+        }else{ 
             user = result
-            console.log("############################")
-            console.log(result.length);
             return callback(user[0]);
         }
     });
-}
+};
 
+function getItem(item_id, callback){
+    connection.query('select * from Item where idItem=?',[item_id], function(err, result){
+        if(err){
+	    console.log("No item")
+	}else{
+	    item = result;
+	    return callback(item[0]);
+	} 
+    });
+};   
 
 app.post('/login', function(request, response){
     console.log(request.session.user);
@@ -228,7 +233,10 @@ app.post('/login', function(request, response){
 app.get('/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
-    response.render("item.html",{itemId: request.params.itemId});
+    getItem(request.params.itemId, function(item){
+        var price = item.price, duration = item.duration, condition = item.condition, description = item.description;
+	response.render("item.html",{itemId: request.params.itemId, price: price, duration: duration, condition: condition, description: description, image: item.image});
+    });
 });
 app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
      var messages = [];
