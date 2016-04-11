@@ -198,20 +198,6 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         }
     });
 });
-
-app.get('/logout', function(req, res){
-    console.log("logout");
-    //res.send('logout');
-    if(req.session.user) {
-      req.session.destroy(function(){
-	console.log("destroy");
-      });
-    } else {
-        console.log("no session");
-    }
-    res.redirect('/');
-});
-
 app.post('/login', function(request, response){
     var uname = request.body.email;
     var pw = request.body.password;
@@ -286,6 +272,19 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
         }
     });
 });
+
+app.get('/logout', function(req, res){
+    console.log("logout");
+    if(req.session.user) {
+      req.session.destroy(function(){
+	console.log("destroy");
+      });
+    } else {
+        console.log("no session");
+    }
+    res.redirect('/');
+});
+
 console.log("Blend Server listening on port 8080");
 
 app.on('close', function () {
@@ -294,14 +293,15 @@ app.on('close', function () {
 });
 
 function requireLogin (req, res, next) {
-  //console.log(req.session);
-  if (!req.session.user) {
+  console.log(req.session);
+  res.redirect('/');
+  /*if (!req.session.user) {
     console.log("login now");
     res.redirect('/');
   } else {
     console.log("Passed");
     next();
-  }
+  }*/
 };
 
 var server = https.createServer({

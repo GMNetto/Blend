@@ -1,0 +1,4 @@
+To include check login functionality just add requireLogin(there are examples).
+For production, just https.
+Logout removes the session.
+The bootstrap .css and .js should be local(there is a folder called bootstrap).

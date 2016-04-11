@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="itemId" content="{{itemId}}">
+        <title>Product Details for {{itemId}}</title>
+        <!--<link href="signin.css" rel="stylesheet">-->
+        <script src="item.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <h1></h1>
+        <input type="button" class="controls" value="Borrow!" onclick="">
+        <img id="itemImg" src="#" alt="item image couldn't be loaded" />
+        <span id="price"></span>
+         <p id="duration"></p>
+        <span id="condition"></span>
+        <!--ItemDescription goes here-->
+        <p id="itemDescription"></p>
+        <p id="owner"></p>
+    </body>
+    <script>
+        /**
+        var imgrequest = new XMLHttpRequest();
+        var itemId = 10;
+        // specify the HTTP method, URL, and asynchronous flag
+        //console.log("Attempting to load item of id:"+itemId);
+        imgrequest.open('GET', '/item/' + itemId + '/retrieveImage', true);
+        imgrequest.addEventListener('load', function(e){
+             if (imgrequest.status == 200) {
+                 console.log(imgrequest.file);
+                 var reader = new FileReader();
+                 var file = new File(imgrequest.response,"test");
+                reader.onload = function (e) {
+                    $('#imgFile').attr('src', e.target.result);
+                    console.log("Printing result");
+                    console.log(reader.result);
+                }
+                //reader.r
+                reader.readAsDataURL(imgrequest.response);
+                } else {
+                   //for some reason request didn't succeed. Do nothing
+                }
+        }, false);
+        imgrequest.send(null);
+        **/
+    </script>
+</html>
