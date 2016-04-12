@@ -107,8 +107,10 @@ app.post('/searchquery', requireLogin, function(request, response){
     var period = request.body.period;
     var condition = request.body.condition;
     var minrating = request.body.minRating;
+    var distancefilter = "3 km";
+    console.log("Filtering for condition:"+condition);
     //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
-    connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?', [itemName,priceCeil,calcDuration(period),minrating], function (err,rows) {
+    connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
             if(err){
                 console.log(err);
             }
@@ -125,16 +127,59 @@ app.post('/searchquery', requireLogin, function(request, response){
                     //TODO distance filter
                     
                     //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
-                    console.log(findDistance(originalat,originallon,row.latitude,row.longitude));
-                    tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/"+row.idItem});
+                    var dist =findDistance(originallat,originallon,row.latitude,row.longitude,function(result){
+                        console.log(result);
+                    }); 
+                    
+                    //console.log(compareDistances(distancefilter,dist));
+                    
+                   tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)}); 
+                    
 
                 }
                 // encode all messages object as JSON and send it back to client
                 console.log("Sent:"+rows.length);
+                
                 response.json(tosend);
             }
     });
 });
+
+function compareDistances(dist1,dist2){
+    var original = dist1;
+    var final1;
+    if(original.indexOf("km")>0){
+        //convert to m
+        original = original.replace(" km","");
+        final1 = parseFloat(original);
+        final1 = final1*1000.0;
+    }
+    else{
+        original = original.replace(" m","");
+        final1 = parseFloat(original);
+    }
+    var tocompare = dist2;
+    var second;
+    if(tocompare.indexOf("km")>0){
+        //convert to m
+        tocompare = tocompare.replace(" km","");
+        second = parseFloat(tocompare);
+        second = second*1000.0;
+    }
+    else{
+        tocompare = tocompare.replace(" m","");
+        second = parseFloat(tocompare);
+    }
+    if(final1>second){
+        return 1;
+    }
+    if(second>final1){
+        return -1;
+    }
+    else{
+        return 0;
+    }
+}
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
     response.render("lend.html");
@@ -178,7 +223,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     var price = request.body.price;
     var period = request.body.period;
     var periodHours = calcDuration(period);
-    var condition = request.body.condition;
+    var condition = convertCondition(request.body.condition);
     var description = request.body.description;
     //var image = 
     //deposit thing in db along with filename
@@ -216,7 +261,24 @@ app.get('/logout', function(req, res){
     }
     res.redirect('/');
 });
-
+function convertCondition(condition){
+    if(condition=="New"){
+        return 4;
+    }
+    if(condition=="Used:Like New"){
+        return 3;
+    }
+    if(condition=="Used:Very Good"){
+        return 2;
+    }
+    if(condition=="Used:Good"){
+        return 1;
+    }
+    else{
+        //Used:Acceptable
+        return 0;
+    }
+}
 function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err){
@@ -268,7 +330,7 @@ app.post('/login', function(request, response){
         }
     });
 });
-app.get('/:itemId', requireLogin, function(request, response){
+app.get('/item/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
     getItem(request.params.itemId, function(item){
@@ -306,19 +368,26 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
         }
     });
 });
-function findDistance(originlat,originlon, destinationlat,destinationlon){
+function findDistance(originlat,originlon, destinationlat,destinationlon,callback){
     
-
+    console.log("finding distance between:"+originlat+ " "+originlon+" "+destinationlat+ " "+destinationlon);
     distance.get(
       {
         origin: originlat+','+originlon,
         destination: destinationlat+','+destinationlon
       },
       function(err, data) {
-        if (err) return Number.POSITIVE_INFINITY;
-        console.log(data);
-        console.log(data.distance);
-        return data.distance;  
+        if (err) {
+            console.log("err:"+err);
+            return Number.POSITIVE_INFINITY;
+        }
+        else{
+            console.log("Found distance?")
+            console.log(data);
+            console.log(data.distance);
+            return data.distance; 
+        }  
+         
     });
 }
 console.log("Blend Server listening on port 8080");

@@ -3,7 +3,7 @@ window.addEventListener('load', function(){
     console.log("loading item details");
     itemId = meta('itemId');  
     console.log(itemId);
-    loadItem();
+    //loadItem();
     
 }, false);
 function meta(name) {
@@ -52,6 +52,7 @@ function loadItem(){
                     dur.appendChild(durval);
                     //http://expressjs.com/en/starter/static-files.html
                     var img = document.getElementById("itemImg");
+                    console.log("called script?"+data[0].img);
                     img.src = data[0].image;
                     
                 }

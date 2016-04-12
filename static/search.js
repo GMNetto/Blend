@@ -26,6 +26,7 @@ function submitItem(){
                     // grab ul
                     var ul = document.getElementById('searchResults');
                     // create a new li element for the message, and append it
+                    ul.innerHTML="";
                     var curid;
                     for(i = 0;i<data.length;i++){
                         //add only new messages to list
