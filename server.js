@@ -87,6 +87,15 @@ app.get('/signup', function(request, response) {
     response.render("signup.html");
 });
 
+app.get('/profile/:username', requireLogin, function(req, res){
+    console.log("params " + req.params.username);
+    getUser(req.params.username, function(user){
+	    console.log("user " + user);
+        res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url});
+        res.end(); 
+    });
+});
+
 app.get('/search', requireLogin, function(request, response){
     response.send('search')
 });
@@ -144,13 +153,6 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     }
     var condition = request.body.condition;
     var description = request.body.description;
-    //var image = 
-    //deposit thing in db along with filename
-    /**
-     connection.query('UPDATE Item WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
-        
-    });
-    **/
     connection.query('SELECT * from User WHERE idUser = ?', [user], function (err,rows) {
         if(err){
             
@@ -195,13 +197,33 @@ function getUser(username, callback){
 function getItem(item_id, callback){
     connection.query('select * from Item where idItem=?',[item_id], function(err, result){
         if(err){
-	    console.log("No item")
-	}else{
-	    item = result;
-	    return callback(item[0]);
-	} 
+	        console.log("No item");
+	    }else{
+	        item = result;
+	        return callback(item[0]);
+	    }    
     });
 };   
+
+function getRecentBorrow(username, limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            return result;        
+        }    
+    })
+};
+
+function getRecentLend(limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?;', [limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            return result;        
+        }    
+    }
+)};
 
 app.post('/login', function(request, response){
     console.log(request.session.user);
@@ -230,7 +252,8 @@ app.post('/login', function(request, response){
         }
     });
 });
-app.get('/:itemId', requireLogin, function(request, response){
+
+app.get('/item/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
     getItem(request.params.itemId, function(item){

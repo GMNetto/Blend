@@ -74,18 +74,26 @@ app.use(express.static('bootstrap'));
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
 // dunno if this works:http://stackoverflow.com/questions/21128451/express-cant-upload-file-req-files-is-undefined
-
 connection.query('select count(*) from User', function (err, rows, fields) {
     if(err) console.log('ERROR');
     else console.log(rows);
 });
 
 app.get('/', function(request, response) {
+    console.log(request.session.user);
     response.render("index.html");
 });
 app.get('/signup', function(request, response) {
-    //request.session.user = 'b';
     response.render("signup.html");
+});
+
+app.get('/profile/:username', requireLogin, function(req, res){
+    console.log("params " + req.params.username);
+    getUser(req.params.username, function(user){
+	    console.log("user " + user);
+        res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url});
+        res.end(); 
+    });
 });
 
 app.get('/search', requireLogin, function(request, response){
@@ -93,6 +101,7 @@ app.get('/search', requireLogin, function(request, response){
 });
 
 app.get('/lend', requireLogin, function(request, response) {
+    console.log(request.session.user);
     response.render("lend.html");
 });
 
@@ -121,45 +130,14 @@ app.post('/newuser', function(request, response){
     });
     
 });
-app.post('/newitem', requireLogin, function(request, response){
-    var user = request.body.username;
-    var name = request.body.name;
-    var price = request.body.price;
-    var period = request.body.period;
-    var periodHours = 720;//month, which is about 30 days
-    if(period==="Hour"){
-        periodHours = 1;
-    }
-    if(period==="Day"){
-        periodHours = 24;
-    }
-    if(period==="Week"){
-        periodHours = 148;
-    }
-    var condition = request.body.condition;
-    var description = request.body.description;
-    var image = request.body.image;
-    connection.query('SELECT * from User WHERE Username = ?', [user], function (err,rows) {
-        if(err){
-            
-        }
-        else{
-            var userid = rows[0].idUser;
-            connection.query('INSERT INTO Item VALUES(?,?,?,?,?,?,?,?)', [null,name, condition, userid,price,description,periodHours,image], function (err) {
-                    if(err){
-                        console.log(err);
-                    } 
-            });
-        }
-    });
-});
+
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
     //console.log(request);
     console.log(request.file);
     var image = request.file.filename;
     console.log(request.body);
-    var user = request.body.username;
+    var user = request.session.user;
     var name = request.body.itemName;
     var price = request.body.price;
     var period = request.body.period;
@@ -175,14 +153,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     }
     var condition = request.body.condition;
     var description = request.body.description;
-    //var image = 
-    //deposit thing in db along with filename
-    /**
-     connection.query('UPDATE Item WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
-        
-    });
-    **/
-    connection.query('SELECT * from User WHERE Username = ?', [user], function (err,rows) {
+    connection.query('SELECT * from User WHERE idUser = ?', [user], function (err,rows) {
         if(err){
             
         }
@@ -198,11 +169,67 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         }
     });
 });
+
+app.get('/logout', function(req, res){
+    console.log("logout");
+    //res.send('logout');
+    if(req.session.user) {
+      req.session.destroy(function(){
+	console.log("destroy");
+      });
+    } else {
+        console.log("no session");
+    }
+    res.redirect('/');
+});
+
+function getUser(username, callback){
+    connection.query('Select * from User where username=?',[username], function(err, result){
+        if(err){
+            console.log("No user");
+        }else{ 
+            user = result
+            return callback(user[0]);
+        }
+    });
+};
+
+function getItem(item_id, callback){
+    connection.query('select * from Item where idItem=?',[item_id], function(err, result){
+        if(err){
+	        console.log("No item");
+	    }else{
+	        item = result;
+	        return callback(item[0]);
+	    }    
+    });
+};   
+
+function getRecentBorrow(username, limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idItem from Borrows, User where Borrows.idUser=User.idUser and User.username=?) limit=?', [username, limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            return result;        
+        }    
+    })
+};
+
+function getRecentLend(limit, callback){
+    connection.query('select * from Item where Item.owner in (select idItem from Borrows, User where Borrows.idUser=User.idUser and User.username=?) limit ?', [limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            return result;        
+        }    
+    }
+)};
+
 app.post('/login', function(request, response){
+    console.log(request.session.user);
     var uname = request.body.email;
     var pw = request.body.password;
     console.log("Received login request");
-    //request.session.user = 'b';
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
         if(err){
             console.log('Adding new user failed');
@@ -213,34 +240,26 @@ app.post('/login', function(request, response){
             if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
                 if(bCrypt.compareSync(pw,rows[0].password)){
-                    //response.send();
                     console.log("FOUND ROW");
-		    var u = getUser(uname);
-                    //request.session.regenerate(function(err){
-                    request.session.user = 'a';
+                    //request.session.user = "a";
+		    var u = getUser(uname, function(u){
+                        console.log("returned id " + u.idUser);
+			request.session.user = u.idUser;
+                        response.redirect('/search')                      
+                     });
                 }
              }
         }
-        console.log('3################3');
-        response.redirect('/search');
     });
 });
 
-function getUser(username){
-    connection.query('Select * from User where username=?',[username], function(err, result){
-        if(err){
-            console.log("No user");
-        }else{
-            //console.log(result);
-            return {};        
-        }
-    });
-}
-
-app.get('/:itemId', requireLogin, function(request, response){
+app.get('/item/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
-    response.render("item.html",{itemId: request.params.itemId});
+    getItem(request.params.itemId, function(item){
+        var price = item.price, duration = item.duration, condition = item.condition, description = item.description;
+	response.render("item.html",{itemId: request.params.itemId, price: price, duration: duration, condition: condition, description: description, image: item.image});
+    });
 });
 app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
      var messages = [];
@@ -272,19 +291,6 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
         }
     });
 });
-
-app.get('/logout', function(req, res){
-    console.log("logout");
-    if(req.session.user) {
-      req.session.destroy(function(){
-	console.log("destroy");
-      });
-    } else {
-        console.log("no session");
-    }
-    res.redirect('/');
-});
-
 console.log("Blend Server listening on port 8080");
 
 app.on('close', function () {
@@ -293,16 +299,31 @@ app.on('close', function () {
 });
 
 function requireLogin (req, res, next) {
-  console.log(req.session);
-  res.redirect('/');
-  /*if (!req.session.user) {
+  //console.log(req.session);
+  if (!req.session.user) {
     console.log("login now");
     res.redirect('/');
   } else {
     console.log("Passed");
     next();
-  }*/
+  }
 };
+
+function User(idUser, username, password, email, phone, lender_rating, borrow_rating, profile_url, first_name, last_name, address, latitude, longitude){
+    this.idUser = idUser,
+    this.username = username,
+    this.password = password, 
+    this.email = email,
+    this.phone = phone,
+    this.lender_rating = lender_rating,
+    this.borrow_rating = borrow_rating,
+    this.profile_url = profile_url,
+    this.first_name = first_name,
+    this.last_name = last_name,
+    this.address = address,
+    this.latitude = latiture,
+    this.longitude = longitude
+}
 
 var server = https.createServer({
   key: fs.readFileSync('private.key'),
