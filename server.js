@@ -24,8 +24,8 @@ var connection = mysql.createConnection({
 var options_session = {
     host: 'localhost',
     port: 3306,
-    user: 'root',
-    password: 'senha123',
+    user: 'blend_user',
+    password: 'blend_password',
     database: 'blend_db',
     checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
     expiration: 86400000,// The maximum age of a valid session; milliseconds.
@@ -69,16 +69,23 @@ app.set('views', __dirname + '/templates'); // tell Express where to find templa
 app.use(express.static('static'));
 //static file server stuff
 app.use('/static',express.static('static'));
+
 app.use(express.static('bootstrap'));
+
+//google maps distance api
+
+//example: findDistance("Brown University","Brown University");
+var distance = require('google-distance');
 //multer for file uploads
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
+/**
 // dunno if this works:http://stackoverflow.com/questions/21128451/express-cant-upload-file-req-files-is-undefined
 connection.query('select count(*) from User', function (err, rows, fields) {
     if(err) console.log('ERROR');
     else console.log(rows);
 });
-
+**/
 app.get('/', function(request, response) {
     console.log(request.session.user);
     response.render("index.html");
@@ -88,9 +95,46 @@ app.get('/signup', function(request, response) {
 });
 
 app.get('/search', requireLogin, function(request, response){
-    response.send('search')
+    response.render("search.html");
 });
+app.post('/searchquery', requireLogin, function(request, response){
+    console.log("Received request for search");
+    console.log(request.body);
+    console.log(request.params);
+    var itemName = request.body.itemName;
+    //var priceFloor = request.body.priceFloor;
+    var priceCeil = request.body.priceCeil;
+    var period = request.body.period;
+    var condition = request.body.condition;
+    var minrating = request.body.minRating;
+    //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
+    connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?', [itemName,priceCeil,calcDuration(period),minrating], function (err,rows) {
+            if(err){
+                console.log(err);
+            }
+            else{
+                console.log("FOUND SEARCH STUFF");
+                console.log("USER?");
+                console.log(request.session.user);
+                var row;
+                var tosend =[];
+                var originallat = request.session.latitude;
+                var originallon = request.session.longitude;
+                for(i = 0;i<rows.length;i++){
+                    row = rows[i];
+                    //TODO distance filter
+                    
+                    //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
+                    console.log(findDistance(originalat,originallon,row.latitude,row.longitude));
+                    tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/"+row.idItem});
 
+                }
+                // encode all messages object as JSON and send it back to client
+                console.log("Sent:"+rows.length);
+                response.json(tosend);
+            }
+    });
+});
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
     response.render("lend.html");
@@ -124,6 +168,7 @@ app.post('/newuser', function(request, response){
 
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
+    console.log("Uploading item from:"+request.session.user);
     //console.log(request);
     console.log(request.file);
     var image = request.file.filename;
@@ -132,16 +177,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     var name = request.body.itemName;
     var price = request.body.price;
     var period = request.body.period;
-    var periodHours = 720;//month, which is about 30 days
-    if(period==="Hour"){
-        periodHours = 1;
-    }
-    if(period==="Day"){
-        periodHours = 24;
-    }
-    if(period==="Week"){
-        periodHours = 148;
-    }
+    var periodHours = calcDuration(period);
     var condition = request.body.condition;
     var description = request.body.description;
     //var image = 
@@ -222,7 +258,9 @@ app.post('/login', function(request, response){
                     //request.session.user = "a";
 		    var u = getUser(uname, function(u){
                         console.log("returned id " + u.idUser);
-			request.session.user = u.idUser;
+			             request.session.user = u.idUser;
+                        request.session.latitude = u.latitude;
+                        request.session.longitude = u.longitude;
                         response.redirect('/search')                      
                      });
                 }
@@ -251,7 +289,7 @@ app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
             console.log("Found item");
             console.log(rows);
             var res=[];
-            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:"http://localhost:8080/static/images/"+row.image });
+            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:"https://localhost:8080/static/images/"+row.image });
             response.json(res);
         }
     });
@@ -268,6 +306,21 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
         }
     });
 });
+function findDistance(originlat,originlon, destinationlat,destinationlon){
+    
+
+    distance.get(
+      {
+        origin: originlat+','+originlon,
+        destination: destinationlat+','+destinationlon
+      },
+      function(err, data) {
+        if (err) return Number.POSITIVE_INFINITY;
+        console.log(data);
+        console.log(data.distance);
+        return data.distance;  
+    });
+}
 console.log("Blend Server listening on port 8080");
 
 app.on('close', function () {
@@ -301,7 +354,20 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.latitude = latiture,
     this.longitude = longitude
 }
-
+function calcDuration(period){
+   
+    if(period==="Hour"){
+        return 1;
+    }
+    if(period==="Day"){
+        return 24;
+    }
+    if(period==="Week"){
+        return 148;
+    }
+    else
+    {return 720;} //month, which is about 30 days
+}
 var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
