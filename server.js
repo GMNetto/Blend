@@ -291,7 +291,7 @@ function getUser(username, callback){
 };
 
 function getItem(item_id, callback){
-    connection.query('select * from Item where idItem=?',[item_id], function(err, result){
+    connection.query('select * from (select * from Item where idItem=?) as item left join User on item.owner=User.idUser',[item_id], function(err, result){
         if(err){
 	    console.log("No item")
 	}else{
@@ -334,10 +334,43 @@ app.get('/item/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");
     getItem(request.params.itemId, function(item){
-        var price = item.price, duration = item.duration, condition = item.condition, description = item.description;
-	response.render("item.html",{itemId: request.params.itemId, price: price, duration: duration, condition: condition, description: description, image: item.image});
+        console.log("Item:"+item.Username);
+        var price = item.price, duration = item.duration, condition = convertCondition(item.condition), description = item.description;
+	response.render("item.html",{itemId: request.params.itemId, price: price, duration: convertDuration(duration), condition: condition, description: description, image: item.image, owner:item.Username});
     });
 });
+function convertDuration(period){
+   
+    if(period==1){
+        return "Hour";
+    }
+    if(period==24){
+        return "Day";
+    }
+    if(period==148){
+        return "Week";
+    }
+    else
+    {return "Month";} //month, which is about 30 days
+}
+function convertCondition(condition){
+    if(condition==4){
+        return "New";
+    }
+    if(condition==3){
+        return "Used:Like New";
+    }
+    if(condition==2){
+        return "Used:Very Good";
+    }
+    if(condition==1){
+        return "Used:Good";
+    }
+    else{
+        //0
+        return "Used:Acceptable";
+    }
+}
 app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
      var messages = [];
     // query code

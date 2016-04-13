@@ -1,9 +1,11 @@
 var itemId;
 window.addEventListener('load', function(){
     console.log("loading item details");
-    itemId = meta('itemId');  
-    console.log(itemId);
+    //itemId = meta('itemId');  
+    //console.log(itemId);
     //loadItem();
+    //document.getElementById("condition").innerHTML=convertCondition(document.getElementById("condition").innerHTML);
+    //document.getElementById("duration").innerHTML=convertDuration(document.getElementById("duration").innerHTML);
     
 }, false);
 function meta(name) {
