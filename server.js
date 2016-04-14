@@ -9,7 +9,7 @@ var app = express();
 //asynchronous handling stuff
 var async = require("async");
 //number parsing for distance library
-var numeral = require('numeral');
+//var numeral = require('numeral');
 app.use(bodyParser.urlencoded({ extended: false }));
 var mysql = require("mysql2");
 var bCrypt = require("bcrypt-nodejs");
@@ -365,7 +365,7 @@ app.get('/item/:itemId', requireLogin, function(request, response){
     console.log("Multiple params?");
     getItem(request.params.itemId, function(item){
         console.log("Item:"+item.Username);
-        var price = item.price, duration = item.duration, condition = convertCondition(item.condition), description = item.description;
+        var price = item.price, duration = item.duration, condition = convertConditionBack(item.condition), description = item.description;
 	response.render("item.html",{itemId: request.params.itemId, price: price, duration: convertDuration(duration), condition: condition, description: description, image: item.image, owner:item.Username});
     });
 });
@@ -383,7 +383,7 @@ function convertDuration(period){
     else
     {return "Month";} //month, which is about 30 days
 }
-function convertCondition(condition){
+function convertConditionBack(condition){
     if(condition==4){
         return "New";
     }
