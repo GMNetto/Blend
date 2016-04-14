@@ -16,6 +16,7 @@ var bCrypt = require("bcrypt-nodejs");
 app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
+var emailExistence = require('email-existence');
 
 //create db connection to localhost (at this point)
 var connection = mysql.createConnection({
@@ -126,20 +127,20 @@ app.post('/searchquery', requireLogin, function(request, response){
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
-                
+
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
                     //TODO distance filter
-                    
+
                     //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
                     //var dist =findDistance(originallat,originallon,row.latitude,row.longitude,function(result){
                       //  console.log(result);
-                    //}); 
-                    
+                    //});
+
                     //console.log(compareDistances(distancefilter,dist));
-                    
-                   tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)}); 
-                    
+
+                   tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
+
 
                 }
                 async.each(tosend, function(item, callback) {
@@ -150,7 +151,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                         //eliminate commas for distance filter
                         item.distance =result.replace(',','');
                         callback();
-                    }); 
+                    });
                     /**
                   if( item.name ==="foobar" ) {
                     console.log('This file name is too long');
@@ -170,17 +171,17 @@ app.post('/searchquery', requireLogin, function(request, response){
                     } else {
                       console.log('All rows processsed');
                         response.json(tosend);
-                    
+
                     }
                 });
                 // encode all messages object as JSON and send it back to client
                // console.log("Sent:"+rows.length);
-                
+
                // packageSearchQuery(rows,originallat,originallon,function(result){
-                   //console.log("done:"+result); 
+                   //console.log("done:"+result);
                     //response.json(tosend);
                 //});
-                
+
             }
     });
 });
@@ -193,15 +194,15 @@ function packageSearchQuery(rows,originlat,originlon, callback){
         //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
         var dist =findDistance(originlat,originlon,row.latitude,row.longitude);
         while(dist===undefined){
-            
+
         }
-        //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:result}); 
-         
+        //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:result});
+
 
         //console.log(compareDistances(distancefilter,dist));
 
-       tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem}); 
-        
+       tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem});
+
 
     }
     // encode all messages object as JSON and send it back to client
@@ -217,47 +218,43 @@ app.get('/lend', requireLogin, function(request, response) {
 
 app.post('/newuser', function(request, response){
     //adding new user
-    var email = request.body.email; 
+    var email = request.body.email;
     //extract params and hash pw
     var pw = bCrypt.hashSync(request.body.pw, bCrypt.genSaltSync(10));//request.body.pw;
-    var ln = request.body.ln; 
-    var fn = request.body.fn; 
+    var ln = request.body.ln;
+    var fn = request.body.fn;
     var address = request.body.address;
     var username = request.body.username;
     var phone = request.body.phone;
     geocoder.geocode(address, function(error, res) {
         //if err probably not an actual address
         if(error){
-            
+
         }
         else{
             connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', [null, username, pw, email,phone,0.0,0.0,'',fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
             if(err){
                 console.log(err);
-            } 
+            }
             });
         }
     });
-    
+
 });
 app.post('/usernameverif', function(req, res){
      //console.log("Verifying username");
      //console.log(req.body);
      connection.query('SELECT * from User WHERE Username = ?', [req.body.username], function (err,rows) {
-        if(err){
-            
-        }
-        else{
             var response = [];
-           if(rows.length>0){
-               response.push({result:true});
-               res.json(response);
-           }
-            else{
-                response.push({result:false});
-                res.json(response);
+            if (rows.length>0) {
+              response.push({result:true, err:'Username already exists'});
             }
-        }
+            else {
+              response.push({result:false});
+            }
+
+            res.json(response);
+
     });
 });
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
@@ -274,16 +271,16 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     var periodHours = calcDuration(period);
     var condition = convertCondition(request.body.condition);
     var description = request.body.description;
-    //var image = 
+    //var image =
     //deposit thing in db along with filename
     /**
      connection.query('UPDATE Item WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
-        
+
     });
     **/
     connection.query('SELECT * from User WHERE idUser = ?', [user], function (err,rows) {
         if(err){
-            
+
         }
         else{
             console.log(rows[0]);
@@ -292,7 +289,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                     if(err){
                         console.log('Adding new item failed');
                         console.log(err);
-                    } 
+                    }
             });
         }
     });
@@ -332,7 +329,7 @@ function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err){
             console.log("No user");
-        }else{ 
+        }else{
             user = result
             return callback(user[0]);
         }
@@ -346,9 +343,9 @@ function getItem(item_id, callback){
 	}else{
 	    item = result;
 	    return callback(item[0]);
-	} 
+	}
     });
-};   
+};
 
 app.post('/login', function(request, response){
     console.log(request.session.user);
@@ -372,7 +369,7 @@ app.post('/login', function(request, response){
 			             request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
-                        response.redirect('/search')                      
+                        response.redirect('/search')
                      });
                 }
              }
@@ -389,7 +386,7 @@ app.get('/item/:itemId', requireLogin, function(request, response){
     });
 });
 function convertDuration(period){
-   
+
     if(period==1){
         return "Hour";
     }
@@ -451,7 +448,7 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
     });
 });
 function findDistance(originlat,originlon, destinationlat,destinationlon,callback){
-    
+
     console.log("finding distance between:"+originlat+ " "+originlon+" "+destinationlat+ " "+destinationlon);
     distance.get(
       {
@@ -467,9 +464,9 @@ function findDistance(originlat,originlon, destinationlat,destinationlon,callbac
             console.log("Found distance?")
             console.log(data);
             console.log(data.distance);
-            callback(data.distance); 
-        }  
-         
+            callback(data.distance);
+        }
+
     });
 }
 console.log("Blend Server listening on port 8080");
@@ -493,7 +490,7 @@ function requireLogin (req, res, next) {
 function User(idUser, username, password, email, phone, lender_rating, borrow_rating, profile_url, first_name, last_name, address, latitude, longitude){
     this.idUser = idUser,
     this.username = username,
-    this.password = password, 
+    this.password = password,
     this.email = email,
     this.phone = phone,
     this.lender_rating = lender_rating,
@@ -506,7 +503,7 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.longitude = longitude
 }
 function calcDuration(period){
-   
+
     if(period==="Hour"){
         return 1;
     }

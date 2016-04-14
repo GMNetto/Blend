@@ -21,7 +21,7 @@ function submitForm(){
     var username = document.getElementById("username").value;
     var phone = document.getElementById("phone").value;
     //e.preventDefault();
-    
+
     **/
     var validated = true;
     //retrieve values
@@ -85,8 +85,8 @@ function submitForm(){
     }
     if(validated){
         //display success somehow?
-        var usereq = new XMLHttpRequest(); 
-        var userparams = 'username='+username;
+        var usereq = new XMLHttpRequest();
+        var userparams = 'username='+username+'&email='+email;
         usereq.open('POST', '/usernameverif', true);
         usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         usereq.send(userparams);
@@ -97,28 +97,28 @@ function submitForm(){
             if(content.length>0){
                 // list appending code
                 // should be array of message objects
-                var data = JSON.parse(content); 
-                if(data[0].result){
-                    alert("You dun goofed");
+                var data = JSON.parse(content);
+                if(data[0].result) {
+                    alert(data[0].err);
                 }
                 else{
                    document.getElementById("success").style.display="block";
                     //http://stackoverflow.com/questions/8064691/how-do-i-pass-along-variables-with-xmlhttprequest
-                    var req = new XMLHttpRequest(); 
+                    var req = new XMLHttpRequest();
                     //probably should encrypt password or something. This doesn't seem very safe
                     var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
                     req.open('POST', '/newuser', true);
                     req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    req.send(params); 
+                    req.send(params);
                 }
-            }  
-                
+            }
+
         } else {
             // something went wrong, check the request status
             // hint: 403 means Forbidden, maybe you forgot your username?
         }
     }, false);
-        
+
         return false;
     }
     else{
