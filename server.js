@@ -6,6 +6,10 @@ var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
+//asynchronous handling stuff
+var async = require("async");
+//number parsing for distance library
+var numeral = require('numeral');
 app.use(bodyParser.urlencoded({ extended: false }));
 var mysql = require("mysql2");
 var bCrypt = require("bcrypt-nodejs");
@@ -122,64 +126,90 @@ app.post('/searchquery', requireLogin, function(request, response){
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
+                
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
                     //TODO distance filter
                     
                     //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
-                    var dist =findDistance(originallat,originallon,row.latitude,row.longitude,function(result){
-                        console.log(result);
-                    }); 
+                    //var dist =findDistance(originallat,originallon,row.latitude,row.longitude,function(result){
+                      //  console.log(result);
+                    //}); 
                     
                     //console.log(compareDistances(distancefilter,dist));
                     
-                   tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)}); 
+                   tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)}); 
                     
 
                 }
+                async.each(tosend, function(item, callback) {
+                  // Perform operation on file here.
+                  console.log('Processing item ' + item);
+                findDistance(originallat,originallon,item.lat,item.lon,function(result){
+                        console.log("done");
+                        //eliminate commas for distance filter
+                        item.distance =result.replace(',','');
+                        callback();
+                    }); 
+                    /**
+                  if( item.name ==="foobar" ) {
+                    console.log('This file name is too long');
+                    callback('Not foobar');
+                  } else {
+                    // Do work to process file here
+                    console.log('item processed');
+                    callback();
+                  }
+                  **/
+                }, function(err){
+                    // if any of the file processing produced an error, err would equal that error
+                    if( err ) {
+                      // One of the iterations produced an error.
+                      // All processing will now stop.
+                      console.log('A row failed to process');
+                    } else {
+                      console.log('All rows processsed');
+                        response.json(tosend);
+                    
+                    }
+                });
                 // encode all messages object as JSON and send it back to client
-                console.log("Sent:"+rows.length);
+               // console.log("Sent:"+rows.length);
                 
-                response.json(tosend);
+               // packageSearchQuery(rows,originallat,originallon,function(result){
+                   //console.log("done:"+result); 
+                    //response.json(tosend);
+                //});
+                
             }
     });
 });
+function packageSearchQuery(rows,originlat,originlon, callback){
+    var tosend = [];
+    for(i = 0;i<rows.length;i++){
+        row = rows[i];
+        //TODO distance filter
 
-function compareDistances(dist1,dist2){
-    var original = dist1;
-    var final1;
-    if(original.indexOf("km")>0){
-        //convert to m
-        original = original.replace(" km","");
-        final1 = parseFloat(original);
-        final1 = final1*1000.0;
+        //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
+        var dist =findDistance(originlat,originlon,row.latitude,row.longitude);
+        while(dist===undefined){
+            
+        }
+        //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:result}); 
+         
+
+        //console.log(compareDistances(distancefilter,dist));
+
+       tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem}); 
+        
+
     }
-    else{
-        original = original.replace(" m","");
-        final1 = parseFloat(original);
-    }
-    var tocompare = dist2;
-    var second;
-    if(tocompare.indexOf("km")>0){
-        //convert to m
-        tocompare = tocompare.replace(" km","");
-        second = parseFloat(tocompare);
-        second = second*1000.0;
-    }
-    else{
-        tocompare = tocompare.replace(" m","");
-        second = parseFloat(tocompare);
-    }
-    if(final1>second){
-        return 1;
-    }
-    if(second>final1){
-        return -1;
-    }
-    else{
-        return 0;
-    }
-}
+    // encode all messages object as JSON and send it back to client
+    tosend.forEach
+    return callback(tosend);
+};
+
+
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
     response.render("lend.html");
@@ -412,13 +442,13 @@ function findDistance(originlat,originlon, destinationlat,destinationlon,callbac
       function(err, data) {
         if (err) {
             console.log("err:"+err);
-            return Number.POSITIVE_INFINITY;
+            callback(Number.POSITIVE_INFINITY);
         }
         else{
             console.log("Found distance?")
             console.log(data);
             console.log(data.distance);
-            return data.distance; 
+            callback(data.distance); 
         }  
          
     });
