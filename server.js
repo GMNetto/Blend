@@ -240,7 +240,26 @@ app.post('/newuser', function(request, response){
     });
     
 });
-
+app.post('/usernameverif', function(req, res){
+     //console.log("Verifying username");
+     //console.log(req.body);
+     connection.query('SELECT * from User WHERE Username = ?', [req.body.username], function (err,rows) {
+        if(err){
+            
+        }
+        else{
+            var response = [];
+           if(rows.length>0){
+               response.push({result:true});
+               res.json(response);
+           }
+            else{
+                response.push({result:false});
+                res.json(response);
+            }
+        }
+    });
+});
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
     console.log("Uploading item from:"+request.session.user);

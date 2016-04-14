@@ -68,7 +68,7 @@ function submitForm(){
     }
     var username = document.getElementById("username").value;
     //username check, will have to come up with a username regex
-    if(username.length===0||!testUserName(username)){
+    if(username.length===0||!testUserName(username)||username.indexOf(" ")>=0){
         document.getElementById("1").className+=" has-error";;
         validated=false;
     }
@@ -85,14 +85,40 @@ function submitForm(){
     }
     if(validated){
         //display success somehow?
-        document.getElementById("success").style.display="block";
-        //http://stackoverflow.com/questions/8064691/how-do-i-pass-along-variables-with-xmlhttprequest
-        var req = new XMLHttpRequest(); 
-        //probably should encrypt password or something. This doesn't seem very safe
-        var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
-        req.open('POST', '/newuser', true);
-        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        req.send(params);
+        var usereq = new XMLHttpRequest(); 
+        var userparams = 'username='+username;
+        usereq.open('POST', '/usernameverif', true);
+        usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        usereq.send(userparams);
+        usereq.addEventListener('load', function(e){
+        //login request if successful
+        if (usereq.status == 200) {
+             var content = usereq.responseText;
+            if(content.length>0){
+                // list appending code
+                // should be array of message objects
+                var data = JSON.parse(content); 
+                if(data[0].result){
+                    alert("You dun goofed");
+                }
+                else{
+                   document.getElementById("success").style.display="block";
+                    //http://stackoverflow.com/questions/8064691/how-do-i-pass-along-variables-with-xmlhttprequest
+                    var req = new XMLHttpRequest(); 
+                    //probably should encrypt password or something. This doesn't seem very safe
+                    var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
+                    req.open('POST', '/newuser', true);
+                    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    req.send(params); 
+                }
+            }  
+                
+        } else {
+            // something went wrong, check the request status
+            // hint: 403 means Forbidden, maybe you forgot your username?
+        }
+    }, false);
+        
         return false;
     }
     else{
