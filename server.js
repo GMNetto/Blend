@@ -16,7 +16,7 @@ var bCrypt = require("bcrypt-nodejs");
 app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
-var emailExistence = require('email-existence');
+//var emailExistence = require('email-existence'); defunct
 
 //create db connection to localhost (at this point)
 var connection = mysql.createConnection({
@@ -253,10 +253,10 @@ app.post('/newuser', function(request, response){
 app.post('/usernameverif', function(req, res){
      //console.log("Verifying username");
      //console.log(req.body);
-     connection.query('SELECT * from User WHERE Username = ?', [req.body.username], function (err,rows) {
+     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [req.body.username,req.body.email], function (err,rows) {
             var response = [];
             if (rows.length>0) {
-              response.push({result:true, err:'Username already exists'});
+              response.push({result:true, err:'Username or email already exists'});
             }
             else {
               response.push({result:false});
