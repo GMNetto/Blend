@@ -16,7 +16,7 @@ var bCrypt = require("bcrypt-nodejs");
 app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
-var emailExistence = require('email-existence');
+//var emailExistence = require('email-existence'); defunct
 
 //create db connection to localhost (at this point)
 var connection = mysql.createConnection({
@@ -84,13 +84,7 @@ var distance = require('google-distance');
 //multer for file uploads
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
-/**
-// dunno if this works:http://stackoverflow.com/questions/21128451/express-cant-upload-file-req-files-is-undefined
-connection.query('select count(*) from User', function (err, rows, fields) {
-    if(err) console.log('ERROR');
-    else console.log(rows);
-});
-**/
+
 app.get('/', function(request, response) {
     console.log(request.session.user);
     response.render("index.html");
@@ -99,9 +93,24 @@ app.get('/signup', function(request, response) {
     response.render("signup.html");
 });
 
+app.get('/profile/:username', requireLogin, function(req, res){
+    console.log("params " + req.params.username);
+    getUser(req.params.username, function(user){
+        console.log(user);
+	    render_profile(user, res);
+    });
+});
+
+app.get('/my_profile', requireLogin, function(req, res){
+    get_user_by_id(req.session.user, function(user){
+        render_my_profile(user, res);        
+    });
+});
+
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
+
 app.post('/searchquery', requireLogin, function(request, response){
     console.log("Received request for search");
     console.log(request.body);
@@ -244,10 +253,10 @@ app.post('/newuser', function(request, response){
 app.post('/usernameverif', function(req, res){
      //console.log("Verifying username");
      //console.log(req.body);
-     connection.query('SELECT * from User WHERE Username = ?', [req.body.username], function (err,rows) {
+     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [req.body.username,req.body.email], function (err,rows) {
             var response = [];
             if (rows.length>0) {
-              response.push({result:true, err:'Username already exists'});
+              response.push({result:true, err:'Username or email already exists'});
             }
             else {
               response.push({result:false});
@@ -345,14 +354,80 @@ function getUser(username, callback){
     });
 };
 
+function get_user_by_id(id_user, callback){
+    connection.query('Select * from User where idUser=?',[id_user], function(err, result){
+        if(err){
+            console.log("No user");
+        }else{ 
+            user = result
+            return callback(user[0]);
+        }
+    });
+};
+
 function getItem(item_id, callback){
     connection.query('select * from (select * from Item where idItem=?) as item left join User on item.owner=User.idUser',[item_id], function(err, result){
         if(err){
-	    console.log("No item")
-	}else{
-	    item = result;
-	    return callback(item[0]);
-	}
+	        console.log("No item")
+	    }else{
+	        item = result;
+	        return callback(item[0]);
+	    }
+    });
+};
+
+function getRecentBorrow(username, limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            callback(result);        
+        }    
+    })
+};
+
+function getRecentLend(username, limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            callback(result);        
+        }    
+    }
+)};
+
+function get_items_from_user(idUser, callback){
+    console.log('user '+ idUser)
+    connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            callback(result);        
+        }    
+    }
+)};
+
+function render_profile(user, res){
+    console.log("render: "+user.Username);
+    getRecentBorrow(user.Username, 3, function(list_items_borrow){
+        getRecentLend(user.Username, 3, function(list_items_lend){
+            var l_B = list_items_borrow, l_L = list_items_lend;
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}]; 
+            console.log(l_B);
+            console.log(l_L);
+            res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url, borrow: l_B, lend: l_L});
+            console.log("end");
+        });    
+    });
+};
+
+function render_my_profile(user, res){
+    getRecentBorrow(user.Username, 3, function(list_items_borrow){
+        getRecentLend(user.Username, 3, function(list_items_lend){
+            get_items_from_user(user.idUser, function(list_items){
+                res.render("my_profile.html", {user: user, borrow: list_items_borrow, lend: list_items_lend, items: list_items});
+            });
+        });
     });
 };
 
@@ -385,6 +460,7 @@ app.post('/login', function(request, response){
         }
     });
 });
+
 app.get('/item/:itemId', requireLogin, function(request, response){
     console.log(request.params);
     console.log("Multiple params?");

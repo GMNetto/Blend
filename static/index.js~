@@ -25,7 +25,12 @@ function login(){
 
 $(document).ready(function(){
     $('.btn-login').click(function(e){
+<<<<<<< HEAD
          e.preventDefault(); 
+=======
+         e.preventDefault();
+         //alert("hello"); 
+>>>>>>> 4a1921a9634575aa02446a3c3e297194e64d827d
          var email = document.getElementById("inputEmail").value;
          var password = document.getElementById("inputPassword").value;
 
