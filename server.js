@@ -257,6 +257,15 @@ app.post('/usernameverif', function(req, res){
 
     });
 });
+app.post('/borrow/:itemId', requireLogin, function(request, response){
+    //console.log("GOT REQUEST TO BORROW A THING");
+    //console.log(request.params);
+     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+            if(err){
+                console.log(err);
+            } 
+    });
+});
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
     console.log("Uploading item from:"+request.session.user);

@@ -12,10 +12,11 @@
         <!--<script src="https://localhost:8080/bootstrap.min.js"></script>-->
         <script src="../item.js" type="text/javascript"></script>
         <title>Product Details for {{itemId}}</title>
+         
     </head>
     <body>
 	<div class="container">
-
+        <meta name="itemId" content="{{itemId}}"/>
 	<div class="row">
 		<h2>Search for a product</h2>
            <div id="custom-search-input">
@@ -31,7 +32,7 @@
 	</div>
 
         <h1></h1>
-        <input type="button" class="controls" value="Borrow!" onclick="">
+        <input type="button" class="controls" value="Borrow!" onclick="borrowThing();return false;">
         <img id="itemImg" src="/static/images/{{image}}" height=100px width=100px alt="item image couldn't be loaded" />
         <label>Price</label>
         <span id="price">{{price}}</span>
