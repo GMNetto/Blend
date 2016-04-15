@@ -32,34 +32,54 @@
 
     <div class="row">
         <div class="col-md-4">
-            <p>Borrowed</p>
-            <ul>
+            <div class="row">
+                <p>Borrowed</p>
+                <ul>
                 {{#borrow}}
                     <li>{{name}}</li>
                     <li>{{description}}</li>
                     <li>{{price}}</li>
-                    <!--<li>{{description}}</li>-->
                 {{/borrow}}
-            </ul>
+                </ul>
+             </div>
+             <div> 
+                <p>Lent</p>
+                <ul>
+                {{#lend}}
+                    <li>{{name}}</li>
+                    <li>{{description}}</li>
+                    <li>{{price}}</li>
+                {{/lend}}
+             </ul>        
+             </div>  
         </div>
         <div class="col-md-4">
+            {{#user}}
             <p>Profile</p>
-            <h3>{{username}}</h3>
+            <h3>{{Username}}</h3>
             <img id="itemImg" src="/images/{{image}}" height=100px width=100px alt="item image couldn't be loaded" /><br>
             <label>Rating borrower: </label>
-            <p>{{rating_borrower}}</p>
+            <p>{{borrower_rating}}</p>
             <label>Rating lender: </label>
-            <p>{{rating_lender}}</p>
+            <p>{{lender_rating}}</p>
             <label>address: </label>
             <p>{{address}}</p>
             <label>phone: </label>
             <p>{{phone}}</p>
             <label>email: </label>
             <p>{{email}}</p>
+            {{/user}}
         </div>
         <div class="col-md-4">
-            <p>Lent</p>
-            <ul></ul>
+            <p>Items</p>
+            <ul>
+                {{#items}}
+                    <li>{{name}}</li>
+                    <li>{{description}}</li>
+                    <li>{{price}}</li>
+                    <!--<li>{{description}}</li>-->
+                {{/items}}
+            </ul>
         </div>
     </div>
     <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">

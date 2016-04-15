@@ -79,13 +79,7 @@ var distance = require('google-distance');
 //multer for file uploads
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
-/**
-// dunno if this works:http://stackoverflow.com/questions/21128451/express-cant-upload-file-req-files-is-undefined
-connection.query('select count(*) from User', function (err, rows, fields) {
-    if(err) console.log('ERROR');
-    else console.log(rows);
-});
-**/
+
 app.get('/', function(request, response) {
     console.log(request.session.user);
     response.render("index.html");
@@ -97,15 +91,21 @@ app.get('/signup', function(request, response) {
 app.get('/profile/:username', requireLogin, function(req, res){
     console.log("params " + req.params.username);
     getUser(req.params.username, function(user){
-	    console.log("user " + user);
-        res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url});
-        res.end(); 
+        console.log(user);
+	    render_profile(user, res);
+    });
+});
+
+app.get('/my_profile', requireLogin, function(req, res){
+    get_user_by_id(req.session.user, function(user){
+        render_my_profile(user, res);        
     });
 });
 
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
+
 app.post('/searchquery', requireLogin, function(request, response){
     console.log("Received request for search");
     console.log(request.body);
@@ -230,6 +230,17 @@ function getUser(username, callback){
     });
 };
 
+function get_user_by_id(id_user, callback){
+    connection.query('Select * from User where idUser=?',[id_user], function(err, result){
+        if(err){
+            console.log("No user");
+        }else{ 
+            user = result
+            return callback(user[0]);
+        }
+    });
+};
+
 function getItem(item_id, callback){
     connection.query('select * from Item where idItem=?',[item_id], function(err, result){
         if(err){
@@ -246,20 +257,55 @@ function getRecentBorrow(username, limit, callback){
         if(err){
             console.log("No item");        
         }else{
-            return result;        
+            callback(result);        
         }    
     })
 };
 
-function getRecentLend(limit, callback){
-    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?;', [limit], function(err, result){
+function getRecentLend(username, limit, callback){
+    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err){
             console.log("No item");        
         }else{
-            return result;        
+            callback(result);        
         }    
     }
 )};
+
+function get_items_from_user(idUser, callback){
+    console.log('user '+ idUser)
+    connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
+        if(err){
+            console.log("No item");        
+        }else{
+            callback(result);        
+        }    
+    }
+)};
+
+function render_profile(user, res){
+    console.log("render: "+user.Username);
+    getRecentBorrow(user.Username, 3, function(list_items_borrow){
+        getRecentLend(user.Username, 3, function(list_items_lend){
+            var l_B = list_items_borrow, l_L = list_items_lend;
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}]; 
+            console.log(l_B);
+            console.log(l_L);
+            res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url, borrow: l_B, lend: l_L});
+            console.log("end");
+        });    
+    });
+};
+
+function render_my_profile(user, res){
+    getRecentBorrow(user.Username, 3, function(list_items_borrow){
+        getRecentLend(user.Username, 3, function(list_items_lend){
+            get_items_from_user(user.idUser, function(list_items){
+                res.render("my_profile.html", {user: user, borrow: list_items_borrow, lend: list_items_lend, items: list_items});
+            });
+        });
+    });
+};
 
 app.post('/login', function(request, response){
     console.log(request.session.user);
