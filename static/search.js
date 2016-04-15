@@ -35,7 +35,7 @@ function submitItem(){
                         var li = document.createElement('li');
                         //construct list element
                         if(compareDistances(distancefilter,data[i].distance)>=0){
-                            li.innerHTML = "<div id =\x22searchresult\x22>"+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+"</div>";
+                            li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
                             //add to list html on frontend
                             ul.appendChild(li,ul.childNodes[0]);
                         }
