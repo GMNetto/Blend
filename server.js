@@ -342,7 +342,7 @@ function convertCondition(condition){
         //Used:Acceptable
         return 0;
     }
-}
+};
 function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err){
@@ -366,7 +366,8 @@ function get_user_by_id(id_user, callback){
 };
 
 function getItem(item_id, callback){
-    connection.query('select * from (select * from Item where idItem=?) as item left join User on item.owner=User.idUser',[item_id], function(err, result){
+    console.log(item_id);
+    connection.query('select Item.name, Item.condition, price, description, duration, image, Username from Item, User where Item.idItem = ? and Item.owner = User.idUser',[item_id], function(err, result){
         if(err){
 	        console.log("No item")
 	    }else{
@@ -396,6 +397,7 @@ function getRecentLend(username, limit, callback){
     }
 )};
 
+
 function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
     connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
@@ -406,6 +408,7 @@ function get_items_from_user(idUser, callback){
         }    
     }
 )};
+
 
 function render_profile(user, res){
     console.log("render: "+user.Username);
@@ -458,6 +461,12 @@ app.post('/login', function(request, response){
                 }
              }
         }
+    });
+});
+
+app.get("/items", function(req, res){
+    get_items_from_user(req.session.user, function(items){
+        res.render("items.html", {items: items});                    
     });
 });
 
