@@ -23,6 +23,7 @@ function submitForm(){
     //e.preventDefault();
 
     **/
+    document.getElementById("badusername").style.display="none";
     var validated = true;
     //retrieve values
     var email = document.getElementById("inputEmail").value;
@@ -99,7 +100,9 @@ function submitForm(){
                 // should be array of message objects
                 var data = JSON.parse(content);
                 if(data[0].result) {
-                    alert(data[0].err);
+                    //alert(data[0].err);
+                    document.getElementById("1").className+=" has-error";;
+                    document.getElementById("badusername").style.display="block";
                 }
                 else{
                    document.getElementById("success").style.display="block";
