@@ -123,6 +123,7 @@ app.post('/searchquery', requireLogin, function(request, response){
     var minrating = request.body.minRating;
     var distancefilter = "3 km";
     console.log("Filtering for condition:"+condition);
+    console.log("query made by:"+request.session.user);
     //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
     connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
             if(err){
@@ -194,30 +195,7 @@ app.post('/searchquery', requireLogin, function(request, response){
             }
     });
 });
-function packageSearchQuery(rows,originlat,originlon, callback){
-    var tosend = [];
-    for(i = 0;i<rows.length;i++){
-        row = rows[i];
-        //TODO distance filter
 
-        //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
-        var dist =findDistance(originlat,originlon,row.latitude,row.longitude);
-        while(dist===undefined){
-
-        }
-        //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:result});
-
-
-        //console.log(compareDistances(distancefilter,dist));
-
-       tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem});
-
-
-    }
-    // encode all messages object as JSON and send it back to client
-    tosend.forEach
-    return callback(tosend);
-};
 
 
 app.get('/lend', requireLogin, function(request, response) {
@@ -235,13 +213,16 @@ app.post('/newuser', function(request, response){
     var address = request.body.address;
     var username = request.body.username;
     var phone = request.body.phone;
+    var profileurl = "https://localhost:8080/profile/"+username;
+    //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
+    var salt =pw;
     geocoder.geocode(address, function(error, res) {
         //if err probably not an actual address
         if(error){
 
         }
         else{
-            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)', [null, username, pw, email,phone,0.0,0.0,'',fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
+            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
             if(err){
                 console.log(err);
             }
@@ -267,20 +248,39 @@ app.post('/usernameverif', function(req, res){
     });
 });
 app.post('/borrow/:itemId', requireLogin, function(request, response){
-    //console.log("GOT REQUEST TO BORROW A THING");
-    //console.log(request.params);
-     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
-            if(err){
-                console.log(err);
-            } 
-    });
+    console.log("GOT REQUEST TO BORROW A THING");
+    console.log(request.params);
+    var borrowuser = request.session.user;
+    console.log(borrowuser);
+     connection.query('SELECT * from Item WHERE owner = ? AND idItem= ?', [request.session.user,request.params.itemId], function (err,rows) {
+         console.log(rows.length);
+         //some logic to check for if item owner matches session user
+         if(rows.length>=1){
+             //if there are rows, borrower is same as lender
+         }
+         else{
+             //insert into db. Note: does prevent duplicate offers, since each is unique
+             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+                    if(err){
+                        console.log(err);
+                    } 
+            });
+         }
+      });
 });
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
     console.log("Uploading item from:"+request.session.user);
     //console.log(request);
     console.log(request.file);
-    var image = request.file.filename;
+    var image;
+    if(request.file!==undefined){
+        image= request.file.filename;
+    }
+    else{
+        //some default image
+        image="No_image_available.png";
+    }
     console.log(request.body);
     var user = request.session.user;
     var name = request.body.itemName;
@@ -312,7 +312,84 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         }
     });
 });
-
+app.post('/newfeedback', requireLogin, function(request, response){
+    var newrating = parseFloat(request.body.rating);
+    var feedbackuser = request.body.user;
+    var feedbacktype = request.body.type;
+    var feedbackuserid = request.body.userid;
+    console.log("Adding new feedback for "+feedbackuserid+ " "+feedbackuser);
+    connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
+        if(rows.length>0){
+            console.log("updating row:");
+            console.log(rows[0]);
+            var row = rows[0];
+            //calc new cumulative moving average = (new rating + old total*current average)/(old total+1)
+            var newaverage;
+            if(feedbacktype=="borrower"){
+                var curborrows = row.total_borrow_ratings;//n
+                newaverage = ((newrating +(curborrows*row.borrower_rating))/parseFloat(curborrows+1)).toFixed(1);
+                console.log("borrow newaverage:"+newaverage);
+                //http://stackoverflow.com/questions/2762851/increment-a-database-field-by-1
+                connection.query('UPDATE User SET borrower_rating = ?, total_borrow_ratings = total_borrow_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                    if(err){
+                        //feedback update failed
+                        console.log("updating borrower rating failed");
+                    }
+                 });
+            }
+            else{
+                //lender update logic
+                var curlender = row.total_lend_ratings;
+                
+                newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
+                console.log("lender newaverage:"+newaverage);
+                connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                    if(err){
+                        //feedback update failed
+                        console.log("updating lender rating failed");
+                    }
+                 });
+            }
+        }
+        else{
+            console.log("Couldn't find user");
+        }
+    });
+});
+app.get('/feedback/:transactionId', requireLogin, function(request, response){
+    //some query to check if this is valid feedback for a COMPLETED transaction. Since it's still kind of fluid right now, there won't be a check here
+    connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
+        if(rows.length==0){
+            //no such transaction   
+        }
+        else{
+            var row = rows[0];
+            var borrower = row.idUser;
+            var usertorate;
+            var usertype;
+            //going to need another query to get username though
+            if(borrower==request.session.user){
+                //feedback is for owner of the item
+                usertorate = row.owner;
+                usertype = "lender";
+            }
+            else{
+                //feedback is for borrower
+                usertorate = row.idUser;
+                usertype = "borrower";
+            }
+            connection.query('SELECT * from User WHERE idUser= ?', [usertorate], function (err,rows) {
+                //params are {{feedbackuser}},{{itemName}},{{image}}, probably should send feedbackuser id to store in meta tag or something
+                if(rows.length>0){
+                    response.render("feedback.html",{type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
+                }
+                else{
+                    //user doesn't exist. This shouldn't happen
+                }
+             });
+        }
+    });
+});
 app.get('/logout', function(req, res){
     console.log("logout");
     //res.send('logout');
