@@ -34,27 +34,31 @@
         <div class="col-md-4">
             <div class="row">
                 <p>Borrowed</p>
-                <ul>
+                <ul class="list-group">
                 {{#borrow}}
                     <a href="https://localhost:8080/item/{{idItem}}">
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
-                    </a>
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>                
                 {{/borrow}}
                 </ul>
              </div>
-             <div> 
+             <div class="row"> 
                 <p>Lent</p>
-                <ul>
+                <ul class="list-group">
                 {{#lend}}
                     <a href="https://localhost:8080/item/{{idItem}}">
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
                     </a>
                 {{/lend}}
-             </ul>        
+                </ul>        
              </div>  
         </div>
         <div class="col-md-4">
@@ -79,9 +83,11 @@
             <ul>
                 {{#items}}
                     <a href="https://localhost:8080/item/{{idItem}}">
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
                     </a>
                     <!--<li>{{description}}</li>-->
                 {{/items}}

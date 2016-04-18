@@ -93,18 +93,27 @@ app.get('/signup', function(request, response) {
     response.render("signup.html");
 });
 
-app.get('/profile/:username', requireLogin, function(req, res){
+app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
-    getUser(req.params.username, function(user){
-        console.log(user);
-	    render_profile(user, res);
+    getUser(req.params.username, function(err, user){
+        if(err)
+            next();
+        else
+	        render_profile(user, res);
     });
 });
 
 app.get('/my_profile', requireLogin, function(req, res){
-    get_user_by_id(req.session.user, function(user){
-        render_my_profile(user, res);        
+    get_user_by_id(req.session.user, function(err, user){
+        if(err)
+            res.render("something_wrong.html");
+        else
+            render_my_profile(user, res);        
     });
+});
+
+app.get('/search?*', requireLogin, function(req, res, next){
+    res.send("Search?");
 });
 
 app.get('/search', requireLogin, function(request, response){
@@ -422,22 +431,23 @@ function convertCondition(condition){
 };
 function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
-        if(err){
+        if(err || isEmpty(result)){
             console.log("No user");
+            return callback(true, undefined);
         }else{
             user = result
-            return callback(user[0]);
+            return callback(err, user[0]);
         }
     });
 };
 
 function get_user_by_id(id_user, callback){
     connection.query('Select * from User where idUser=?',[id_user], function(err, result){
-        if(err){
-            console.log("No user");
+        if(err || isEmpty(result)){
+            return callback(true, undefined);
         }else{ 
             user = result
-            return callback(user[0]);
+            return callback(err, user[0]);
         }
     });
 };
@@ -445,31 +455,34 @@ function get_user_by_id(id_user, callback){
 function getItem(item_id, callback){
     console.log(item_id);
     connection.query('select Item.name, Item.condition, price, description, duration, image, Username from Item, User where Item.idItem = ? and Item.owner = User.idUser',[item_id], function(err, result){
-        if(err){
+        if(err || isEmpty(result)){
 	        console.log("No item")
+            return callback(true, undefined);
 	    }else{
 	        item = result;
-	        return callback(item[0]);
+	        return callback(err, item[0]);
 	    }
     });
 };
 
 function getRecentBorrow(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
-        if(err){
+        if(err || isEmpty(result)){
             console.log("No item");        
+            callback(true, undefined);
         }else{
-            callback(result);        
+            callback(err, result);        
         }    
     })
 };
 
 function getRecentLend(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
-        if(err){
+        if(err || isEmpty(result)){
             console.log("No item");        
+            callback(true, undefined);
         }else{
-            callback(result);        
+            callback(err, result);        
         }    
     }
 )};
@@ -478,10 +491,11 @@ function getRecentLend(username, limit, callback){
 function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
     connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
-        if(err){
+        if(err || isEmpty(result)){
             console.log("No item");        
+            callback(true, undefined);
         }else{
-            callback(result);        
+            callback(err, result);        
         }    
     }
 )};
@@ -489,8 +503,12 @@ function get_items_from_user(idUser, callback){
 
 function render_profile(user, res){
     console.log("render: "+user.Username);
-    getRecentBorrow(user.Username, 3, function(list_items_borrow){
-        getRecentLend(user.Username, 3, function(list_items_lend){
+    getRecentBorrow(user.Username, 3, function(err_borrow, list_items_borrow){
+        getRecentLend(user.Username, 3, function(err_lend, list_items_lend){
+            if(err_borrow || err_lend){
+                res.render("page_not_found.html");
+                res.end();
+            }
             var l_B = list_items_borrow, l_L = list_items_lend;
             //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}]; 
             console.log(l_B);
@@ -502,10 +520,13 @@ function render_profile(user, res){
 };
 
 function render_my_profile(user, res){
-    getRecentBorrow(user.Username, 3, function(list_items_borrow){
-        getRecentLend(user.Username, 3, function(list_items_lend){
-            get_items_from_user(user.idUser, function(list_items){
-                res.render("my_profile.html", {user: user, borrow: list_items_borrow, lend: list_items_lend, items: list_items});
+    getRecentBorrow(user.Username, 3, function(err_borrow, list_items_borrow){
+        getRecentLend(user.Username, 3, function(err_lend, list_items_lend){
+            get_items_from_user(user.idUser, function(err_items, list_items){
+                if(err_borrow || err_lend || err_items)
+                    res.render("page_not_found.html");
+                else
+                    res.render("my_profile.html", {user: user, borrow: list_items_borrow, lend: list_items_lend, items: list_items});
             });
         });
     });
@@ -542,18 +563,24 @@ app.post('/login', function(request, response){
 });
 
 app.get("/items", function(req, res){
-    get_items_from_user(req.session.user, function(items){
-        res.render("items.html", {items: items});                    
+    get_items_from_user(req.session.user, function(err, items){
+        if(err){
+            res.status(404);
+            res.render("something_wrong.html", {url: req.url});
+        }else{
+            res.render("items.html", {items: items});
+        }                    
     });
 });
 
-app.get('/item/:itemId', requireLogin, function(request, response){
-    console.log(request.params);
-    console.log("Multiple params?");
-    getItem(request.params.itemId, function(item){
-        console.log("Item:"+item.Username);
-        var price = item.price, duration = item.duration, condition = convertConditionBack(item.condition), description = item.description;
-	response.render("item.html",{itemId: request.params.itemId, price: price, duration: convertDuration(duration), condition: condition, description: description, image: item.image, owner:item.Username});
+app.get('/item/:itemId', requireLogin, function(request, response, next){
+    getItem(request.params.itemId, function(err, item){
+        if(err){
+            next();
+        }else{
+            var price = item.price, duration = item.duration, condition = convertConditionBack(item.condition), description = item.description;
+	        response.render("item.html",{itemId: request.params.itemId, price: price, duration: convertDuration(duration), condition: condition, description: description, image: item.image, owner:item.Username});
+        }
     });
 });
 function convertDuration(period){
@@ -673,6 +700,11 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.latitude = latiture,
     this.longitude = longitude
 }
+
+function isEmpty(object){
+    return Object.keys(object).length === 0;
+};
+
 function calcDuration(period){
 
     if(period==="Hour"){
@@ -687,6 +719,15 @@ function calcDuration(period){
     else
     {return 720;} //month, which is about 30 days
 }
+
+app.use(function(req, res, next){
+    res.status(404);
+    if(req.accepts("html")){
+        res.render('page_not_found.html', {url: req.url});   
+        return; 
+    }
+});
+
 var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
