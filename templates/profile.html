@@ -35,9 +35,11 @@
             <p>Borrowed</p>
             <ul>
                 {{#borrow}}
+                    <a href="https://localhost:8080/item/{{idItem}}">
                     <li>{{name}}</li>
                     <li>{{description}}</li>
                     <li>{{price}}</li>
+                    </a>
                     <!--<li>{{description}}</li>-->
                 {{/borrow}}
             </ul>
@@ -61,10 +63,12 @@
             <p>Lent</p>
             <ul>
                 {{#lend}}
+                    <a href="https://localhost:8080/item/{{idItem}}">
                     <li>{{name}}</li>
                     <li>{{description}}</li>
                     <li>{{price}}</li>
                     <!--<li>{{description}}</li>-->
+                    </a>
                 {{/lend}}
             </ul>
         </div>

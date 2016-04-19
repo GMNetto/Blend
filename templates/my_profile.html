@@ -34,49 +34,61 @@
         <div class="col-md-4">
             <div class="row">
                 <p>Borrowed</p>
-                <ul>
+                <ul class="list-group">
                 {{#borrow}}
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>                
                 {{/borrow}}
                 </ul>
              </div>
-             <div> 
+             <div class="row"> 
                 <p>Lent</p>
-                <ul>
+                <ul class="list-group">
                 {{#lend}}
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>
                 {{/lend}}
-             </ul>        
+                </ul>        
              </div>  
         </div>
         <div class="col-md-4">
             {{#user}}
-            <p>Profile</p>
-            <h3>{{Username}}</h3>
-            <img id="itemImg" src="/images/{{image}}" height=100px width=100px alt="item image couldn't be loaded" /><br>
-            <label>Rating borrower: </label>
-            <p>{{borrower_rating}}</p>
-            <label>Rating lender: </label>
-            <p>{{lender_rating}}</p>
-            <label>address: </label>
-            <p>{{address}}</p>
-            <label>phone: </label>
-            <p>{{phone}}</p>
-            <label>email: </label>
-            <p>{{email}}</p>
+                <p>Profile</p>
+                <h3>{{Username}}</h3>
+                <img id="itemImg" src="/images/{{image}}" height=100px width=100px alt="item image couldn't be loaded" /><br>
+                <label>Rating borrower: </label>
+                <p>{{borrower_rating}}</p>
+                <label>Rating lender: </label>
+                <p>{{lender_rating}}</p>
+                <label>address: </label>
+                <p>{{address}}</p>
+                <label>phone: </label>
+                <p>{{phone}}</p>
+                <label>email: </label>
+                <p>{{email}}</p>
             {{/user}}
         </div>
         <div class="col-md-4">
             <p>Items</p>
             <ul>
                 {{#items}}
-                    <li>{{name}}</li>
-                    <li>{{description}}</li>
-                    <li>{{price}}</li>
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>
                     <!--<li>{{description}}</li>-->
                 {{/items}}
             </ul>

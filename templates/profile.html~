@@ -59,7 +59,14 @@
         </div>
         <div class="col-md-4">
             <p>Lent</p>
-            <ul></ul>
+            <ul>
+                {{#lend}}
+                    <li>{{name}}</li>
+                    <li>{{description}}</li>
+                    <li>{{price}}</li>
+                    <!--<li>{{description}}</li>-->
+                {{/lend}}
+            </ul>
         </div>
     </div>
     <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
