@@ -549,9 +549,9 @@ app.post('/login', function(request, response){
                 if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
                     //request.session.user = "a";
-		    var u = getUser(uname, function(u){
+		            var u = getUser(uname, function(err, u){
                         console.log("returned id " + u.idUser);
-			             request.session.user = u.idUser;
+			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
                         response.redirect('/search')

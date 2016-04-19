@@ -112,7 +112,7 @@ app.get('/my_profile', requireLogin, function(req, res){
     });
 });
 
-app.get('/search*', requireLogin, function(req, res, next){
+app.get('/search?*', requireLogin, function(req, res, next){
     res.send("Search?");
 });
 
