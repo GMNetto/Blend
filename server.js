@@ -95,6 +95,9 @@ app.get('/', function(request, response) {
 app.get('/signup', function(request, response) {
     response.render("register.html");
 });
+app.get('/forgetpassword', function(request, response) {
+    response.render("forgot_password.html");
+});
 
 app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
