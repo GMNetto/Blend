@@ -73,8 +73,11 @@ app.set('views', __dirname + '/templates'); // tell Express where to find templa
 
 app.use(express.static('static'));
 //static file server stuff
-app.use('/static',express.static('static'));
-
+app.use('/static', express.static('static'));
+app.use('/static2', express.static('static2'));
+app.use('/css', express.static('css'));
+app.use('/font-awesome', express.static('font-awesome'))
+app.use('/js', express.static('js'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -90,7 +93,7 @@ app.get('/', function(request, response) {
     response.render("index.html");
 });
 app.get('/signup', function(request, response) {
-    response.render("signup.html");
+    response.render("register.html");
 });
 
 app.get('/profile/:username', requireLogin, function(req, res, next){
@@ -108,7 +111,7 @@ app.get('/my_profile', requireLogin, function(req, res){
         if(err)
             res.render("something_wrong.html");
         else
-            render_my_profile(user, res);        
+            render_my_profile(user, res);
     });
 });
 
@@ -272,7 +275,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
              connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
                     if(err){
                         console.log(err);
-                    } 
+                    }
             });
          }
       });
@@ -349,7 +352,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
             else{
                 //lender update logic
                 var curlender = row.total_lend_ratings;
-                
+
                 newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
                 console.log("lender newaverage:"+newaverage);
                 connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
@@ -369,7 +372,7 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
     //some query to check if this is valid feedback for a COMPLETED transaction. Since it's still kind of fluid right now, there won't be a check here
     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
         if(rows.length==0){
-            //no such transaction   
+            //no such transaction
         }
         else{
             var row = rows[0];
@@ -445,7 +448,7 @@ function get_user_by_id(id_user, callback){
     connection.query('Select * from User where idUser=?',[id_user], function(err, result){
         if(err || isEmpty(result)){
             return callback(true, undefined);
-        }else{ 
+        }else{
             user = result
             return callback(err, user[0]);
         }
@@ -468,22 +471,22 @@ function getItem(item_id, callback){
 function getRecentBorrow(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     })
 };
 
 function getRecentLend(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     }
 )};
 
@@ -492,11 +495,11 @@ function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
     connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     }
 )};
 
@@ -510,12 +513,12 @@ function render_profile(user, res){
                 res.end();
             }
             var l_B = list_items_borrow, l_L = list_items_lend;
-            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}]; 
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
             console.log(l_B);
             console.log(l_L);
             res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url, borrow: l_B, lend: l_L});
             console.log("end");
-        });    
+        });
     });
 };
 
@@ -569,7 +572,7 @@ app.get("/items", function(req, res){
             res.render("something_wrong.html", {url: req.url});
         }else{
             res.render("items.html", {items: items});
-        }                    
+        }
     });
 });
 
@@ -723,8 +726,8 @@ function calcDuration(period){
 app.use(function(req, res, next){
     res.status(404);
     if(req.accepts("html")){
-        res.render('page_not_found.html', {url: req.url});   
-        return; 
+        res.render('page_not_found.html', {url: req.url});
+        return;
     }
 });
 
