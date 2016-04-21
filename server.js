@@ -90,7 +90,7 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("index.html");
+    response.render("../index.html");
 });
 app.get('/signup', function(request, response) {
     response.render("register.html");
@@ -536,13 +536,13 @@ function render_my_profile(user, res){
 };
 
 app.post('/login', function(request, response){
-    console.log(request.session.user);
-    var uname = request.body.email;
-    var pw = request.body.password;
+    //console.log(request.body);
+    var uname = request.body.lg_username;
+    var pw = request.body.lg_password;
     console.log("Received login request");
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
         if(err){
-            console.log('Adding new user failed');
+            console.log('User lookup failed');
             console.log(err);
         }
         else{
