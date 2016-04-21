@@ -26,11 +26,11 @@ function login(){
 $(document).ready(function(){
     $('.btn-login').click(function(e){
          e.preventDefault(); 
-         var email = document.getElementById("inputEmail").value;
-         var password = document.getElementById("inputPassword").value;
+         var username = document.getElementById("lg_username").value;
+         var password = document.getElementById("lg_password").value;
 
          $.post("login",{		   
-                   email : email,
+                   username : username,
                    password : password
                    },function(data){
             if(!data.error) {
