@@ -36,7 +36,7 @@ function submitForm(){
     }
     var pw = document.getElementById("inputPassword").value;
     if(pw.length<6||pw.length>20){
-        //there is no addClass without jQuery:http://stackoverflow.com/questions/507138/how-do-i-add-a-class-to-a-given-element
+
         document.getElementById("3").className+=" has-error";
         validated=false;
     }

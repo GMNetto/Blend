@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../static/signin.css" rel="stylesheet">
+        <!--<link rel="stylesheet" href="https://localhost:8080/bootstrap.min.css">-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <!--<script src="https://localhost:8080/bootstrap.min.js"></script>-->
+        <!--<script src="item.js" type="text/javascript"></script>-->
+        <title>Profile Details for {{username}}</title>
+    </head>
+    <body>
+	<div class="container">
+
+	<div class="row">
+		<h2>Search for a product</h2>
+           <div id="custom-search-input">
+               <div class="input-group col-md-12">
+                   <input type="text" class="  search-query form-control" placeholder="Search" />
+                   <span class="input-group-btn">
+                       <button class="btn btn-danger" type="button">
+                           <span class=" glyphicon glyphicon-search"></span>
+                       </button>
+                   </span>
+               </div>
+           </div>
+	</div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row">
+                <p>Borrowed</p>
+                <ul class="list-group">
+                {{#borrow}}
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>                
+                {{/borrow}}
+                </ul>
+             </div>
+             <div class="row"> 
+                <p>Lent</p>
+                <ul class="list-group">
+                {{#lend}}
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>
+                {{/lend}}
+                </ul>        
+             </div>  
+        </div>
+        <div class="col-md-4">
+            {{#user}}
+                <p>Profile</p>
+                <h3>{{Username}}</h3>
+                <img id="itemImg" src="/images/{{image}}" height=100px width=100px alt="item image couldn't be loaded" /><br>
+                <label>Rating borrower: </label>
+                <p>{{borrower_rating}}</p>
+                <label>Rating lender: </label>
+                <p>{{lender_rating}}</p>
+                <label>address: </label>
+                <p>{{address}}</p>
+                <label>phone: </label>
+                <p>{{phone}}</p>
+                <label>email: </label>
+                <p>{{email}}</p>
+            {{/user}}
+        </div>
+        <div class="col-md-4">
+            <p>Items</p>
+            <ul>
+                {{#items}}
+                    <a href="https://localhost:8080/item/{{idItem}}">
+                    <li class="list-group-item">
+                        <p>{{name}}</p>
+                        <p>{{description}}</p>
+                        <p>{{price}}</p>
+                    </li>
+                    </a>
+                    <!--<li>{{description}}</li>-->
+                {{/items}}
+            </ul>
+        </div>
+    </div>
+    <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <ul class="nav navbar-nav">
+                <li><a href="#"><span class="glyphicon glyphicon-hand-up"></span>Borrow</a></li> 
+                <li><a href="#"><span class="glyphicon glyphicon-hand-down"></span>Lend</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span>Profile</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-option-horizontal"></span>Other</a></li>
+             </ul>
+        </div>
+    </nav>
+    </div>
+    </body>
+</html>
