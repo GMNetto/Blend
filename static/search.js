@@ -9,7 +9,7 @@ function submitItem(){
     // specify the HTTP method, URL, and asynchronous flag
     searchrequest.open('POST', '/searchquery', true);
     searchrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    var params = 'itemName='+document.getElementById('itemName').value+"&minRating="+document.getElementById('minRating').value+"&priceCeil="+document.getElementById('priceC').value+"&period="+document.getElementById('periodSelector').value+"&condition="+document.getElementById('conditionSelector').value;
+    var params = 'itemName='+document.getElementById('itemName').value+"&minRating="+document.getElementById('reg_rating').value+"&priceCeil="+document.getElementById('reg_price').value+"&period="+document.getElementById('periodSelector').value+"&condition="+document.getElementById('conditionSelector').value;
     //http://stackoverflow.com/questions/14417226/node-js-express-ajax-sessions
     searchrequest.withCredentials = true;
     searchrequest.addEventListener('load', function(e){
@@ -22,13 +22,15 @@ function submitItem(){
                     // list appending code
                     // should be array of message objects
                     var data = JSON.parse(content);  
+                    console.log("content?");
                     console.log(data);
                     // grab ul
                     var ul = document.getElementById('searchResults');
                     // create a new li element for the message, and append it
                     ul.innerHTML="";
                     var curid;
-                    var distancefilter = document.getElementById("dist").value+ " "+document.getElementById("unitSelector").value;
+                   
+                    var distancefilter = document.getElementById("reg_distance").value+ " "+document.getElementById("unitSelector").value;
                     console.log("Filtering using distance:"+distancefilter);
                     for(i = 0;i<data.length;i++){
                         //add only new messages to list
@@ -41,6 +43,7 @@ function submitItem(){
                         }
 
                     }
+                    
                 }
             } else {
                //for some reason request didn't succeed. Do nothing

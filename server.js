@@ -119,7 +119,7 @@ app.get('/my_profile', requireLogin, function(req, res){
 });
 
 app.get('/search?*', requireLogin, function(req, res, next){
-    res.send("Search?");
+    res.render("search.html");
 });
 
 app.get('/search', requireLogin, function(request, response){
@@ -136,7 +136,7 @@ app.post('/searchquery', requireLogin, function(request, response){
     var period = request.body.period;
     var condition = request.body.condition;
     var minrating = request.body.minRating;
-    var distancefilter = "3 km";
+    //var distancefilter = "3 km"; unusued. Filter is on client side
     console.log("Filtering for condition:"+condition);
     console.log("query made by:"+request.session.user);
     //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
@@ -163,7 +163,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                     //});
 
                     //console.log(compareDistances(distancefilter,dist));
-
+                    console.log(row);
                    tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
 
 
