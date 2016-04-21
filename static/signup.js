@@ -74,48 +74,44 @@ function submitForm(){
     }
     if(validated){
       console.log("SUCCESS");
-        //display success somehow?
-        // var usereq = new XMLHttpRequest();
-        // var userparams = 'username='+username+'&email='+email;
-        // usereq.open('POST', '/usernameverif', true);
-        // usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        // usereq.send(userparams);
-        // usereq.addEventListener('load', function(e){
-        // //login request if successful
-        // if (usereq.status == 200) {
-        //      var content = usereq.responseText;
-        //     if(content.length>0){
-        //         // list appending code
-        //         // should be array of message objects
-        //         var data = JSON.parse(content);
-        //         if(data[0].result) {
-        //             //alert(data[0].err);
-        //             document.getElementById("1").className+=" has-error";;
-        //             document.getElementById("badusername").style.display="block";
-        //         }
-        //         else{
-        //           alert("successful login");
-        //            document.getElementById("success").style.display="block";
-        //             //http://stackoverflow.com/questions/8064691/how-do-i-pass-along-variables-with-xmlhttprequest
-        //             var req = new XMLHttpRequest();
-        //             //probably should encrypt password or something. This doesn't seem very safe
-        //             var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
-        //             req.open('POST', '/newuser', true);
-        //             req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        //             req.send(params);
-        //         }
-        //     }
+        var usereq = new XMLHttpRequest();
+        var userparams = 'username='+username+'&email='+email;
+        usereq.open('POST', '/usernameverif', true);
+        usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        usereq.send(userparams);
+        usereq.addEventListener('load', function(e){
+        //login request if successful
+        if (usereq.status == 200) {
+             var content = usereq.responseText;
+            if(content.length>0){
+                // list appending code
+                // should be array of message objects
+                var data = JSON.parse(content);
+                if(data[0].result) {
+                    //alert(data[0].err);
+                    document.getElementById("1").className+=" has-error";;
+                }
+                else{
+                    alert("Registration Successful");
+                    var req = new XMLHttpRequest();
+                    //probably should encrypt password or something. This doesn't seem very safe
+                    var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
+                    req.open('POST', '/newuser', true);
+                    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    req.send(params);
+                }
+            }
 
         } else {
             // something went wrong, check the request status
             // hint: 403 means Forbidden, maybe you forgot your username?
         }
-    // }, false);
+    }, false);
 
-    //     return false;
-    // }
-    // else{
-    //     return false;
-    // }
-    // return false;
+        return false;
+    }
+    else{
+        return false;
+    }
+    return false;
 }

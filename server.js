@@ -229,8 +229,16 @@ app.post('/newuser', function(request, response){
     var username = request.body.username;
     var phone = request.body.phone;
     var profileurl = "https://localhost:8080/profile/"+username;
+    console.log(email);
+    console.log(pw);
+    console.log(fn);
+    console.log(ln);
+    console.log(address);
+    console.log(phone);
+    console.log(username);
+    console.log(profileurl);
     //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
-    var salt =pw;
+    var salt = pw;
     geocoder.geocode(address, function(error, res) {
         //if err probably not an actual address
         if(error){
@@ -247,8 +255,8 @@ app.post('/newuser', function(request, response){
 
 });
 app.post('/usernameverif', function(req, res){
-     //console.log("Verifying username");
-     //console.log(req.body);
+     console.log("Verifying username");
+     console.log(req.body);
      connection.query('SELECT * from User WHERE Username = ? OR email = ?', [req.body.username,req.body.email], function (err,rows) {
             var response = [];
             if (rows.length>0) {
