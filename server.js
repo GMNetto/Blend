@@ -361,9 +361,28 @@ app.post('/finish/:transactionId', requireLogin, function(request, response){
         //declined, ?
     }
 });
-app.get('/transactions', requireLogin, function(request, response){
-    //get user's current transactions, package into json
-     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE (owner= ? OR idUser = ?) AND finished==0 ', [request.session.user,request.session.user], function (err,rows) {
+app.get('/mytransactions', requireLogin, function(request, response){
+    //get user's current transactions for current requested/borrowed items, package into json
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE owner= ? AND finished= 0 ', [request.session.user], function (err,rows) {
+        if(err){
+            console.log(err);
+        }
+         else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                console.log(row);
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+
+            }
+             response.json(tosend);
+         }
+    });
+});
+app.get('/itemtransactions', requireLogin, function(request, response){
+    //get user's current transactions involving owned items, package into json
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idUser= ? AND finished= 0 ', [request.session.user], function (err,rows) {
         if(err){
             console.log(err);
         }
