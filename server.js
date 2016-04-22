@@ -1,6 +1,7 @@
 /**
  * Created by Gustavo on 4/3/2016.
  */
+var http = require('http');
 var https = require('https');
 var fs = require('fs');
 var express = require('express');
@@ -735,7 +736,9 @@ app.use(function(req, res, next){
 
 app.set('port', (process.env.PORT || 5000));
 
+var serverhttp = http.createServer(app).listen(app.get('port'));
+
 var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
-}, app).listen(app.get('port'));
+}, app).listen(8080);
