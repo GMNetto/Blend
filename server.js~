@@ -87,6 +87,7 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
+    console.log("######################receiving request#############################33");
     response.render("index.html");
 });
 app.get('/signup', function(request, response) {
