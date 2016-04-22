@@ -120,7 +120,7 @@ app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
 
-connection.query('SELECT * FROM USERS', function(err, rows){
+connection.query('SELECT * FROM USER', function(err, rows){
     console.log(rows);
 });
 
