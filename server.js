@@ -295,14 +295,90 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          }
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
-             //transaction ownerid, accepted (boolean), itemId, finished, boolean
-             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+             //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
+             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
                     if(err){
                         console.log(err);
                     }
             });
          }
       });
+});
+// lender transaction logic, takes in one param and transaction id from the url
+app.post('/lender/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    var itemId = request.params.itemId;
+    if(responseType>0){
+        //accepted, remove other requests for that item that aren't accepted yet
+        connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,itemId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+    else{
+        //declined, remove that particular transaction
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+});
+// borrower transaction logic
+app.post('/borrower/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    if(responseType>0){
+        //accepted, update ongoing transaction in Borrows
+        connection.query('UPDATE Borrows SET accepted=1 WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+        
+    }
+    else{
+        //declined, remove transaction
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+});
+//for lender finish confirmation
+app.post('/finish/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    if(responseType>0){
+        //accepted, update transaction
+         connection.query('UPDATE Borrows SET finished=1 WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+    else{
+        //declined, ?
+    }
+});
+app.get('/transactions', requireLogin, function(request, response){
+    //get user's current transactions, package into json
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE (owner= ? OR idUser = ?) AND finished==0 ', [request.session.user,request.session.user], function (err,rows) {
+        if(err){
+            console.log(err);
+        }
+         else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                console.log(row);
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+
+            }
+             response.json(tosend);
+         }
+    });
 });
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
