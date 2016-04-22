@@ -54,7 +54,29 @@ var options_session = {
     }
 };
 
-connection.connect();
+var connection;
+
+function handleDisconnect() {
+  connection = mysql.createConnection(db_config);
+  connection.connect(function(err) {
+    if(err) {               
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000);
+    }                                    
+  });                                    
+  connection.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleDisconnect();                        
+    } else {                                     
+      throw err;                                 
+    }
+  });
+}
+
+handleDisconnect();
+
+//connection.connect();
 var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',
@@ -245,7 +267,7 @@ app.post('/newuser', function(request, response){
 
         }
         else{
-            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
+            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,1,1,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
             if(err){
                 console.log(err);
             }

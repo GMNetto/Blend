@@ -267,7 +267,7 @@ app.post('/newuser', function(request, response){
 
         }
         else{
-            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
+            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0.0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
             if(err){
                 console.log(err);
             }
