@@ -20,18 +20,18 @@ var MySQLStore = require('express-mysql-session')(session);
 
 //create db connection to localhost (at this point)
 var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'blend_user',
-    password: 'blend_password',
-    database: 'blend_db'
+    host: 'us-cdbr-iron-east-03.cleardb.net',
+    user: 'b56fefe00420cd',
+    password: '6e81455e',
+    database: 'heroku_6d29352a6951ad0'
 });
 
 var options_session = {
-    host: 'localhost',
+    host: 'us-cdbr-iron-east-03.cleardb.net',
     port: 3306,
-    user: 'blend_user',
-    password: 'blend_password',
-    database: 'blend_db',
+    user: 'b56fefe00420cd',
+    password: '6e81455e',
+    database: 'heroku_6d29352a6951ad0',
     checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
     expiration: 86400000,// The maximum age of a valid session; milliseconds.
     createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
@@ -118,6 +118,10 @@ app.get('/search?*', requireLogin, function(req, res, next){
 
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
+});
+
+connection.query('SELECT * FROM USERS', function(err, rows){
+    console.log(rows);
 });
 
 app.post('/searchquery', requireLogin, function(request, response){
@@ -549,9 +553,9 @@ app.post('/login', function(request, response){
                 if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
                     //request.session.user = "a";
-		    var u = getUser(uname, function(u){
+		            var u = getUser(uname, function(err, u){
                         console.log("returned id " + u.idUser);
-			             request.session.user = u.idUser;
+			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
                         response.redirect('/search')
