@@ -20,12 +20,20 @@ var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
 
 //create db connection to localhost (at this point)
-var connection = mysql.createConnection({
+/*var connection = mysql.createConnection({
     host: 'us-cdbr-iron-east-03.cleardb.net',
     user: 'b56fefe00420cd',
     password: '6e81455e',
     database: 'heroku_6d29352a6951ad0'
-});
+});*/
+
+
+db_config = {
+    host: 'us-cdbr-iron-east-03.cleardb.net',
+    user: 'b56fefe00420cd',
+    password: '6e81455e',
+    database: 'heroku_6d29352a6951ad0'
+}
 
 var options_session = {
     host: 'us-cdbr-iron-east-03.cleardb.net',
@@ -46,7 +54,29 @@ var options_session = {
     }
 };
 
-connection.connect();
+var connection;
+
+function handleDisconnect() {
+  connection = mysql.createConnection(db_config);
+  connection.connect(function(err) {
+    if(err) {               
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000);
+    }                                    
+  });                                    
+  connection.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleDisconnect();                        
+    } else {                                     
+      throw err;                                 
+    }
+  });
+}
+
+handleDisconnect();
+
+//connection.connect();
 var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',

@@ -20,12 +20,20 @@ var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
 
 //create db connection to localhost (at this point)
-var connection = mysql.createConnection({
+/*var connection = mysql.createConnection({
     host: 'us-cdbr-iron-east-03.cleardb.net',
     user: 'b56fefe00420cd',
     password: '6e81455e',
     database: 'heroku_6d29352a6951ad0'
-});
+});*/
+
+
+db_config = {
+    host: 'us-cdbr-iron-east-03.cleardb.net',
+    user: 'b56fefe00420cd',
+    password: '6e81455e',
+    database: 'heroku_6d29352a6951ad0'
+}
 
 var options_session = {
     host: 'us-cdbr-iron-east-03.cleardb.net',
