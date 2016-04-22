@@ -133,11 +133,23 @@ app.post('/searchquery', requireLogin, function(request, response){
     var itemName = request.body.itemName;
     //var priceFloor = request.body.priceFloor;
     var priceCeil = request.body.priceCeil;
+    if(priceCeil.toString().length==0){
+        priceCeil = Number.MAX_VALUE;
+    }
     var period = request.body.period;
+    if(period.length==0){
+        period = "Hour";
+    }
     var condition = request.body.condition;
+    if(condition.length==0){
+        condition = "Used:Acceptable";
+    }
     var minrating = request.body.minRating;
+    if(minrating.toString().length==0){
+        minrating = 0;
+    }
     //var distancefilter = "3 km"; unusued. Filter is on client side
-    console.log("Filtering for condition:"+condition);
+    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating);
     console.log("query made by:"+request.session.user);
     //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
     connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
@@ -283,6 +295,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          }
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
+             //transaction ownerid, accepted (boolean), itemId, finished, boolean
              connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
                     if(err){
                         console.log(err);

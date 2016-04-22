@@ -29,9 +29,10 @@ function submitItem(){
                     // create a new li element for the message, and append it
                     ul.innerHTML="";
                     var curid;
-                   
-                    var distancefilter = document.getElementById("reg_distance").value+ " "+document.getElementById("unitSelector").value;
+                   var distance = document.getElementById("reg_distance").value;
+                    var distancefilter = distance+ " "+document.getElementById("unitSelector").value;
                     console.log("Filtering using distance:"+distancefilter);
+                    console.log(distancefilter);
                     for(i = 0;i<data.length;i++){
                         //add only new messages to list
                         var li = document.createElement('li');
