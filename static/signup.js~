@@ -110,8 +110,9 @@ function submitForm(){
     }, false);
 
         return false;
-   }else{
+    }
+    else{
         return false;
-   }
-   return false;
+    }
+    return false;
 }

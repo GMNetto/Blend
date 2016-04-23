@@ -254,7 +254,7 @@ app.post('/newuser', function(request, response){
     geocoder.geocode(address, function(error, res) {
         //if err probably not an actual address
         if(error){
-
+            console.log("Did not find address")
         }
         else{
             connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {

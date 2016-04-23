@@ -73,8 +73,11 @@ app.set('views', __dirname + '/templates'); // tell Express where to find templa
 
 app.use(express.static('static'));
 //static file server stuff
-app.use('/static',express.static('static'));
-
+app.use('/static', express.static('static'));
+app.use('/static2', express.static('static2'));
+app.use('/css', express.static('css'));
+app.use('/font-awesome', express.static('font-awesome'))
+app.use('/js', express.static('js'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -87,10 +90,13 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("index.html");
+    response.render("../index.html");
 });
 app.get('/signup', function(request, response) {
-    response.render("signup.html");
+    response.render("register.html");
+});
+app.get('/forgetpassword', function(request, response) {
+    response.render("forgot_password.html");
 });
 
 app.get('/profile/:username', requireLogin, function(req, res, next){
@@ -108,12 +114,12 @@ app.get('/my_profile', requireLogin, function(req, res){
         if(err)
             res.render("something_wrong.html");
         else
-            render_my_profile(user, res);        
+            render_my_profile(user, res);
     });
 });
 
 app.get('/search?*', requireLogin, function(req, res, next){
-    res.send("Search?");
+    res.render("search.html");
 });
 
 app.get('/search', requireLogin, function(request, response){
@@ -127,11 +133,23 @@ app.post('/searchquery', requireLogin, function(request, response){
     var itemName = request.body.itemName;
     //var priceFloor = request.body.priceFloor;
     var priceCeil = request.body.priceCeil;
+    if(priceCeil.toString().length==0){
+        priceCeil = Number.MAX_VALUE;
+    }
     var period = request.body.period;
+    if(period.length==0){
+        period = "Hour";
+    }
     var condition = request.body.condition;
+    if(condition.length==0){
+        condition = "Used:Acceptable";
+    }
     var minrating = request.body.minRating;
-    var distancefilter = "3 km";
-    console.log("Filtering for condition:"+condition);
+    if(minrating.toString().length==0){
+        minrating = 0;
+    }
+    //var distancefilter = "3 km"; unusued. Filter is on client side
+    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating);
     console.log("query made by:"+request.session.user);
     //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
     connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
@@ -157,7 +175,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                     //});
 
                     //console.log(compareDistances(distancefilter,dist));
-
+                    console.log(row);
                    tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
 
 
@@ -223,8 +241,16 @@ app.post('/newuser', function(request, response){
     var username = request.body.username;
     var phone = request.body.phone;
     var profileurl = "https://localhost:8080/profile/"+username;
+    console.log(email);
+    console.log(pw);
+    console.log(fn);
+    console.log(ln);
+    console.log(address);
+    console.log(phone);
+    console.log(username);
+    console.log(profileurl);
     //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
-    var salt =pw;
+    var salt = pw;
     geocoder.geocode(address, function(error, res) {
         //if err probably not an actual address
         if(error){
@@ -241,8 +267,8 @@ app.post('/newuser', function(request, response){
 
 });
 app.post('/usernameverif', function(req, res){
-     //console.log("Verifying username");
-     //console.log(req.body);
+     console.log("Verifying username");
+     console.log(req.body);
      connection.query('SELECT * from User WHERE Username = ? OR email = ?', [req.body.username,req.body.email], function (err,rows) {
             var response = [];
             if (rows.length>0) {
@@ -269,13 +295,109 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          }
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
-             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,0,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+             //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
+             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
                     if(err){
                         console.log(err);
-                    } 
+                    }
             });
          }
       });
+});
+// lender transaction logic, takes in one param and transaction id from the url
+app.post('/lender/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    var itemId = request.params.itemId;
+    if(responseType>0){
+        //accepted, remove other requests for that item that aren't accepted yet
+        connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,itemId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+    else{
+        //declined, remove that particular transaction
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+});
+// borrower transaction logic
+app.post('/borrower/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    if(responseType>0){
+        //accepted, update ongoing transaction in Borrows
+        connection.query('UPDATE Borrows SET accepted=1 WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+        
+    }
+    else{
+        //declined, remove transaction
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+});
+//for lender finish confirmation
+app.post('/finish/:transactionId', requireLogin, function(request, response){
+    var responseType = request.body.type;
+    if(responseType>0){
+        //accepted, update transaction
+         connection.query('UPDATE Borrows SET finished=1 WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
+    }
+    else{
+        //declined, ?
+    }
+});
+app.get('/mytransactions', requireLogin, function(request, response){
+    //get user's current transactions for current requested/borrowed items, package into json
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE owner= ? AND finished= 0 ', [request.session.user], function (err,rows) {
+        if(err){
+            console.log(err);
+        }
+         else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                console.log(row);
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+
+            }
+             response.json(tosend);
+         }
+    });
+});
+app.get('/itemtransactions', requireLogin, function(request, response){
+    //get user's current transactions involving owned items, package into json
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idUser= ? AND finished= 0 ', [request.session.user], function (err,rows) {
+        if(err){
+            console.log(err);
+        }
+         else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                console.log(row);
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+
+            }
+             response.json(tosend);
+         }
+    });
 });
 app.post('/itemupload', requireLogin, upload.single('img'),function(request, response){
     console.log("Received item upload");
@@ -349,7 +471,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
             else{
                 //lender update logic
                 var curlender = row.total_lend_ratings;
-                
+
                 newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
                 console.log("lender newaverage:"+newaverage);
                 connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
@@ -369,7 +491,7 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
     //some query to check if this is valid feedback for a COMPLETED transaction. Since it's still kind of fluid right now, there won't be a check here
     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
         if(rows.length==0){
-            //no such transaction   
+            //no such transaction
         }
         else{
             var row = rows[0];
@@ -445,7 +567,7 @@ function get_user_by_id(id_user, callback){
     connection.query('Select * from User where idUser=?',[id_user], function(err, result){
         if(err || isEmpty(result)){
             return callback(true, undefined);
-        }else{ 
+        }else{
             user = result
             return callback(err, user[0]);
         }
@@ -468,22 +590,22 @@ function getItem(item_id, callback){
 function getRecentBorrow(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     })
 };
 
 function getRecentLend(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     }
 )};
 
@@ -492,11 +614,11 @@ function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
     connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
         if(err || isEmpty(result)){
-            console.log("No item");        
+            console.log("No item");
             callback(true, undefined);
         }else{
-            callback(err, result);        
-        }    
+            callback(err, result);
+        }
     }
 )};
 
@@ -510,12 +632,12 @@ function render_profile(user, res){
                 res.end();
             }
             var l_B = list_items_borrow, l_L = list_items_lend;
-            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}]; 
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
             console.log(l_B);
             console.log(l_L);
             res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url, borrow: l_B, lend: l_L});
             console.log("end");
-        });    
+        });
     });
 };
 
@@ -533,13 +655,13 @@ function render_my_profile(user, res){
 };
 
 app.post('/login', function(request, response){
-    console.log(request.session.user);
-    var uname = request.body.email;
-    var pw = request.body.password;
+    //console.log(request.body);
+    var uname = request.body.lg_username;
+    var pw = request.body.lg_password;
     console.log("Received login request");
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
         if(err){
-            console.log('Adding new user failed');
+            console.log('User lookup failed');
             console.log(err);
         }
         else{
@@ -549,9 +671,9 @@ app.post('/login', function(request, response){
                 if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
                     //request.session.user = "a";
-		    var u = getUser(uname, function(u){
+		            var u = getUser(uname, function(err, u){
                         console.log("returned id " + u.idUser);
-			             request.session.user = u.idUser;
+			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
                         response.redirect('/search')
@@ -569,7 +691,7 @@ app.get("/items", function(req, res){
             res.render("something_wrong.html", {url: req.url});
         }else{
             res.render("items.html", {items: items});
-        }                    
+        }
     });
 });
 
@@ -723,8 +845,8 @@ function calcDuration(period){
 app.use(function(req, res, next){
     res.status(404);
     if(req.accepts("html")){
-        res.render('page_not_found.html', {url: req.url});   
-        return; 
+        res.render('page_not_found.html', {url: req.url});
+        return;
     }
 });
 

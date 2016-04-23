@@ -74,12 +74,12 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#page-top">Blend</a>
-                <!--<div
+                <div
   class="fb-like"
   data-share="true"
   data-width="450"
   data-show-faces="true">
-</div>-->
+</div>
             </div>
 
 
