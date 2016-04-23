@@ -229,7 +229,9 @@ app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
     response.render("lend.html");
 });
-
+app.get('/transactions', function(request, response) {
+    response.render("transactions.html");
+});
 app.post('/newuser', function(request, response){
     //adding new user
     var email = request.body.email;
@@ -306,15 +308,23 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
 });
 // lender transaction logic, takes in one param and transaction id from the url
 app.post('/lender/:transactionId', requireLogin, function(request, response){
+    console.log("got lender accept for transaction:"+request.params.transactionId);
     var responseType = request.body.type;
-    var itemId = request.params.itemId;
     if(responseType>0){
         //accepted, remove other requests for that item that aren't accepted yet
-        connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,itemId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
+        connection.query('SELECT * FROM Borrows WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
+            if(err){
+                
+            }
+            else{
+                console.log(rows[0]);
+                connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,rows[0].idProduct], function (err) {
+                            if(err){
+                                console.log(err);
+                            }
+                    });
+            }
+        });
     }
     else{
         //declined, remove that particular transaction
@@ -327,6 +337,7 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
 });
 // borrower transaction logic
 app.post('/borrower/:transactionId', requireLogin, function(request, response){
+    console.log("received borrower response for transaction:"+request.params.transactionId);
     var responseType = request.body.type;
     if(responseType>0){
         //accepted, update ongoing transaction in Borrows
@@ -334,6 +345,10 @@ app.post('/borrower/:transactionId', requireLogin, function(request, response){
                     if(err){
                         console.log(err);
                     }
+                else{
+                    console.log("Borrower accepted");
+                }
+            
             });
         
     }
@@ -343,6 +358,9 @@ app.post('/borrower/:transactionId', requireLogin, function(request, response){
                     if(err){
                         console.log(err);
                     }
+                else{
+                    console.log("Borrower declined");
+                }
             });
     }
 });
@@ -358,12 +376,13 @@ app.post('/finish/:transactionId', requireLogin, function(request, response){
             });
     }
     else{
-        //declined, ?
+        //declined, nothing really happens at this point
     }
 });
 app.get('/mytransactions', requireLogin, function(request, response){
+    console.log("received request for mytransactions from: "+request.session.user);
     //get user's current transactions for current requested/borrowed items, package into json
-     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE owner= ? AND finished= 0 ', [request.session.user], function (err,rows) {
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idUser = ? AND finished= 0 ', [request.session.user], function (err,rows) {
         if(err){
             console.log(err);
         }
@@ -382,7 +401,8 @@ app.get('/mytransactions', requireLogin, function(request, response){
 });
 app.get('/itemtransactions', requireLogin, function(request, response){
     //get user's current transactions involving owned items, package into json
-     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idUser= ? AND finished= 0 ', [request.session.user], function (err,rows) {
+    console.log("received request for itemtransactions from: "+request.session.user);
+     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE owner= ? AND finished= 0 ', [request.session.user], function (err,rows) {
         if(err){
             console.log(err);
         }
