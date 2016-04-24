@@ -10,9 +10,9 @@ window.addEventListener('load', function(){
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
     //for testing purposes, though the users will probably be loaded at this point
-    loadUserTransactions();
-    loadItemTransactions();
-    acceptBorrower(1);
+    //loadUserTransactions();
+    //loadItemTransactions();
+    //acceptBorrower(1);
     //finishLender(1);
 }, false);
 //now not needed
@@ -59,17 +59,17 @@ function loadItemTransactions(){
     return false;
 }
 //assuming now that transactionId can be harcoded into transaction elements or passed in 
-function acceptBorrower(transactionId){
+function acceptBorrower(transactionId,response){
     acceptreqb.open('POST','/borrower/'+transactionId,true);
-    var response = 0;//will probably get out of transaction html element or something
+    //var response = 0;//will probably get out of transaction html element or something
     var param = 'type='+response;
     acceptreqb.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     acceptreqb.withCredentials = true;
     acceptreqb.send(param);
 }
-function acceptLender(transactionId){
+function acceptLender(transactionId,response){
     acceptreql.open('POST','/lender/'+transactionId,true);
-    var response = 1;//will probably get out of transaction html element or something
+    //var response = 1;//will probably get out of transaction html element or something
     var param = 'type='+response;
     acceptreql.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     acceptreql.withCredentials = true;

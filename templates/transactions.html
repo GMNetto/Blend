@@ -9,13 +9,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-	<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	
 	<link href="../static/search.css" rel="stylesheet">
-	<script src="../static/search.js" type="text/javascript"></script>
+	<script src="../static/transactions.js" type="text/javascript"></script>
 
     <title>Blend</title>
 
@@ -23,12 +23,12 @@
     <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
+    <link href="../static/trans.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -40,7 +40,7 @@
     <link href="../static/login_info.css" rel="stylesheet">
     <script src="../static/login_info.js" type="text/javascript"></script> 
     <link href="../static/signin.css" rel="stylesheet">
-    <script src="https://localhost:8080/static/transactions.js" type="text/javascript"></script> 
+    <script src="../static/index.js" type="text/javascript"></script> 
 
 </head>
 
@@ -71,6 +71,9 @@
                         <a href="lend.html">Lend</a>
                     </li>
                     <li class="page-scroll">
+                        <a href="transactions.html">Activity</a>
+                    </li>
+                    <li class="page-scroll">
                         <a href="profile.html">Profile</a>
                     </li>
                     <li class="page-scroll">
@@ -93,198 +96,615 @@
             <div class="container">
                 <div class="row">
                     <div class="footer-col col-md-4" style = "width:50%">
-                        <h3>Lending:</h3>
+                        <h3 style = "text-align:center">Lend Requests:</h3>
                         <hr />
-                        	<div id = "test2">
-                        		<div class="container">
-						<div class="row">
-
-							<section class="content">
-								<div class="col-md-8 col-md-offset-2">
-									<div class="panel panel-default">
-										<div class="panel-body">
-											<div class="pull-right">
-												<div class="btn-group">
-													<button type="button" class="btn btn-success btn-filter" data-target="pagado">Current</button>
-													<button type="button" class="btn btn-warning btn-filter" data-target="pendiente">Pendiente</button>
-													<button type="button" class="btn btn-danger btn-filter" data-target="cancelado">Cancelled</button>
-													<button type="button" class="btn btn-default btn-filter" data-target="all">All</button>
-												</div>
-											</div>
-											<div class="table-container">
-												<table class="table table-filter">
-													<tbody>
-														<tr data-status="pagado">
-															<td>
-																<div class="ckbox">
-																	<input type="checkbox" id="checkbox1">
-																	<label for="checkbox1"></label>
-																</div>
-															</td>
-															<td>
-																<a href="javascript:;" class="star">
-																	<i class="glyphicon glyphicon-star"></i>
-																</a>
-															</td>
-															<td>
-																<div class="media">
-																	<a href="#" class="pull-left">
-																		<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-																	</a>
-																	<div class="media-body">
-																		<span class="media-meta pull-right">Febrero 13, 2016</span>
-																		<h4 class="title">
-																			Lorem Impsum
-																			<span class="pull-right pagado">(Pagado)</span>
-																		</h4>
-																		<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-																	</div>
-																</div>
-															</td>
-														</tr>
-														<tr data-status="pendiente">
-															<td>
-																<div class="ckbox">
-																	<input type="checkbox" id="checkbox3">
-																	<label for="checkbox3"></label>
-																</div>
-															</td>
-															<td>
-																<a href="javascript:;" class="star">
-																	<i class="glyphicon glyphicon-star"></i>
-																</a>
-															</td>
-															<td>
-																<div class="media">
-																	<a href="#" class="pull-left">
-																		<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-																	</a>
-																	<div class="media-body">
-																		<span class="media-meta pull-right">Febrero 13, 2016</span>
-																		<h4 class="title">
-																			Lorem Impsum
-																			<span class="pull-right pendiente">(Pendiente)</span>
-																		</h4>
-																		<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-																	</div>
-																</div>
-															</td>
-														</tr>
-														<tr data-status="cancelado">
-															<td>
-																<div class="ckbox">
-																	<input type="checkbox" id="checkbox2">
-																	<label for="checkbox2"></label>
-																</div>
-															</td>
-															<td>
-																<a href="javascript:;" class="star">
-																	<i class="glyphicon glyphicon-star"></i>
-																</a>
-															</td>
-															<td>
-																<div class="media">
-																	<a href="#" class="pull-left">
-																		<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-																	</a>
-																	<div class="media-body">
-																		<span class="media-meta pull-right">Febrero 13, 2016</span>
-																		<h4 class="title">
-																			Lorem Impsum
-																			<span class="pull-right cancelado">(Cancelado)</span>
-																		</h4>
-																		<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-																	</div>
-																</div>
-															</td>
-														</tr>
-														<tr data-status="pagado">
-															<td>
-																<div class="ckbox">
-																	<input type="checkbox" id="checkbox4" >
-																	<label for="checkbox4"></label>
-																</div>
-															</td>
-															<td>
-																<a href="javascript:;" class="star">
-																	<i class="glyphicon glyphicon-star"></i>
-																</a>
-															</td>
-															<td>
-																<div class="media">
-																	<a href="#" class="pull-left">
-																		<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-																	</a>
-																	<div class="media-body">
-																		<span class="media-meta pull-right">Febrero 13, 2016</span>
-																		<h4 class="title">
-																			Lorem Impsum
-																			<span class="pull-right pagado">(Pagado)</span>
-																		</h4>
-																		<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-																	</div>
-																</div>
-															</td>
-														</tr>
-														<tr data-status="pendiente">
-															<td>
-																<div class="ckbox">
-																	<input type="checkbox" id="checkbox5">
-																	<label for="checkbox5"></label>
-																</div>
-															</td>
-															<td>
-																<a href="javascript:;" class="star">
-																	<i class="glyphicon glyphicon-star"></i>
-																</a>
-															</td>
-															<td>
-																<div class="media">
-																	<a href="#" class="pull-left">
-																		<img src="https://s3.amazonaws.com/uifaces/faces/twitter/fffabs/128.jpg" class="media-photo">
-																	</a>
-																	<div class="media-body">
-																		<span class="media-meta pull-right">Febrero 13, 2016</span>
-																		<h4 class="title">
-																			Lorem Impsum
-																			<span class="pull-right pendiente">(Pendiente)</span>
-																		</h4>
-																		<p class="summary">Ut enim ad minim veniam, quis nostrud exercitation...</p>
-																	</div>
-																</div>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											</div>
+                        	
+                        	<!-- List for items Lent -->
+                            <ul style = "list-style:none;" class = "list-group">
+                                {{#haslend}}
+                                {{#lend}}
+                            	<!-- Item 1 -->
+								<li class = "list-group-item">
+                                    <meta name="transactionId" value={{idBorrows}}>
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = 'https://localhost:8080/static/images/{{image}}'>
+												<span id = "item_fade">{{name}}</span>
+											</a>
 										</div>
-									</div>
 
-								</div>
-							</section>
-		
-						</div>
-</div>
-							</div>
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "div2">
+										
+										<!-- Text/Link for user profile -->
+										<a href = "#" > 
+											<div id = "trans-user">user: {{Username}}</div>
+										</a>
+										
+										<!-- Text/Link for user rating-->
+										<a href = "#" > 
+											<div id = "trans-rating">rating: {{borrower_rating}}</div>
+										</a>
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
+											<img class = "trans_check" src = "../img/check.png">
+										</a>
+										
+										<!-- Image/Link for decline transaction, opens up modal when clicked -->
+										<a href = "#reject{{idBorrows}}" class="portfolio-link" data-toggle="modal" id = "trans_reject" >
+											<img class = "trans_x" src = "../img/fail.png">
+										</a>
+									</div>
+								</li>
+                                
+                                <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-content">
+                                        <div class="close-modal" data-dismiss="modal">
+                                            <div class="lr">
+                                                <div class="rl">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-8 col-lg-offset-2">
+                                                    <div class="modal-body">
+                                                        <h2>{{name}}</h2>
+                                                        <hr class="star-primary">
+                                                        <img src='https://localhost:8080/static/images/{{image}}' class="img-responsive img-centered" alt="">
+                                                        <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                                                        <ul class="list-inline item-details">
+                                                            <li>Client:
+                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
+                                                                </strong>
+                                                            </li>
+                                                            <li>Date:
+                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
+                                                                </strong>
+                                                            </li>
+                                                            <li>Service:
+                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
+                                                                </strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </ul>
+                                <!-- Modal 2, Item accept -->
+                                <div class="portfolio-modal modal fade" id="accept{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-content">
+                                        <div class="close-modal" data-dismiss="modal">
+                                            <div class="lr">
+                                                <div class="rl">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-8 col-lg-offset-2">
+                                                    <div class="modal-body">
+                                                        <h2>Are you sure you want to accept this offer?</h2>
+                                                        <hr >
+                                                        <img src="https://localhost:8080/static/images/{{image}}" class="img-responsive img-centered" alt="">
+                                                        item: {{name}}
+                                                        <br />
+                                                        user: {{Username}}
+                                                        <br />
+                                                        user rating: {{borrower_rating}}
+                                                        <br />
+                                                        Lend Period: (start period) to (end period)
+                                                        <br />
+                                                        <br />
+                                                        <hr >
+                                                        <button type="button" class="btn btn-success" onclick="acceptLender({{idBorrows}},1)">Yes, accept offer</button>
+
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal 3, Item reject -->
+                                <div class="portfolio-modal modal fade" id="reject{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-content">
+                                        <div class="close-modal" data-dismiss="modal">
+                                            <div class="lr">
+                                                <div class="rl">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-8 col-lg-offset-2">
+                                                    <div class="modal-body">
+                                                        <h2>Are you sure you want to reject this offer?</h2>
+                                                        <hr >
+                                                        <img src="https://localhost:8080/static/images/{{image}}" class="img-responsive img-centered" alt="">
+                                                        item: {{name}}
+                                                        <br />
+                                                        user: {{Username}}
+                                                        <br />
+                                                        user rating: {{borrower_rating}}
+                                                        <br />
+                                                        Lend Period: (start period) to (end period)
+                                                        <br />
+                                                        <br />
+                                                        <hr >
+                                                        <button type="button" class="btn btn-danger" onclick="acceptLender({{idBorrows}},0)">Reject Offer</button>
+
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/lend}}
+								{{/haslend}}
+							 
+ 
+
                    	</div>
                     
                     <div class="footer-col col-md-4" style = "width:50%; margin-right:0px;" >
-                        <h3>Borrowing</h3>
+                        <h3 style = "text-align:center">Borrowing:</h3>
                         <hr class="vertical"/>
                     
-                        
-                        	
+                        	<ul style = "list-style:none; color:black" class = "list-group">
+                                
+                                {{#borrows}}
+                            	<!-- Item 1 -->
+								<li class = "list-group-item">
+                                    <meta name="transactionId" value={{idBorrows}}>
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = 'https://localhost:8080/static/images/{{image}}'>
+												<span id = "item_fade">{{name}}</span>
+											</a>
+										</div>
 
+									</div>
+									
+									<!-- Section 2, start and end date -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date:{{inital_date}} </div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: </div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "{{profile_url}}" >
+											<div id = "lender_link"><strong>Contact Lender</strong></div>
+										</a>
+										
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+										
+										<!-- Image/Link for decline transaction, opens up modal when clicked -->
+										<a href = "#portfolioModal4" class="portfolio-link" data-toggle="modal" id = "trans_cancel" >
+											<img class = "trans_x2" src = "../img/fail.png">
+										</a>
+									</div>
+                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-content">
+                                        <div class="close-modal" data-dismiss="modal">
+                                            <div class="lr">
+                                                <div class="rl">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-8 col-lg-offset-2">
+                                                    <div class="modal-body">
+                                                        <h2>{{name}}</h2>
+                                                        <hr class="star-primary">
+                                                        <img src='https://localhost:8080/static/images/{{image}}' class="img-responsive img-centered" alt="">
+                                                        <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                                                        <ul class="list-inline item-details">
+                                                            <li>Client:
+                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
+                                                                </strong>
+                                                            </li>
+                                                            <li>Date:
+                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
+                                                                </strong>
+                                                            </li>
+                                                            <li>Service:
+                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
+                                                                </strong>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+								</li>
+                                
+                        </ul>
+                        {{/borrows}}
+                        
                     </div>
 
+
+					<div class="footer-col col-md-4" style = "width:100%">
+                        <h3 style = "text-align:center">All items: </h3>
+                        <hr />
+                        	
+                        	<!-- List for items Lent -->
+                            <ul style = "list-style:none;" class = "list-group">
+                            
+                            	<!-- Item 1 -->
+								<li class = "list-group-item">
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = "../img/img.png">
+												<span id = "item_fade">Item 1</span>
+											</a>
+										</div>
+
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date: {{start}}</div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: {{end}}</div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "#" >
+											<div id = "end_date"><strong>Contact Borrower</strong></div>
+										</a>
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+									</div>
+								</li>
+								
+							
+								<!-- Item 2 -->
+								<li class = "list-group-item">
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = "../img/img.png">
+												<span id = "item_fade">Item 2</span>
+											</a>
+										</div>
+
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date: {{start}}</div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: {{end}}</div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "#" >
+											<div id = "end_date"><strong>Contact Borrower</strong></div>
+										</a>
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+									</div>
+								</li>
+							
+								
+								<!-- Item 3 -->
+								<li class = "list-group-item">
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = "../img/img.png">
+												<span id = "item_fade">Item 3</span>
+											</a>
+										</div>
+
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date: {{start}}</div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: {{end}}</div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "#" >
+											<div id = "end_date"><strong>Contact Borrower</strong></div>
+										</a>
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+									</div>
+								</li>
+							
+								
+								<!-- Item 4 -->
+								<li class = "list-group-item">
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = "../img/img.png">
+												<span id = "item_fade">Item 4</span>
+											</a>
+										</div>
+
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date: {{start}}</div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: {{end}}</div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "#" >
+											<div id = "end_date"><strong>Contact Borrower</strong></div>
+										</a>
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+									</div>
+								</li>
+							
+								
+								<!-- Item 5 -->
+								<li class = "list-group-item">
+ 									<!-- Section 1, item image and title -->
+									<div class="footer-col col-md-4">
+										<!-- Item Image and title, opens up modal when clicked -->
+										<div class="portfolio-item" >
+											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+												<img class = "img_fade" src = "../img/img.png">
+												<span id = "item_fade">Item 5</span>
+											</a>
+										</div>
+
+									</div>
+									
+									<!-- Section 2, User and Rating -->
+									<div class="footer-col col-md-4" id = "period_contact">
+										
+										<!-- text for start date -->
+										<div id = "start_date">start date: {{start}}</div>
+										
+										
+										<!-- text for end date -->
+										<div id = "end_date">end date: {{end}}</div>
+										
+										<!-- link for contacting buyer -->
+										<a href = "#" >
+											<div id = "end_date"><strong>Contact Borrower</strong></div>
+										</a>
+
+									</div>
+									
+									<!-- Section 3, Transaction accept or cancel -->
+									<div class="footer-col col-md-4" id = "div3">
+										
+										<!-- Image/Link for check transaction, opens up modal -->
+										<a href = "#" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
+										</a>
+									</div>
+								</li>
+							<ul>
+ 
+
+                   	</div>
                 </div>
             </div>
         </div>
-
+        
+        
+	
     </header>
     
     
-
+	<!-- Portfolio Modals -->
+	
+	<!-- Modal 1, Item Preview -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Item Preview</h2>
+                            <hr class="star-primary">
+                            <img src="../img/portfolio/cabin.png" class="img-responsive img-centered" alt="">
+                            <p>Item description<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                            <ul class="list-inline item-details">
+                                <li>Client:
+                                    <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
+                                    </strong>
+                                </li>
+                                <li>Date:
+                                    <strong><a href="http://startbootstrap.com">April 2014</a>
+                                    </strong>
+                                </li>
+                                <li>Service:
+                                    <strong><a href="http://startbootstrap.com">Web Development</a>
+                                    </strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal 2, Item accept -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Are you sure you want to accept this offer?</h2>
+                            <hr >
+                            <img src="../img/img.png" class="img-responsive img-centered" alt="">
+                            item: {{item}}
+                            <br />
+                            user: {{user}}
+                            <br />
+                            user rating: {{rating}}
+                           	<br />
+                            Lend Period: (start period) to (end period)
+                            <br />
+                            <br />
+                            <hr >
+                            <button type="button" class="btn btn-success">Yes, accept offer</button>
+                            
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal 3, Item reject -->
+    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h2>Are you sure you want to reject this offer?</h2>
+                            <hr >
+                            <img src="../img/img.png" class="img-responsive img-centered" alt="">
+                            item: {{item}}
+                            <br />
+                            user: {{user}}
+                            <br />
+                            user rating: {{rating}}
+                           	<br />
+                            Lend Period: (start period) to (end period)
+                            <br />
+                            <br />
+                            <hr >
+                            <button type="button" class="btn btn-danger">Yes, Reject Offer</button>
+                            
+                            
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
@@ -303,7 +723,7 @@
     <script src="../js/bootstrap.min.js"></script>
 
     <!-- Plugin JavaScript -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
     <script src="../js/classie.js"></script>
     <script src="../js/cbpAnimatedHeader.js"></script>
 

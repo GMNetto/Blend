@@ -126,7 +126,26 @@ app.get('/search?*', requireLogin, function(req, res, next){
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
-
+function getOngoingBorrows(username, callback){
+    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.finished = 0;', [username], function(err, result){
+        if(err || isEmpty(result)){
+            console.log("No ongoing borrow transactions");
+            callback(true, undefined);
+        }else{
+            callback(err, result);
+        }
+    })
+};
+function getOngoingLends(userid, callback){
+    connection.query('select * from Borrows, User as U,Item as I where Borrows.idProduct = I.idItem and U.idUser=Borrows.idUser and Borrows.idProduct in (select idItem from Item where Item.owner=?);', [userid], function(err, result){
+        if(err || isEmpty(result)){
+            console.log("No ongoing lent item transactions");
+            callback(true, undefined);
+        }else{
+            callback(err, result);
+        }
+    }
+)};
 app.post('/searchquery', requireLogin, function(request, response){
     console.log("Received request for search");
     console.log(request.body);
@@ -231,8 +250,32 @@ app.get('/lend', requireLogin, function(request, response) {
     response.render("lend.html");
 });
 app.get('/transactions', function(request, response) {
-    response.render("transactions.html");
+     get_user_by_id(request.session.user, function(err, user){
+        if(err)
+            res.render("something_wrong.html");
+        else
+            render_transactions(user, response);
+    });
+    //response.render("transactions.html");
 });
+function render_transactions(user, res){
+    console.log("render: "+user.idUser);
+    getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
+        getOngoingLends(user.idUser, function(err_lend, list_items_lend){
+            if(err_borrow || err_lend){
+                res.render("page_not_found.html");
+                res.end();
+            }
+            var l_B = list_items_borrow, l_L = list_items_lend;
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
+            console.log(l_B);
+            console.log("lending stuff");
+            console.log(l_L);
+            res.render("transactions.html",{ borrows: l_B,haslend:(l_L.length>0),lend: l_L});
+            console.log("end");
+        });
+    });
+};
 app.post('/newuser', function(request, response){
     //adding new user
     var email = request.body.email;
