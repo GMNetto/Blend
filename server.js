@@ -78,6 +78,7 @@ app.use('/static2', express.static('static2'));
 app.use('/css', express.static('css'));
 app.use('/font-awesome', express.static('font-awesome'))
 app.use('/js', express.static('js'));
+app.use('/img/portfolio', express.static('img/portfolio'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -314,7 +315,7 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
         //accepted, remove other requests for that item that aren't accepted yet
         connection.query('SELECT * FROM Borrows WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
             if(err){
-                
+
             }
             else{
                 console.log(rows[0]);
@@ -348,9 +349,9 @@ app.post('/borrower/:transactionId', requireLogin, function(request, response){
                 else{
                     console.log("Borrower accepted");
                 }
-            
+
             });
-        
+
     }
     else{
         //declined, remove transaction
@@ -392,7 +393,7 @@ app.get('/mytransactions', requireLogin, function(request, response){
             for(i = 0;i<rows.length;i++){
                 row = rows[i];
                 console.log(row);
-                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});
 
             }
              response.json(tosend);
@@ -412,7 +413,7 @@ app.get('/itemtransactions', requireLogin, function(request, response){
             for(i = 0;i<rows.length;i++){
                 row = rows[i];
                 console.log(row);
-                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});
 
             }
              response.json(tosend);
