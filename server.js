@@ -113,8 +113,10 @@ app.get('/my_profile', requireLogin, function(req, res){
     get_user_by_id(req.session.user, function(err, user){
         if(err)
             res.render("something_wrong.html");
-        else
-            render_my_profile(user, res);
+        else{
+            console.log("Page my profile")
+            render_my_profile(user, res);        
+        }
     });
 });
 
@@ -148,10 +150,8 @@ app.post('/searchquery', requireLogin, function(request, response){
     if(minrating.toString().length==0){
         minrating = 0;
     }
-    //var distancefilter = "3 km"; unusued. Filter is on client side
     console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating);
     console.log("query made by:"+request.session.user);
-    //sample that works:SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=?;
     connection.query('SELECT * FROM (SELECT * from Item WHERE name = ? AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
             if(err){
                 console.log(err);
@@ -167,43 +167,21 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
-                    //TODO distance filter
-
-                    //console.log(request.session.latitude+" "+request.session.longitude+" "+row.longitude+" "+row.latitude);
-                    //var dist =findDistance(originallat,originallon,row.latitude,row.longitude,function(result){
-                      //  console.log(result);
-                    //});
-
-                    //console.log(compareDistances(distancefilter,dist));
+                   
                     console.log(row);
-                   tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
-
-
+                   tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image}); 
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
                   console.log('Processing item ' + item);
                 findDistance(originallat,originallon,item.lat,item.lon,function(result){
                         console.log("done");
-                        //eliminate commas for distance filter
                         item.distance =result.replace(',','');
                         callback();
                     });
-                    /**
-                  if( item.name ==="foobar" ) {
-                    console.log('This file name is too long');
-                    callback('Not foobar');
-                  } else {
-                    // Do work to process file here
-                    console.log('item processed');
-                    callback();
-                  }
-                  **/
+                   
                 }, function(err){
-                    // if any of the file processing produced an error, err would equal that error
                     if( err ) {
-                      // One of the iterations produced an error.
-                      // All processing will now stop.
                       console.log('A row failed to process');
                     } else {
                       console.log('All rows processsed');
@@ -211,14 +189,6 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                     }
                 });
-                // encode all messages object as JSON and send it back to client
-               // console.log("Sent:"+rows.length);
-
-               // packageSearchQuery(rows,originallat,originallon,function(result){
-                   //console.log("done:"+result);
-                    //response.json(tosend);
-                //});
-
             }
     });
 });
@@ -279,7 +249,7 @@ app.post('/usernameverif', function(req, res){
             else {
               response.push({result:false});
             }
-
+            console.log("response "+response)
             res.json(response);
 
     });
@@ -463,6 +433,56 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         }
     });
 });
+
+app.post('/update_user', requireLogin, upload.single("img"), function(request, response){
+    console.log("Received user to update");
+    console.log("Uploading item from:"+request.session.user);
+    //console.log(request);
+    console.log(request.file);
+    var image;
+    if(request.file!==undefined){
+        image= request.file.filename;
+    }
+    else{
+        //some default image
+        image="No_image_available.png";
+    }
+    //adding new user
+    var email = request.body.email;
+    //extract params and hash pw
+    var pw = bCrypt.hashSync(request.body.pw, bCrypt.genSaltSync(10));//request.body.pw;
+    var ln = request.body.ln;
+    var fn = request.body.fn;
+    var address = request.body.address;
+    var username = request.body.username;
+    var phone = request.body.phone;
+    var profileurl = "https://localhost:8080/profile/"+username;
+    console.log(email);
+    console.log(pw);
+    console.log(fn);
+    console.log(ln);
+    console.log(address);
+    console.log(phone);
+    console.log(username);
+    console.log(image);
+    //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
+    var salt = pw;
+    geocoder.geocode(address, function(error, res) {
+        //if err probably not an actual address
+        if(error){
+            console.log("Did not find address")
+        }
+        else{
+            connection.query('UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, pw, salt, email,phone,image,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
+            if(err){
+                console.log(err);
+            }
+            });
+        }
+    });
+
+});
+
 app.post('/newfeedback', requireLogin, function(request, response){
     var newrating = parseFloat(request.body.rating);
     var feedbackuser = request.body.user;
@@ -609,7 +629,7 @@ function getItem(item_id, callback){
 
 function getRecentBorrow(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
-        if(err || isEmpty(result)){
+        if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
         }else{
@@ -620,7 +640,7 @@ function getRecentBorrow(username, limit, callback){
 
 function getRecentLend(username, limit, callback){
     connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
-        if(err || isEmpty(result)){
+        if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
         }else{
@@ -633,7 +653,7 @@ function getRecentLend(username, limit, callback){
 function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
     connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
-        if(err || isEmpty(result)){
+        if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
         }else{
@@ -653,10 +673,10 @@ function render_profile(user, res){
             }
             var l_B = list_items_borrow, l_L = list_items_lend;
             //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
-            console.log(l_B);
-            console.log(l_L);
-            res.render("profile.html",{username: user.Username, rating_borrower: user.borrower_rating, rating_lender: user.lender_rating, address: user.address, phone: user.phone, email: user.email, image: user.profile_url, borrow: l_B, lend: l_L});
-            console.log("end");
+            var list_items_borrow_has_items = (list_items_borrow.length > 0)
+            var list_items_lend_has_items = (list_items_lend.length > 0)
+            console.log("rendering profile");                    
+            res.render("profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend});
         });
     });
 };
@@ -668,7 +688,10 @@ function render_my_profile(user, res){
                 if(err_borrow || err_lend || err_items)
                     res.render("page_not_found.html");
                 else
-                    res.render("my_profile.html", {user: user, borrow: list_items_borrow, lend: list_items_lend, items: list_items});
+                    var list_items_borrow_has_items = (list_items_borrow.length > 0)
+                    var list_items_lend_has_items = (list_items_lend.length > 0)
+                    console.log("rendering my profile");                    
+                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
             });
         });
     });
