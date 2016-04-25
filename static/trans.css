@@ -899,6 +899,15 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 	padding:10px;
 }
 
+#period_contact_feedback{
+	text-align:center;
+	padding:18px;
+}
+
+#div-main-feedback {
+	text-align:center;
+}
+
 
 #feedback_btn{
 	padding: 5px; 6px;
@@ -926,3 +935,6 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 }
 
 
+#feedback_main {
+	min-width: 650px;
+}

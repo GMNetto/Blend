@@ -271,7 +271,24 @@ function render_transactions(user, res){
             console.log(l_B);
             console.log("lending stuff");
             console.log(l_L);
-            res.render("transactions.html",{ borrows: l_B,haslend:(l_L.length>0),lend: l_L});
+            var hasL;
+            if(l_L===undefined){
+                hasL=false;
+                l_L={};
+            }
+            else{
+                hasL=(l_L.length>0);
+                
+            }
+            var hasB;
+            if(l_B===undefined){
+                hasB=false;
+                l_B={};
+            }
+            else{
+                hasB =(l_B.length>0);
+            }
+            res.render("transactions.html",{ borrows: l_B,haslend:hasL,lend: l_L});
             console.log("end");
         });
     });
@@ -349,7 +366,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
                      console.log("detected ongoing transaction. Blocking");
                  }
                  else{
-                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
                             if(err){
                                 console.log(err);
                             }
@@ -529,10 +546,11 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     });
 });
 app.post('/newfeedback', requireLogin, function(request, response){
+    console.log(request.body);
     var newrating = parseFloat(request.body.rating);
-    var feedbackuser = request.body.user;
-    var feedbacktype = request.body.type;
-    var feedbackuserid = request.body.userid;
+    var feedbackuser = request.body.feedbackUser;
+    var feedbacktype = request.body.transactionType;
+    var feedbackuserid = request.body.feedbackuserId;
     console.log("Adding new feedback for "+feedbackuserid+ " "+feedbackuser);
     connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
         if(rows.length>0){
@@ -552,6 +570,12 @@ app.post('/newfeedback', requireLogin, function(request, response){
                         console.log("updating borrower rating failed");
                     }
                  });
+                //if comment on borrower, set finished. 
+                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
             }
             else{
                 //lender update logic
@@ -565,6 +589,11 @@ app.post('/newfeedback', requireLogin, function(request, response){
                         console.log("updating lender rating failed");
                     }
                  });
+                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
             }
         }
         else{
@@ -597,7 +626,7 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
             connection.query('SELECT * from User WHERE idUser= ?', [usertorate], function (err,rows) {
                 //params are {{feedbackuser}},{{itemName}},{{image}}, probably should send feedbackuser id to store in meta tag or something
                 if(rows.length>0){
-                    response.render("feedback.html",{type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
+                    response.render("feedback.html",{transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
                 }
                 else{
                     //user doesn't exist. This shouldn't happen
