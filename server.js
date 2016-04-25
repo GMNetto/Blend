@@ -342,11 +342,20 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
-             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
+             //first check if there is an ongoing transaction concerning that item however
+             connection.query('select * from Borrows where accepted = 1 and finished = 0', [request.session.user,request.params.itemId], function (err,rows) {
+                 if(rows.length>0){
+                     //currently an ongoing transactions, block the borrowing
+                     console.log("detected ongoing transaction. Blocking");
+                 }
+                 else{
+                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+                            if(err){
+                                console.log(err);
+                            }
+                    });
+                 }
+             });
          }
       });
 });
@@ -356,19 +365,31 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
     var responseType = request.body.type;
     if(responseType>0){
         //accepted, remove other requests for that item that aren't accepted yet
-        connection.query('SELECT * FROM Borrows WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
+        connection.query('SELECT * FROM Borrows WHERE idBorrows= ? AND accepted = 0', [request.params.transactionId], function (err,rows) {
             if(err){
 
             }
             else{
-                console.log(rows[0]);
-                connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,rows[0].idProduct], function (err) {
-                            if(err){
-                                console.log(err);
-                            }
+                if(rows.length>0){
+                    console.log(rows[0]);
+                    connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ? AND accepted = 0', [request.params.transactionId,rows[0].idProduct], function (err) {
+                                if(err){
+                                    console.log(err);
+                                }
+                    });
+                    connection.query('UPDATE Borrows SET accepted=1,inital_date=CURDATE() WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log("Borrower accepted");
+                        }
+
                     });
             }
+            }
         });
+        
     }
     else{
         //declined, remove that particular transaction
