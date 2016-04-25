@@ -2,7 +2,7 @@ var itemId;
 var borrowrequest;
 window.addEventListener('load', function(){
     console.log("loading item details");
-    itemId = meta('itemId');  
+    itemId = meta('itemId');
     //console.log(itemId);
     //loadItem();
     //document.getElementById("condition").innerHTML=convertCondition(document.getElementById("condition").innerHTML);
@@ -21,7 +21,7 @@ function meta(name) {
 function loadItem(){
      var initrequest = new XMLHttpRequest();
     // specify the HTTP method, URL, and asynchronous flag
-    
+
     initrequest.open('GET', '/item/' + itemId + '/retrieve', true);
     initrequest.addEventListener('load', function(e){
          if (initrequest.status == 200) {
@@ -33,7 +33,7 @@ function loadItem(){
                 if(content.length>0){
                     // list appending code
                     // should be array of message objects
-                    var data = JSON.parse(content);  
+                    var data = JSON.parse(content);
                     //http://www.w3schools.com/jsref/met_document_createtextnode.asp
                     var disc = document.getElementById("itemDescription");
                     var d =document.createTextNode(data[0].description);
@@ -57,7 +57,7 @@ function loadItem(){
                     var img = document.getElementById("itemImg");
                     console.log("called script?"+data[0].img);
                     img.src = data[0].image;
-                    
+
                 }
             } else {
                //for some reason request didn't succeed. Do nothing
@@ -66,9 +66,10 @@ function loadItem(){
 
     // start the request, optionally with a request body for POST requests
     initrequest.send(null);
-    
+
 }
 function borrowThing(){
+    alert("Request to borrow sent");
     console.log("Attempting to borrow item of id:"+itemId);
     borrowrequest.open('POST', '/borrow/'+itemId, true);
     borrowrequest.addEventListener('load', function(e){
@@ -81,9 +82,9 @@ function borrowThing(){
                 if(content.length>0){
                     // list appending code
                     // should be array of message objects
-                    var data = JSON.parse(content);  
-                    
-                    
+                    var data = JSON.parse(content);
+
+
                 }
             } else {
                //for some reason request didn't succeed. Do nothing

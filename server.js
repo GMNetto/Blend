@@ -189,7 +189,13 @@ app.post('/searchquery', requireLogin, function(request, response){
                     row = rows[i];
                    
                     console.log(row);
+<<<<<<< HEAD
                    tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image}); 
+=======
+                   tosend.push({description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
+
+
+>>>>>>> 82177ac8d9ac98d474b0abe6caf3f7aaec6956e9
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
