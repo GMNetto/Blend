@@ -196,7 +196,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                     //console.log(compareDistances(distancefilter,dist));
                     console.log(row);
-                   tosend.push({description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
 
 
                 }
@@ -389,7 +389,7 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
             }
             }
         });
-        
+
     }
     else{
         //declined, remove that particular transaction
