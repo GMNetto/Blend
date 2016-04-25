@@ -282,8 +282,8 @@ section.success a.active {
 	color: #1ABC9C;
 	border-style:none;
 	border-radius: 6px;
-	
-	
+
+
 }
 
 #filter:hover {
@@ -477,4 +477,13 @@ footer .footer-below {
 .portfolio-modal .modal-backdrop {
     display: none;
     opacity: 0;
+}
+
+#modal-container {
+  position: relative !important;
+  top: 200px !important;
+  padding-top: 5px !important;
+}
+header .container {
+  /*padding-top: 0px;*/
 }

@@ -5,7 +5,7 @@ body {
 }
 ul#searchResults{
     list-style:none;
-    
+
     float:left;
     margin:0;
     max-height:750px;
@@ -20,5 +20,5 @@ ul#searchResults li{
     padding-bottom: 15px;
     border-style:inset;
     max-height:50%;
-    
+
 }

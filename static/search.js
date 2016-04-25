@@ -1,4 +1,5 @@
 var searchrequest;
+var counter = 0;
 window.addEventListener('load', function(){
     //change username in form field on load based on session. For time being, hardcoded
     searchrequest = new XMLHttpRequest();
@@ -40,12 +41,13 @@ function submitItem(){
                         var li2 = document.createElement('li');
                         //construct list element
                         if(compareDistances(distancefilter,data[i].distance)>=0){
-                            li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + i + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'150 em\' width = \'150 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
-                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + i + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered" alt=""><p>Item description<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p><li>Client:<strong><a href="http://startbootstrap.com">Start Bootstrap</a></strong></li><li>Date:<strong><a href="http://startbootstrap.com">April 2014</a></strong></li><li>Service:<strong><a href="http://startbootstrap.com">Web Development</a></li></ul></div></div></div></div></div></div>'
+                            li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + counter + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'300 em\' width = \'300 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
+                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div style="bottom:300px!important;" class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: ' + data[i].username + '</div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing();return false;"></li></ul></div></div></div></div></div></div>'
                             // li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
                             //add to list html on frontend
                             ul.appendChild(li,ul.childNodes[0]);
                             ul2.appendChild(li2, ul.childNodes[0]);
+                            counter++;
                         }
 
                     }
@@ -96,4 +98,31 @@ function compareDistances(dist1,dist2){
     else{
         return 0;
     }
+}
+
+function borrowThing(){
+    alert("Request to borrow sent");
+    console.log("Attempting to borrow item of id:"+itemId);
+    borrowrequest.open('POST', '/borrow/'+itemId, true);
+    borrowrequest.addEventListener('load', function(e){
+         if (borrowrequest.status == 200) {
+                // do something with the loaded content
+                var content = borrowrequest.responseText;
+                //console.log(initrequest.responseText);
+                //console.log(initrequest);
+                // check if there is prior messages to load at all
+                if(content.length>0){
+                    // list appending code
+                    // should be array of message objects
+                    var data = JSON.parse(content);
+
+
+                }
+            } else {
+               //for some reason request didn't succeed. Do nothing
+            }
+    }, false);
+
+    // start the request, optionally with a request body for POST requests
+    borrowrequest.send(null);
 }
