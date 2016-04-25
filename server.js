@@ -78,6 +78,7 @@ app.use('/static2', express.static('static2'));
 app.use('/css', express.static('css'));
 app.use('/font-awesome', express.static('font-awesome'))
 app.use('/js', express.static('js'));
+app.use('/img/portfolio', express.static('img/portfolio'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -127,7 +128,26 @@ app.get('/search?*', requireLogin, function(req, res, next){
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
-
+function getOngoingBorrows(username, callback){
+    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.finished = 0;', [username], function(err, result){
+        if(err || isEmpty(result)){
+            console.log("No ongoing borrow transactions");
+            callback(true, undefined);
+        }else{
+            callback(err, result);
+        }
+    })
+};
+function getOngoingLends(userid, callback){
+    connection.query('select * from Borrows, User as U,Item as I where Borrows.idProduct = I.idItem and U.idUser=Borrows.idUser and Borrows.idProduct in (select idItem from Item where Item.owner=?);', [userid], function(err, result){
+        if(err || isEmpty(result)){
+            console.log("No ongoing lent item transactions");
+            callback(true, undefined);
+        }else{
+            callback(err, result);
+        }
+    }
+)};
 app.post('/searchquery', requireLogin, function(request, response){
     console.log("Received request for search");
     console.log(request.body);
@@ -200,8 +220,32 @@ app.get('/lend', requireLogin, function(request, response) {
     response.render("lend.html");
 });
 app.get('/transactions', function(request, response) {
-    response.render("transactions.html");
+     get_user_by_id(request.session.user, function(err, user){
+        if(err)
+            res.render("something_wrong.html");
+        else
+            render_transactions(user, response);
+    });
+    //response.render("transactions.html");
 });
+function render_transactions(user, res){
+    console.log("render: "+user.idUser);
+    getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
+        getOngoingLends(user.idUser, function(err_lend, list_items_lend){
+            if(err_borrow || err_lend){
+                res.render("page_not_found.html");
+                res.end();
+            }
+            var l_B = list_items_borrow, l_L = list_items_lend;
+            //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
+            console.log(l_B);
+            console.log("lending stuff");
+            console.log(l_L);
+            res.render("transactions.html",{ borrows: l_B,haslend:(l_L.length>0),lend: l_L});
+            console.log("end");
+        });
+    });
+};
 app.post('/newuser', function(request, response){
     //adding new user
     var email = request.body.email;
@@ -268,11 +312,20 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
-             connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
+             //first check if there is an ongoing transaction concerning that item however
+             connection.query('select * from Borrows where accepted = 1 and finished = 0', [request.session.user,request.params.itemId], function (err,rows) {
+                 if(rows.length>0){
+                     //currently an ongoing transactions, block the borrowing
+                     console.log("detected ongoing transaction. Blocking");
+                 }
+                 else{
+                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+                            if(err){
+                                console.log(err);
+                            }
+                    });
+                 }
+             });
          }
       });
 });
@@ -282,19 +335,31 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
     var responseType = request.body.type;
     if(responseType>0){
         //accepted, remove other requests for that item that aren't accepted yet
-        connection.query('SELECT * FROM Borrows WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
+        connection.query('SELECT * FROM Borrows WHERE idBorrows= ? AND accepted = 0', [request.params.transactionId], function (err,rows) {
             if(err){
-                
+
             }
             else{
-                console.log(rows[0]);
-                connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ?', [request.params.transactionId,rows[0].idProduct], function (err) {
-                            if(err){
-                                console.log(err);
-                            }
+                if(rows.length>0){
+                    console.log(rows[0]);
+                    connection.query('DELETE FROM Borrows WHERE idBorrows != ? AND idProduct = ? AND accepted = 0', [request.params.transactionId,rows[0].idProduct], function (err) {
+                                if(err){
+                                    console.log(err);
+                                }
+                    });
+                    connection.query('UPDATE Borrows SET accepted=1,inital_date=CURDATE() WHERE idBorrows= ? ', [request.params.transactionId], function (err) {
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log("Borrower accepted");
+                        }
+
                     });
             }
+            }
         });
+        
     }
     else{
         //declined, remove that particular transaction
@@ -318,9 +383,9 @@ app.post('/borrower/:transactionId', requireLogin, function(request, response){
                 else{
                     console.log("Borrower accepted");
                 }
-            
+
             });
-        
+
     }
     else{
         //declined, remove transaction
@@ -362,7 +427,7 @@ app.get('/mytransactions', requireLogin, function(request, response){
             for(i = 0;i<rows.length;i++){
                 row = rows[i];
                 console.log(row);
-                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});
 
             }
              response.json(tosend);
@@ -382,7 +447,7 @@ app.get('/itemtransactions', requireLogin, function(request, response){
             for(i = 0;i<rows.length;i++){
                 row = rows[i];
                 console.log(row);
-                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});  
+                tosend.push({accepted:row.accepted,finished:row.finished,name:row.name,duration:row.duration,image:row.image});
 
             }
              response.json(tosend);

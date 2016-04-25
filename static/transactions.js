@@ -1,75 +1,27 @@
-var ireq;
-var req;
 var acceptreqb;
 var acceptreql;
 var finishreq;
 window.addEventListener('load', function(){
-    req = new XMLHttpRequest();
-    ireq = new XMLHttpRequest();
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
-    //for testing purposes, though the users will probably be loaded at this point
-    loadUserTransactions();
-    loadItemTransactions();
-    acceptBorrower(1);
+    //acceptBorrower(1);
     //finishLender(1);
+    populateDateField(720);
 }, false);
-//now not needed
-function loadUserTransactions(){
-    //http://stackoverflow.com/questions/8064691/how-do-i-pass-along-variables-with-xmlhttprequest 
-    //sends back 
-    req.open('GET', '/mytransactions', true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.withCredentials = true;
-    req.addEventListener('load', function(e){
-         if (req.status == 200) {
-             var content = req.responseText;
-             if(content.length>0){
-                    // process each row of json data
-                    var data = JSON.parse(content); 
-                    for(i = 0;i<data.length;i++){
-                        console.log(data[i]);
-                    }
-             }
-         }
-     }, false);
-    req.send(null);
-    return false;
-}
-function loadItemTransactions(){
-    
-    //sends back 
-    ireq.open('GET', '/itemtransactions', true);
-    ireq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    ireq.withCredentials = true;
-    ireq.addEventListener('load', function(e){
-         if (ireq.status == 200) {
-             var content = ireq.responseText;
-             if(content.length>0){
-                    // process each row of json data
-                    var data = JSON.parse(content); 
-                    for(i = 0;i<data.length;i++){
-                        console.log(data[i]);
-                    }
-             }
-         }
-     }, false);
-    ireq.send(null);
-    return false;
-}
+
 //assuming now that transactionId can be harcoded into transaction elements or passed in 
-function acceptBorrower(transactionId){
+function acceptBorrower(transactionId,response){
     acceptreqb.open('POST','/borrower/'+transactionId,true);
-    var response = 0;//will probably get out of transaction html element or something
+    //var response = 0;//will probably get out of transaction html element or something
     var param = 'type='+response;
     acceptreqb.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     acceptreqb.withCredentials = true;
     acceptreqb.send(param);
 }
-function acceptLender(transactionId){
+function acceptLender(transactionId,response){
     acceptreql.open('POST','/lender/'+transactionId,true);
-    var response = 1;//will probably get out of transaction html element or something
+    //var response = 1;//will probably get out of transaction html element or something
     var param = 'type='+response;
     acceptreql.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     acceptreql.withCredentials = true;
@@ -82,4 +34,37 @@ function finishLender(transactionId){
     finishreq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     finishreq.withCredentials = true;
     finishreq.send(param);
+}
+function populateDateField(duration){
+    //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+    var curdate = new Date();
+    var enddate = new Date(curdate);
+    console.log(curdate);
+    if(duration==1){
+        console.log("hour");
+        console.log(curdate.getTime());
+        enddate.setHours(curdate.getHours()+1);
+        enddate.setDate(curdate.getDay()-7);
+        
+    }
+    if(duration==24){
+        console.log("day");
+        //enddate.setHours(curdate.getHours()+24);
+        enddate.setDate(curdate.getDate()+1);
+        enddate.setMonth(curdate.getMonth()-1);
+    }
+    if(duration==148){
+        console.log("week");
+        enddate.setDate(enddate.getDate()+7);
+        
+    }
+    else
+    {//duration is 720, which is a month
+        enddate.setMonth(enddate.getMonth()+1);
+    ;}
+    console.log(enddate);
+}
+//for ongoing transactions with others with a known start date
+function calcEnd(duration){
+    
 }

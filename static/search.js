@@ -2,7 +2,7 @@ var searchrequest;
 window.addEventListener('load', function(){
     //change username in form field on load based on session. For time being, hardcoded
     searchrequest = new XMLHttpRequest();
-    
+
 }, false);
 //now not needed
 function submitItem(){
@@ -21,30 +21,35 @@ function submitItem(){
                 if(content.length>0){
                     // list appending code
                     // should be array of message objects
-                    var data = JSON.parse(content);  
+                    var data = JSON.parse(content);
                     console.log("content?");
                     console.log(data);
                     // grab ul
-                    var ul = document.getElementById('searchResults');
+                    var ul = document.getElementById('mod_results');
+                    var ul2 = document.getElementById('popup_portfolio');
                     // create a new li element for the message, and append it
                     ul.innerHTML="";
                     var curid;
-                   var distance = document.getElementById("reg_distance").value;
+                    var distance = document.getElementById("reg_distance").value;
                     var distancefilter = distance+ " "+document.getElementById("unitSelector").value;
                     console.log("Filtering using distance:"+distancefilter);
                     console.log(distancefilter);
                     for(i = 0;i<data.length;i++){
                         //add only new messages to list
                         var li = document.createElement('li');
+                        var li2 = document.createElement('li');
                         //construct list element
                         if(compareDistances(distancefilter,data[i].distance)>=0){
-                            li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
+                            li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + i + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'150 em\' width = \'150 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
+                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + i + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered" alt=""><p>Item description<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p><li>Client:<strong><a href="http://startbootstrap.com">Start Bootstrap</a></strong></li><li>Date:<strong><a href="http://startbootstrap.com">April 2014</a></strong></li><li>Service:<strong><a href="http://startbootstrap.com">Web Development</a></li></ul></div></div></div></div></div></div>'
+                            // li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
                             //add to list html on frontend
                             ul.appendChild(li,ul.childNodes[0]);
+                            ul2.appendChild(li2, ul.childNodes[0]);
                         }
 
                     }
-                    
+
                 }
             } else {
                //for some reason request didn't succeed. Do nothing
