@@ -1,24 +1,44 @@
-var feedbackrequest;
-var feedback
+var initial_date
 window.addEventListener('load', function(){
-    feedbackrequest = new XMLHttpRequest();
+    initial_date = document.getElementById("start_date").innerHTML.replace("start date: ","");
+    populateDateField(parseFloat(meta("duration")));
     
 }, false);
-function sendFeedback(){
-    // specify the HTTP method, URL, and asynchronous flag
-    feedbackrequest.open('POST', '/newfeedback', true);
-    feedbackrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    //needed params are:request.body.rating,request.body.user, request.body.type,request.body.userid;
-    var params = 'type='+meta('usertype')+"&rating="+document.getElementById("rating").value+"&user="+meta("feedbackuser")+"&userid="+meta("feedbackUserId");
-    //http://stackoverflow.com/questions/14417226/node-js-express-ajax-sessions
-    feedbackrequest.withCredentials = true;
-    // start the request, optionally with a request body for POST requests
-    feedbackrequest.send(params);
-    return false;
+
+function populateDateField(duration){
+    //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+    var curdate = new Date(initial_date);
+    var enddate = new Date(curdate);
+    if(duration==1){
+        //console.log("hour");
+        //console.log(curdate.getTime());
+        enddate.setHours(curdate.getHours()+1);
+        enddate.setDate(curdate.getDay()-7);
+        
+    }
+    if(duration==24){
+        //console.log("day");
+        //enddate.setHours(curdate.getHours()+24);
+        enddate.setDate(curdate.getDate()+1);
+        enddate.setMonth(curdate.getMonth()-1);
+    }
+    if(duration==148){
+        //console.log("week");
+        enddate.setDate(enddate.getDate()+7);
+        
+    }
+    else
+    {//duration is 720, which is a month
+        enddate.setMonth(enddate.getMonth()+1);
+    }
+    //console.log(enddate);
+    //http://stackoverflow.com/questions/2554149/html-javascript-change-div-content
+    //document.getElementById("start_date").innerHTML = "start date:"+curdate;
+    document.getElementById("end_date").innerHTML = "end date:"+enddate;
 }
 function meta(name) {
     var tag = document.querySelector('meta[name=' + name + ']');
-    console.log(tag);
+    
     if (tag != null){
         return tag.content;
     }
