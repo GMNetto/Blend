@@ -74,7 +74,7 @@
                         <a href="transactions.html">Activity</a>
                     </li>
                     <li class="page-scroll">
-                        <a href="my_profile.html">Profile</a>
+                        <a href="profile.html">Profile</a>
                     </li>
                     <li class="page-scroll">
                         <a href="../index.html">Logout</a>
