@@ -116,7 +116,7 @@ app.get('/my_profile', requireLogin, function(req, res){
             res.render("something_wrong.html");
         else{
             console.log("Page my profile")
-            render_my_profile(user, res);        
+            render_my_profile(user, res);
         }
     });
 });
@@ -187,7 +187,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
-                   
+
                     console.log(row);
 
                    tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
@@ -200,7 +200,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                         item.distance =result.replace(',','');
                         callback();
                     });
-                   
+
                 }, function(err){
                     if( err ) {
                       console.log('A row failed to process');
@@ -249,7 +249,7 @@ function render_transactions(user, res){
             }
             else{
                 hasL=(l_L.length>0);
-                
+
             }
             var hasB;
             if(l_B===undefined){
@@ -557,12 +557,15 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
         }
         else{
             connection.query('UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, pw, salt, email,phone,image,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
+              response.redirect('/my_profile');
             if(err){
                 console.log(err);
             }
             });
         }
     });
+
+
 
 });
 
@@ -591,7 +594,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                         console.log("updating borrower rating failed");
                     }
                  });
-                //if comment on borrower, set finished. 
+                //if comment on borrower, set finished.
                 connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
                     if(err){
                         console.log(err);
@@ -661,7 +664,7 @@ app.get('/logout', function(req, res){
     //res.send('logout');
     if(req.session.user) {
       req.session.destroy(function(){
-	console.log("destroy");
+	      console.log("destroy");
       });
     } else {
         console.log("no session");
@@ -770,7 +773,7 @@ function render_profile(user, res){
             //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
             var list_items_borrow_has_items = (list_items_borrow.length > 0)
             var list_items_lend_has_items = (list_items_lend.length > 0)
-            console.log("rendering profile");                    
+            console.log("rendering profile");
             res.render("profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend});
         });
     });
@@ -785,8 +788,8 @@ function render_my_profile(user, res){
                 else
                     var list_items_borrow_has_items = (list_items_borrow.length > 0)
                     var list_items_lend_has_items = (list_items_lend.length > 0)
-                    console.log(list_items_borrow);                   
-                    console.log("rendering my profile");                    
+                    console.log(list_items_borrow);
+                    console.log("rendering my profile");
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
             });
         });
@@ -815,6 +818,7 @@ app.post('/login', function(request, response){
 			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
+
                         response.redirect('/search')
                      });
                 }

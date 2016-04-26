@@ -13,9 +13,10 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-	
+
 	<link href="https://localhost:8080/static/search.css" rel="stylesheet">
 	<script src="https://localhost:8080/static/transactions.js" type="text/javascript"></script>
+
 
     <title>Blend</title>
 
@@ -36,11 +37,13 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+
+
     <link href="https://localhost:8080/static2/login_info.css" rel="stylesheet">
-    <script src="https://localhost:8080/static2/login_info.js" type="text/javascript"></script> 
+    <script src="https://localhost:8080/static2/login_info.js" type="text/javascript"></script>
     <link href="https://localhost:8080/static/signin.css" rel="stylesheet">
-    <script src="https://localhost:8080/static/index.js" type="text/javascript"></script> 
+    <script src="https://localhost:8080/static/index.js" type="text/javascript"></script>
+
 
 </head>
 
@@ -59,28 +62,29 @@
                 </button>
                 <a class="navbar-brand" href="#page-top">Blend</a>
             </div>
-           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="search.html">Borrow</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="lend.html">Lend</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="transactions.html">Activity</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="my_profile.html">Profile</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="../index.html">Logout</a>
-                    </li>
-                </ul>
-            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                 <ul class="nav navbar-nav navbar-right">
+                     <li class="hidden">
+                         <a href="#page-top"></a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="https://localhost:8080/search">Borrow</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="https://localhost:8080/lend">Lend</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="https://localhost:8080/transactions">Activity</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="https://localhost:8080/my_profile">Profile</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="https://localhost:8080/logout">Logout</a>
+                     </li>
+                 </ul>
+             </div>
 
             <!-- /.navbar-collapse -->
         </div>
@@ -88,8 +92,8 @@
     </nav>
 
 
-	
-	
+
+
     <!-- Header -->
     <header>
         <div class="footer-above">
@@ -98,7 +102,7 @@
                     <div class="footer-col col-md-4" style = "width:50%">
                         <h3 style = "text-align:center">Lend Requests:</h3>
                         <hr />
-                        	
+
                         	<!-- List for items Lent -->
                             <ul style = "list-style:none;" class = "list-group">
                                 {{#haslend}}
@@ -117,22 +121,22 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "div2">
-										
+
 										<!-- Text/Link for user profile -->
-										<a href = "#" > 
+										<a href = "#" >
 											<div id = "trans-user">user: {{Username}}</div>
 										</a>
-										
+
 										<!-- Text/Link for user rating-->
-										<a href = "#" > 
+										<a href = "#" >
 											<div id = "trans-rating">rating: {{borrower_rating}}</div>
 										</a>
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
 										{{^accepted}}
@@ -140,7 +144,7 @@
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
 											<img class = "trans_check" src = "../img/check.png">
 										</a>
-										
+
 										<!-- Image/Link for decline transaction, opens up modal when clicked -->
 										<a href = "#reject{{idBorrows}}" class="portfolio-link" data-toggle="modal" id = "trans_reject" >
 											<img class = "trans_x" src = "../img/fail.png">
@@ -158,7 +162,7 @@
                                         {{/finished}}
 									</div>
 								</li>
-                                
+
                                 <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
@@ -272,17 +276,17 @@
                                 </div>
                                 {{/lend}}
 								{{/haslend}}
-							 
- 
+
+
 
                    	</div>
-                    
+
                     <div class="footer-col col-md-4" style = "width:50%; margin-right:0px;" >
                         <h3 style = "text-align:center">Borrowing:</h3>
                         <hr class="vertical"/>
-                    
+
                         	<ul style = "list-style:none; color:black" class = "list-group">
-                                
+
                                 {{#borrows}}
                             	<!-- Item 1 -->
 								<li class = "list-group-item">
@@ -298,28 +302,28 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, start and end date -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date:{{inital_date}} </div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: </div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "{{profile_url}}" >
 											<div id = "lender_link"><strong>Contact Lender</strong></div>
 										</a>
-										
+
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
                                         {{#accepted}}
                                         {{^borrower_commented}}
@@ -370,20 +374,20 @@
                                     </div>
                                 </div>
 								</li>
-                                
+
                         </ul>
                         {{/borrows}}
-                        
+
                     </div>
 
 
 					<div class="footer-col col-md-4" style = "width:100%">
                         <h3 style = "text-align:center">All items: </h3>
                         <hr />
-                        	
+
                         	<!-- List for items Lent -->
                             <ul style = "list-style:none;" class = "list-group">
-                            
+
                             	<!-- Item 1 -->
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
@@ -397,35 +401,35 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date: {{start}}</div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: {{end}}</div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
 									</div>
 								</li>
-								
-							
+
+
 								<!-- Item 2 -->
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
@@ -439,35 +443,35 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date: {{start}}</div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: {{end}}</div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
 									</div>
 								</li>
-							
-								
+
+
 								<!-- Item 3 -->
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
@@ -481,34 +485,34 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date: {{start}}</div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: {{end}}</div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
 									</div>
 								</li>
-							
-								
+
+
 								<!-- Item 4 -->
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
@@ -522,35 +526,35 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date: {{start}}</div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: {{end}}</div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
 									</div>
 								</li>
-							
-								
+
+
 								<!-- Item 5 -->
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
@@ -564,27 +568,27 @@
 										</div>
 
 									</div>
-									
+
 									<!-- Section 2, User and Rating -->
 									<div class="footer-col col-md-4" id = "period_contact">
-										
+
 										<!-- text for start date -->
 										<div id = "start_date">start date: {{start}}</div>
-										
-										
+
+
 										<!-- text for end date -->
 										<div id = "end_date">end date: {{end}}</div>
-										
+
 										<!-- link for contacting buyer -->
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
-									
+
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
@@ -592,20 +596,20 @@
 									</div>
 								</li>
 							<ul>
- 
+
 
                    	</div>
                 </div>
             </div>
         </div>
-        
-        
-	
+
+
+
     </header>
-    
-    
+
+
 	<!-- Portfolio Modals -->
-	
+
 	<!-- Modal 1, Item Preview -->
     <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-content">
@@ -643,7 +647,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Modal 2, Item accept -->
     <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-content">
@@ -671,17 +675,17 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-success">Yes, accept offer</button>
-                            
-                            
-                            
+
+
+
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <!-- Modal 3, Item reject -->
     <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-content">
@@ -709,18 +713,18 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-danger">Yes, Reject Offer</button>
-                            
-                            
-                            
+
+
+
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    
+
+
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
     <div class="scroll-top page-scroll visible-xs visible-sm">
         <a class="btn btn-primary" href="#page-top">
