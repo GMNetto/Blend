@@ -189,13 +189,8 @@ app.post('/searchquery', requireLogin, function(request, response){
                     row = rows[i];
                    
                     console.log(row);
-<<<<<<< HEAD
-                   tosend.push({username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image}); 
-=======
-                   tosend.push({description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
 
-
->>>>>>> 82177ac8d9ac98d474b0abe6caf3f7aaec6956e9
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
@@ -247,7 +242,24 @@ function render_transactions(user, res){
             console.log(l_B);
             console.log("lending stuff");
             console.log(l_L);
-            res.render("transactions.html",{ borrows: l_B,haslend:(l_L.length>0),lend: l_L});
+            var hasL;
+            if(l_L===undefined){
+                hasL=false;
+                l_L={};
+            }
+            else{
+                hasL=(l_L.length>0);
+                
+            }
+            var hasB;
+            if(l_B===undefined){
+                hasB=false;
+                l_B={};
+            }
+            else{
+                hasB =(l_B.length>0);
+            }
+            res.render("transactions.html",{ borrows: l_B,haslend:hasL,lend: l_L});
             console.log("end");
         });
     });
@@ -325,7 +337,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
                      console.log("detected ongoing transaction. Blocking");
                  }
                  else{
-                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE())', [null, request.session.user,request.params.itemId], function (err) {
+                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
                             if(err){
                                 console.log(err);
                             }
@@ -365,7 +377,7 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
             }
             }
         });
-        
+
     }
     else{
         //declined, remove that particular transaction
@@ -555,10 +567,11 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
 });
 
 app.post('/newfeedback', requireLogin, function(request, response){
+    console.log(request.body);
     var newrating = parseFloat(request.body.rating);
-    var feedbackuser = request.body.user;
-    var feedbacktype = request.body.type;
-    var feedbackuserid = request.body.userid;
+    var feedbackuser = request.body.feedbackUser;
+    var feedbacktype = request.body.transactionType;
+    var feedbackuserid = request.body.feedbackuserId;
     console.log("Adding new feedback for "+feedbackuserid+ " "+feedbackuser);
     connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
         if(rows.length>0){
@@ -578,6 +591,12 @@ app.post('/newfeedback', requireLogin, function(request, response){
                         console.log("updating borrower rating failed");
                     }
                  });
+                //if comment on borrower, set finished. 
+                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
             }
             else{
                 //lender update logic
@@ -591,6 +610,11 @@ app.post('/newfeedback', requireLogin, function(request, response){
                         console.log("updating lender rating failed");
                     }
                  });
+                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+            });
             }
         }
         else{
@@ -623,7 +647,7 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
             connection.query('SELECT * from User WHERE idUser= ?', [usertorate], function (err,rows) {
                 //params are {{feedbackuser}},{{itemName}},{{image}}, probably should send feedbackuser id to store in meta tag or something
                 if(rows.length>0){
-                    response.render("feedback.html",{type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
+                    response.render("feedback.html",{transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
                 }
                 else{
                     //user doesn't exist. This shouldn't happen
@@ -761,6 +785,7 @@ function render_my_profile(user, res){
                 else
                     var list_items_borrow_has_items = (list_items_borrow.length > 0)
                     var list_items_lend_has_items = (list_items_lend.length > 0)
+                    console.log(list_items_borrow);                   
                     console.log("rendering my profile");                    
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
             });

@@ -135,7 +135,7 @@
 									
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
-										
+										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
 											<img class = "trans_check" src = "../img/check.png">
@@ -145,6 +145,17 @@
 										<a href = "#reject{{idBorrows}}" class="portfolio-link" data-toggle="modal" id = "trans_reject" >
 											<img class = "trans_x" src = "../img/fail.png">
 										</a>
+                                        {{/accepted}}
+                                        {{#accepted}}
+                                        {{^lender_commented}}
+                                        <a href = "/feedback/{{idBorrows}}" >
+											<button type="button" class="btn btn-info" id = "feedback_btn">Finish and Leave Feedback</button>
+										</a>
+                                        {{/lender_commented}}
+                                        {{/accepted}}
+                                        {{#finished}}
+                                        <span id = "item_fade">Transaction Finished</span>
+                                        {{/finished}}
 									</div>
 								</li>
                                 
@@ -207,7 +218,7 @@
                                                         <br />
                                                         user rating: {{borrower_rating}}
                                                         <br />
-                                                        Lend Period: (start period) to (end period)
+                                                        Lend Period: {{duration}} hours
                                                         <br />
                                                         <br />
                                                         <hr >
@@ -244,7 +255,7 @@
                                                         <br />
                                                         user rating: {{borrower_rating}}
                                                         <br />
-                                                        Lend Period: (start period) to (end period)
+                                                        Lend Period: {{duration}} hours
                                                         <br />
                                                         <br />
                                                         <hr >
@@ -310,10 +321,13 @@
 									<div class="footer-col col-md-4" id = "div3">
 										
 										<!-- Image/Link for check transaction, opens up modal -->
-										<a href = "#" >
+                                        {{#accepted}}
+                                        {{^borrower_commented}}
+										<a href = "/feedback/{{idBorrows}}" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
-										
+                                        {{/borrower_commented}}
+										{{/accepted}}
 										<!-- Image/Link for decline transaction, opens up modal when clicked -->
 										<a href = "#portfolioModal4" class="portfolio-link" data-toggle="modal" id = "trans_cancel" >
 											<img class = "trans_x2" src = "../img/fail.png">

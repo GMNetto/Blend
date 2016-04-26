@@ -79,6 +79,8 @@ CREATE TABLE IF NOT EXISTS `blend_db`.`Borrows` (
   `accepted` TINYINT(1) NOT NULL,
   `finished` TINYINT(1) NOT NULL,
   `inital_date` DATE NOT NULL,
+  `borrower_commented` TINYINT(1) NOT NULL,
+  `lender_commented` TINYINT(1) NOT NULL,
   PRIMARY KEY (`idBorrows`),
   INDEX `idUser_idx` (`idUser` ASC),
   INDEX `idProduct_idx` (`idProduct` ASC),
