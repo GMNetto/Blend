@@ -785,7 +785,7 @@ function render_my_profile(user, res){
                 else
                     var list_items_borrow_has_items = (list_items_borrow.length > 0)
                     var list_items_lend_has_items = (list_items_lend.length > 0)
-                    console.log(list_items_borrow)                    
+                    console.log(list_items_borrow);                   
                     console.log("rendering my profile");                    
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
             });

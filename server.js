@@ -661,7 +661,7 @@ app.get('/logout', function(req, res){
     //res.send('logout');
     if(req.session.user) {
       req.session.destroy(function(){
-	console.log("destroy");
+	      console.log("destroy");
       });
     } else {
         console.log("no session");
