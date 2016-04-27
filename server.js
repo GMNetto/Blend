@@ -130,20 +130,24 @@ app.get('/search', requireLogin, function(request, response){
 });
 function getOngoingBorrows(username, callback){
     connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.finished = 0;', [username], function(err, result){
-        if(err || isEmpty(result)){
-            console.log("No ongoing borrow transactions");
+        if(err){
             callback(true, undefined);
         }else{
+            if(isEmpty(result)){
+                console.log("No ongoing borrow transactions");
+            }
             callback(err, result);
         }
     })
 };
 function getOngoingLends(userid, callback){
     connection.query('select * from Borrows, User as U,Item as I where Borrows.idProduct = I.idItem and U.idUser=Borrows.idUser and Borrows.idProduct in (select idItem from Item where Item.owner=?);', [userid], function(err, result){
-        if(err || isEmpty(result)){
-            console.log("No ongoing lent item transactions");
+        if(err){
             callback(true, undefined);
         }else{
+            if(isEmpty(result)){
+                console.log("No ongoing lent item transactions");
+            }
             callback(err, result);
         }
     }
@@ -234,9 +238,11 @@ function render_transactions(user, res){
     getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
         getOngoingLends(user.idUser, function(err_lend, list_items_lend){
             if(err_borrow || err_lend){
+                console.log("An error just happened");
                 res.render("page_not_found.html");
                 res.end();
             }
+            else{
             var l_B = list_items_borrow, l_L = list_items_lend;
             //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
             console.log(l_B);
@@ -245,7 +251,7 @@ function render_transactions(user, res){
             var hasL;
             if(l_L===undefined){
                 hasL=false;
-                l_L={};
+                
             }
             else{
                 hasL=(l_L.length>0);
@@ -254,14 +260,17 @@ function render_transactions(user, res){
             var hasB;
             if(l_B===undefined){
                 hasB=false;
-                l_B={};
             }
             else{
                 hasB =(l_B.length>0);
             }
-            res.render("transactions.html",{ borrows: l_B,haslend:hasL,lend: l_L});
+            console.log("hasB:"+hasB);
+            console.log("hasL:"+hasL);
+            res.render("transactions.html",{has_borrows:(l_B.length>0),borrows: l_B,haslend:hasL,lend:l_L});
+            //res.send({ has_borrows:true,haslend:true});
             //res.render("transactions.html");
-            console.log("end");
+            //console.log("end");
+            }
         });
     });
 };
