@@ -103,10 +103,14 @@ app.get('/forgetpassword', function(request, response) {
 app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
     getUser(req.params.username, function(err, user){
-        if(err)
-            next();
-        else
-	        render_profile(user, res);
+        if(req.session.user == user.idUser) {
+          res.redirect('/my_profile');
+        }  else {
+          if(err)
+              next();
+          else
+  	        render_profile(user, res);
+        }
     });
 });
 
