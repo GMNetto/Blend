@@ -79,6 +79,7 @@ app.use('/css', express.static('css'));
 app.use('/font-awesome', express.static('font-awesome'))
 app.use('/js', express.static('js'));
 app.use('/img/portfolio', express.static('img/portfolio'));
+app.use('/fonts', express.static('fonts'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -255,7 +256,7 @@ function render_transactions(user, res){
             var hasL;
             if(l_L===undefined){
                 hasL=false;
-                
+
             }
             else{
                 hasL=(l_L.length>0);
