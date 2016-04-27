@@ -15,7 +15,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	
 	<link href="../static/search.css" rel="stylesheet">
-	<script src="../static/search.js" type="text/javascript"></script>
+	<script src="../static/feedback.js" type="text/javascript"></script>
 
     <title>Blend</title>
 
@@ -98,6 +98,8 @@
                     <div class="footer-col col-md-4" style = "width:100%" id = "div-main-feedback">
                         	
                     <div class="logo">feedback: </div>
+                        <meta name="duration" content={{duration}}>
+                        <meta name="startdate" content={{date}}>
                     <hr />
 					<div class="login-form-1" id = "feedback_main">
 						<form id="register-form" class="text-left" action="/newfeedback" method="POST">
@@ -117,13 +119,13 @@
 										<div class="form-group">
 											<div style = "text-align:center"> transaction between: 
 												<a href = "#">
-													<span id = "trans-user"> user1 </span>
+													<span id = "trans-user"> {{feedbackuser}} </span>
 												</a>
 												
 													<span > and</span>
 													
 												<a href = "#">
-													<span id = "trans-user"> user2 </span>
+													<span id = "trans-user"> {{curuser}} </span>
 												</a>
 										</div>
 										<br />
@@ -138,8 +140,8 @@
 													<!-- Item Image and title, opens up modal when clicked -->
 													<div class="portfolio-item" >
 														<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-															<img class = "img_fade" src = "../img/img.png">
-															<span id = "item_fade">Item 1</span>
+															<img class = "img_fade" src = "/static/images/{{image}}">
+															<span id = "item_fade">{{itemName}}</span>
 														</a>
 													</div>
 
@@ -150,7 +152,7 @@
 										
 													<!-- Text/Link for user profile -->
 													<a href = "#" > 
-														<div id = "trans-user">user: {{user}}</div>
+														<div id = "trans-user">user: {{feedbackuser}}</div>
 													</a>
 										
 													<!-- Text/Link for user rating-->
@@ -164,7 +166,7 @@
 												<div class="footer-col col-md-4" id = "period_contact_feedback">
 										
 													<!-- text for start date -->
-													<div id = "start_date">start date: {{start}}</div>
+													<div id = "start_date">start date: {{date}}</div>
 										
 										
 													<!-- text for end date -->
