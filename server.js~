@@ -29,10 +29,10 @@ var MySQLStore = require('express-mysql-session')(session);
 
 
 db_config = {
-    host: 'us-cdbr-iron-east-03.cleardb.net',
-    user: 'b56fefe00420cd',
-    password: '6e81455e',
-    database: 'heroku_6d29352a6951ad0'
+    host: process.env.CLEARDB_DATABASE_HOST,
+    user: process.env.CLEARDB_DATABASE_USER,
+    password: process.env.CLEARDB_DATABASE_PASSWORD,
+    database: process.env.CLEARDB_DATABASE_SCHEMA
 }
 
 var options_session = {
@@ -267,7 +267,7 @@ app.post('/newuser', function(request, response){
 
         }
         else{
-            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,1,1,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
+            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0.0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
             if(err){
                 console.log(err);
             }
