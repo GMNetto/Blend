@@ -118,7 +118,7 @@ app.get('/profile/:username', requireLogin, function(req, res, next){
 app.get('/my_profile', requireLogin, function(req, res){
     get_user_by_id(req.session.user, function(err, user){
         if(err)
-            res.render("something_wrong.html");
+            res.render("error.html");
         else{
             console.log("Page my profile")
             render_my_profile(user, res);
@@ -232,7 +232,7 @@ app.get('/lend', requireLogin, function(request, response) {
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
-            response.render("something_wrong.html");
+            response.render("error.html");
         else
             render_transactions(user, response);
     });
@@ -863,7 +863,7 @@ app.get("/items", function(req, res){
     get_items_from_user(req.session.user, function(err, items){
         if(err){
             res.status(404);
-            res.render("something_wrong.html", {url: req.url});
+            res.render("error.html", {url: req.url});
         }else{
             res.render("items.html", {items: items});
         }
