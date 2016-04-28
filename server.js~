@@ -612,7 +612,7 @@ app.post('/login', function(request, response){
     var pw = request.body.password;
     console.log("Received login request");
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
-        if(err){
+        /*if(err){
             console.log('Adding new user failed');
             console.log(err);
             response.send("Errororror");
@@ -637,7 +637,8 @@ app.post('/login', function(request, response){
                 }
                 //response.send("user not found");
             }        
-        }
+        }*/
+        response.send("Hello");
     });
 });
 
