@@ -232,7 +232,7 @@ app.get('/lend', requireLogin, function(request, response) {
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
-            res.render("something_wrong.html");
+            response.render("something_wrong.html");
         else
             render_transactions(user, response);
     });
@@ -832,22 +832,27 @@ app.post('/login', function(request, response){
         }
         else{
             console.log(rows);
-            if(rows[0].Username===uname||rows[0].email===uname){
-                console.log("FOUND:"+rows[0]);
-                if(bCrypt.compareSync(pw,rows[0].password)){
-                    console.log("FOUND ROW");
-                    //request.session.user = "a";
-		            var u = getUser(uname, function(err, u){
-                        console.log("returned id " + u.idUser);
-			            request.session.user = u.idUser;
-                        request.session.username = u.Username;
-                        request.session.latitude = u.latitude;
-                        request.session.longitude = u.longitude;
+            if(rows.length>0){
+                if(rows[0].Username===uname||rows[0].email===uname){
+                    console.log("FOUND:"+rows[0]);
+                    if(bCrypt.compareSync(pw,rows[0].password)){
+                        console.log("FOUND ROW");
+                        //request.session.user = "a";
+                        var u = getUser(uname, function(err, u){
+                            console.log("returned id " + u.idUser);
+                            request.session.user = u.idUser;
+                            request.session.username = u.Username;
+                            request.session.latitude = u.latitude;
+                            request.session.longitude = u.longitude;
 
-                        response.redirect('/search')
-                     });
-                }
-             }
+                            response.redirect('/search')
+                         });
+                    }
+                 }
+            }
+            else{
+                //send back error code or something
+            }
         }
     });
 });

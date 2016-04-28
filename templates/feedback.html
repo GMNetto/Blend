@@ -104,32 +104,29 @@
 					<div class="login-form-1" id = "feedback_main">
 						<form id="register-form" class="text-left" action="/newfeedback" method="POST">
                             <input type="hidden" name="transactionType" id="transactiontype" value={{type}} /> 
-                          <input type="hidden" name="feedbackuserId" id="fbid" value={{feedbackuserid}} />
-                         <input type="hidden" name="feedbackUser" id="fbuser" value={{feedbackuser}} />
+                            <input type="hidden" name="feedbackuserId" id="fbid" value={{feedbackuserid}} />
+                            <input type="hidden" name="feedbackUser" id="fbuser" value={{feedbackuser}} />
                             <input type="hidden" name="transactionId" id="transid" value={{transactionid}} />
 							<div class="login-form-main-message">
 							</div>
 							<div class="main-login-form">
 								<div class="login-group">	
 									<div class="form-group">
-									<br />
-											           
-											           
-										
+									<br />	
 										<div class="form-group">
 											<div style = "text-align:center"> transaction between: 
 												<a href = "#">
-													<span id = "trans-user"> {{feedbackuser}} </span>
+													<span id = "feedback-user"> {{feedbackuser}} </span>
 												</a>
 												
 													<span > and</span>
 													
 												<a href = "#">
-													<span id = "trans-user"> {{curuser}} </span>
+													<span id = "cur-user"> {{curuser}} </span>
 												</a>
 										</div>
 										<br />
-										
+                                        </div>
 										<!-- List for items Lent -->
 										<ul style = "list-style:none;" class = "list-group">
 							
@@ -152,7 +149,7 @@
 										
 													<!-- Text/Link for user profile -->
 													<a href = "#" > 
-														<div id = "trans-user">user: {{feedbackuser}}</div>
+														<div id = "feedback-user2">user: {{feedbackuser}}</div>
 													</a>
 										
 													<!-- Text/Link for user rating-->
@@ -174,7 +171,7 @@
 									
 												</div>
 											</li>
-										<ul>
+                                            </ul>
 											
 										<div class="form-group login-group-checkbox">
 											<br />
@@ -198,11 +195,13 @@
 									</div>
 									<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
 								</div>
+                                </div>
 							</form>
-						</div>
+						
                    	</div>
                 </div>
             </div>
+        </div>
         </div>
     </header>
     
