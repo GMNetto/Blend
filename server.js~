@@ -158,10 +158,10 @@ var upload = multer({ dest: './static/images/' });
 app.get('/', function(request, response) {
     console.log(request.session.user);
     console.log("######################receiving request#############################33");
-    //response.render("index.html");
-    connection.query('SELECT COUNT(*) FROM User', function(err, rows){
-        res.send(rows);
-    });
+    response.render("index.html");
+    /*connection.query('SELECT COUNT(*) FROM User', function(err, rows){
+        response.send(rows);
+    });*/
 });
 app.get('/signup', function(request, response) {
     response.render("signup.html");

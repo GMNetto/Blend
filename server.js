@@ -158,10 +158,10 @@ var upload = multer({ dest: './static/images/' });
 app.get('/', function(request, response) {
     console.log(request.session.user);
     console.log("######################receiving request#############################33");
-    //response.render("index.html");
-    connection.query('SELECT COUNT(*) FROM User', function(err, rows){
+    response.render("index.html");
+    /*connection.query('SELECT COUNT(*) FROM User', function(err, rows){
         response.send(rows);
-    });
+    });*/
 });
 app.get('/signup', function(request, response) {
     response.render("signup.html");
@@ -186,7 +186,7 @@ app.get('/my_profile', requireLogin, function(req, res){
     });
 });
 
-app.get('/search?*', requireLogin, function(req, res, next){
+app.get('/searchTest', requireLogin, function(req, res, next){
     res.send("Search?");
 });
 
