@@ -854,7 +854,7 @@ app.post('/login', function(request, response){
             }
             else{
                 //login error
-                response.send('<div class = 'logo'> Incorrect Username or Password. </div>');
+                response.send('<div class = 'logo' style = "color: red !important"> Incorrect Username or Password. </div>');
             }
         }
     });
