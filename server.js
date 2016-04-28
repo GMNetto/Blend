@@ -27,35 +27,69 @@ var MySQLStore = require('express-mysql-session')(session);
     database: 'heroku_6d29352a6951ad0'
 });*/
 
+var db_config = undefined;
+if(process.env.PRODUCTION != undefined){
 
-db_config = {
-    host: process.env.CLEARDB_DATABASE_HOST,
-    user: process.env.CLEARDB_DATABASE_USER,
-    password: process.env.CLEARDB_DATABASE_PASSWORD,
-    database: process.env.CLEARDB_DATABASE_SCHEMA
+    db_config = {
+        host: process.env.CLEARDB_DATABASE_HOST,
+        user: process.env.CLEARDB_DATABASE_USER,
+        password: process.env.CLEARDB_DATABASE_PASSWORD,
+        database: process.env.CLEARDB_DATABASE_SCHEMA
+    }
+
+    var options_session = {
+        host: process.env.CLEARDB_DATABASE_HOST,
+        port: 3306,
+        user: process.env.CLEARDB_DATABASE_USER,
+        password: process.env.CLEARDB_DATABASE_PASSWORD,
+        database: process.env.CLEARDB_DATABASE_SCHEMA,
+        checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
+        expiration: 86400000,// The maximum age of a valid session; milliseconds.
+        createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    };
+
+
+}else{
+    db_config = {
+        host: 'localhost',
+        user: 'blend_user',
+        password: 'blend_password',
+        database: 'blend_db'
+    }
+
+    var options_session = {
+        host: 'localhost',
+        port: 3306,
+        user: 'blend_user',
+        password: 'blend_password',
+        database: 'blend_db',
+        checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
+        expiration: 86400000,// The maximum age of a valid session; milliseconds.
+        createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    };
+
+    
 }
 
-var options_session = {
-    host: process.env.CLEARDB_DATABASE_HOST,
-    port: 3306,
-    user: process.env.CLEARDB_DATABASE_USER,
-    password: process.env.CLEARDB_DATABASE_PASSWORD,
-    database: process.env.CLEARDB_DATABASE_SCHEMA,
-    checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
-    expiration: 86400000,// The maximum age of a valid session; milliseconds.
-    createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
-    }
-};
 
 var connection;
-
+console.log(db_config);
 function handleDisconnect() {
   connection = mysql.createConnection(db_config);
   connection.connect(function(err) {
@@ -75,6 +109,11 @@ function handleDisconnect() {
 }
 
 handleDisconnect();
+
+connection.query('SELECT * FROM User', function(err, rows){
+    console.log("Rows: "+rows);
+});
+
 
 //connection.connect();
 var sessionStore = new MySQLStore(options_session, connection);
@@ -150,10 +189,6 @@ app.get('/search?*', requireLogin, function(req, res, next){
 
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
-});
-
-connection.query('SELECT * FROM USER', function(err, rows){
-    console.log(rows);
 });
 
 app.post('/searchquery', requireLogin, function(request, response){
