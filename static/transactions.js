@@ -37,6 +37,7 @@ function finishLender(transactionId){
 }
 function populateDateField(duration){
     //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+    //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
     var curdate = new Date();
     var enddate = new Date(curdate);
     console.log(curdate);
