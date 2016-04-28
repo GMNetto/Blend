@@ -853,7 +853,8 @@ app.post('/login', function(request, response){
                  }
             }
             else{
-                //send back error code or something
+                //login error
+                response.send('<div class = 'logo'> Incorrect Username or Password. </div>');
             }
         }
     });
