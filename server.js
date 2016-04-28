@@ -74,7 +74,7 @@ app.set('views', __dirname + '/templates'); // tell Express where to find templa
 app.use(express.static('static'));
 //static file server stuff
 app.use('/static', express.static('static'));
-app.use('/static2', express.static('static2'));
+app.use('/css', express.static('css'));
 app.use('/css', express.static('css'));
 app.use('/font-awesome', express.static('font-awesome'))
 app.use('/js', express.static('js'));
@@ -526,6 +526,8 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                     if(err){
                         console.log('Adding new item failed');
                         console.log(err);
+                    } else {
+                      response.redirect('/lend');
                     }
             });
         }
