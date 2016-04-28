@@ -158,7 +158,10 @@ var upload = multer({ dest: './static/images/' });
 app.get('/', function(request, response) {
     console.log(request.session.user);
     console.log("######################receiving request#############################33");
-    response.render("index.html");
+    //response.render("index.html");
+    connection.query('SELECT COUNT(*) FROM User', function(err, rows){
+        response.send(rows);
+    });
 });
 app.get('/signup', function(request, response) {
     response.render("signup.html");
@@ -331,7 +334,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
     console.log("GOT REQUEST TO BORROW A THING");
     console.log(request.params);
     var borrowuser = request.session.user;
-    console.log(borrowuser);
+    console.log(borrowuser);'/'
      connection.query('SELECT * from Item WHERE owner = ? AND idItem= ?', [request.session.user,request.params.itemId], function (err,rows) {
          console.log(rows.length);
          //some logic to check for if item owner matches session user
@@ -480,7 +483,7 @@ app.get('/logout', function(req, res){
     } else {
         console.log("no session");
     }
-    res.redirect('/');
+    res.redirect(f);
 });
 function convertCondition(condition){
     if(condition=="New"){
