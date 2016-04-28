@@ -604,6 +604,7 @@ function render_my_profile(user, res){
 };
 
 app.post('/login', function(request, response){
+    response.send("Hello world");
     console.log(request.session.user);
     var uname = request.body.email;
     var pw = request.body.password;
