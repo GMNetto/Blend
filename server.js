@@ -622,7 +622,8 @@ app.post('/login', function(request, response){
             if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
            
-                if(bCrypt.compareSync(pw,rows[0].password)){
+                //if(bCrypt.compareSync(pw,rows[0].password)){
+                if(false){
                     console.log("FOUND ROW");
                     response.send(rows);
                     //request.session.user = "a";
