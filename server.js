@@ -612,14 +612,15 @@ app.post('/login', function(request, response){
     var pw = request.body.password;
     console.log("Received login request");
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [uname,uname], function (err,rows) {
-        /*if(err){
+        if(err){
             console.log('Adding new user failed');
             console.log(err);
             response.send("Errororror");
         }
         else{
             console.log(rows);
-            if(rows[0].Username===uname||rows[0].email===uname){
+            response.send(rows);
+            /*if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
                 if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
@@ -640,7 +641,6 @@ app.post('/login', function(request, response){
                 response.send("Hello");
             }        
         }*/
-        response.send(rows);
     });
 });
 
