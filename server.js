@@ -619,10 +619,10 @@ app.post('/login', function(request, response){
         }
         else{
             console.log(rows);
-            response.send(rows);
-            /*if(rows[0].Username===uname||rows[0].email===uname){
+            if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
-                if(bCrypt.compareSync(pw,rows[0].password)){
+                response.send(rows);
+                /*if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
                     //request.session.user = "a";
 		            var u = getUser(uname, function(err, u){
@@ -635,11 +635,11 @@ app.post('/login', function(request, response){
                      });
                 }else{
                     response.send("Heereee");
-                }
+                }*/
                 //response.send("user not found");
             }else{
                 response.send("Hello");
-            }*/        
+            }     
         }
     });
 });
