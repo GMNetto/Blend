@@ -186,7 +186,7 @@ app.get('/my_profile', requireLogin, function(req, res){
     });
 });
 
-app.get('/search?*', requireLogin, function(req, res, next){
+app.get('/searchTest', requireLogin, function(req, res, next){
     res.send("Search?");
 });
 
@@ -632,8 +632,11 @@ app.post('/login', function(request, response){
                         //response.redirect('/search')
                         response.send("Heereee");
                      });
+                }else{
+                    response.send("Heereee");
                 }
-             }
+                response.send("user not found");
+            }        
         }
     });
 });

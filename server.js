@@ -632,8 +632,11 @@ app.post('/login', function(request, response){
                         //response.redirect('/search')
                         response.send("Heereee");
                      });
+                }else{
+                    response.send("Heereee");
                 }
-             }
+                //response.send("user not found");
+            }        
         }
     });
 });
