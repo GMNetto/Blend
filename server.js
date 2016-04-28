@@ -28,7 +28,7 @@ var MySQLStore = require('express-mysql-session')(session);
 });*/
 
 var db_config = undefined;
-//if(process.env.PRODUCTION != undefined){
+if(process.env.PRODUCTION != undefined){
 
     db_config = {
         host: process.env.CLEARDB_DATABASE_HOST,
@@ -57,7 +57,7 @@ var db_config = undefined;
     };
 
 
-/*}else{
+}else{
     db_config = {
         host: 'localhost',
         user: 'blend_user',
@@ -85,7 +85,7 @@ var db_config = undefined;
     };
 
     
-}*/
+}
 
 
 var connection;
