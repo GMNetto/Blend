@@ -626,7 +626,8 @@ app.post('/login', function(request, response){
 			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
-                        response.redirect('/search')
+                        //response.redirect('/search')
+                        response.send("Heereee");
                      });
                 }
              }
