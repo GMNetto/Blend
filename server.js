@@ -621,21 +621,22 @@ app.post('/login', function(request, response){
             console.log(rows);
             if(rows[0].Username===uname||rows[0].email===uname){
                 console.log("FOUND:"+rows[0]);
-                response.send(rows);
-                /*if(bCrypt.compareSync(pw,rows[0].password)){
+           
+                if(bCrypt.compareSync(pw,rows[0].password)){
                     console.log("FOUND ROW");
+                    response.send(rows);
                     //request.session.user = "a";
-		            var u = getUser(uname, function(err, u){
+		            /*var u = getUser(uname, function(err, u){
                         console.log("returned id " + u.idUser);
 			            request.session.user = u.idUser;
                         request.session.latitude = u.latitude;
                         request.session.longitude = u.longitude;
                         //response.redirect('/search')
                         response.send("Heereee");
-                     });
+                     });*/
                 }else{
                     response.send("Heereee");
-                }*/
+                }
                 //response.send("user not found");
             }else{
                 response.send("Hello");
