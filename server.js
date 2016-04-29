@@ -19,6 +19,7 @@ var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
 
+
 var db_config = undefined;
 if(process.env.PRODUCTION != undefined){
 
@@ -78,7 +79,6 @@ if(process.env.PRODUCTION != undefined){
 }
 
 
-
 var connection;
 console.log(db_config);
 function handleDisconnect() {
@@ -100,6 +100,7 @@ function handleDisconnect() {
 }
 
 handleDisconnect();
+
 var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',
@@ -144,15 +145,9 @@ var distance = require('google-distance');
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
 
-connection.query('SELECT COUNT(*) FROM User', function(err, rows){
-        console.log(rows);
-    });
-
-
 app.get('/', function(request, response) {
-    console.log("###################################");
     console.log(request.session.user);
-    response.render("index.html");
+    response.render("../index.html");
 });
 app.get('/signup', function(request, response) {
     response.render("register.html");
@@ -780,7 +775,7 @@ app.get('/logout', function(req, res){
     //res.send('logout');
     if(req.session.user) {
       req.session.destroy(function(){
-	      console.log("destroy");
+	       console.log("destroy");
       });
     } else {
         console.log("no session");
@@ -1124,3 +1119,4 @@ var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
 }, app).listen(8080);
+
