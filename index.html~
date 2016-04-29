@@ -74,12 +74,12 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#page-top">Blend</a>
-                <div
+                <!--<div
   class="fb-like"
   data-share="true"
   data-width="450"
   data-show-faces="true">
-</div>
+</div>-->
             </div>
 
 
@@ -123,7 +123,7 @@
 										<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
 									</div>
 									<div class="etc-login-form">
-										<div>forgot your password? <a href="https://localhost:8080/forgetpassword">click here</a></div>
+										<div>forgot your password? <a href="forgetpassword">click here</a></div>
 										<div>new user? <a href="https://localhost:8080/signup">create new account</a></div>
 									</div>
 								</form>
