@@ -118,7 +118,7 @@ app.get('/profile/:username', requireLogin, function(req, res, next){
 app.get('/my_profile', requireLogin, function(req, res){
     get_user_by_id(req.session.user, function(err, user){
         if(err)
-            res.render("something_wrong.html");
+            res.render("error.html");
         else{
             console.log("Page my profile")
             render_my_profile(user, res);
@@ -232,7 +232,7 @@ app.get('/lend', requireLogin, function(request, response) {
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
-            response.render("something_wrong.html");
+            response.render("error.html");
         else
             render_transactions(user, response);
     });
@@ -592,55 +592,78 @@ app.post('/newfeedback', requireLogin, function(request, response){
     var feedbackuser = request.body.feedbackUser;
     var feedbacktype = request.body.transactionType;
     var feedbackuserid = request.body.feedbackuserId;
-    console.log("Adding new feedback for "+feedbackuserid+ " "+feedbackuser);
-    connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
-        if(rows.length>0){
-            console.log("updating row:");
-            console.log(rows[0]);
-            var row = rows[0];
-            //calc new cumulative moving average = (new rating + old total*current average)/(old total+1)
-            var newaverage;
-            if(feedbacktype=="borrower"){
-                var curborrows = row.total_borrow_ratings;//n
-                newaverage = ((newrating +(curborrows*row.borrower_rating))/parseFloat(curborrows+1)).toFixed(1);
-                console.log("borrow newaverage:"+newaverage);
-                //http://stackoverflow.com/questions/2762851/increment-a-database-field-by-1
-                connection.query('UPDATE User SET borrower_rating = ?, total_borrow_ratings = total_borrow_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
-                    if(err){
-                        //feedback update failed
-                        console.log("updating borrower rating failed");
+    //make sure that logged in user can actually comment on transaction
+     connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.body.transactionId, request.session.user,request.session.user], function (err,rows) {
+         if(rows.length>0){
+            connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
+                if(rows.length>0){
+                    //console.log("updating row:");
+                    //console.log(rows[0]);
+                    var row = rows[0];
+                    //calc new cumulative moving average = (new rating + old total*current average)/(old total+1)
+                    var newaverage;
+                    if(feedbacktype=="borrower"){
+                        connection.query('SELECT * from Borrows WHERE idBorrows = ? AND finished=0 AND lender_commented=0', [request.body.transactionId], function (err,rows) {
+                            if(rows.length>0){
+                                var curborrows = row.total_borrow_ratings;//n
+                                newaverage = ((newrating +(curborrows*row.borrower_rating))/parseFloat(curborrows+1)).toFixed(1);
+                                console.log("borrow newaverage:"+newaverage);
+                                //http://stackoverflow.com/questions/2762851/increment-a-database-field-by-1
+                                connection.query('UPDATE User SET borrower_rating = ?, total_borrow_ratings = total_borrow_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                                    if(err){
+                                        //feedback update failed
+                                        console.log("updating borrower rating failed");
+                                    }
+                                 });
+                                //if comment on borrower, set finished.
+                                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                            else{
+                                //no nonfinished transaction to comment on
+                                console.log("Transaction already has been commented on by lender ")
+                            }
+                       }); 
                     }
-                 });
-                //if comment on borrower, set finished.
-                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
-            }
-            else{
-                //lender update logic
-                var curlender = row.total_lend_ratings;
+                    else{
+                        connection.query('SELECT * from Borrows WHERE idBorrows = ? AND borrower_commented=0', [request.body.transactionId], function (err,rows) {
+                            if(rows.length>0){
+                                //lender update logic
 
-                newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
-                console.log("lender newaverage:"+newaverage);
-                connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
-                    if(err){
-                        //feedback update failed
-                        console.log("updating lender rating failed");
+                                var curlender = row.total_lend_ratings;
+
+                                newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
+                                console.log("lender newaverage:"+newaverage);
+                                connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                                    if(err){
+                                        //feedback update failed
+                                        console.log("updating lender rating failed");
+                                    }
+                                 });
+                                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                            else{
+                                console.log("Borrower has already commmented on transaction")
+                            }
+                        });
                     }
-                 });
-                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
-            }
+                }
+                else{
+                    console.log("Couldn't find user");
+                }
+        });
         }
-        else{
-            console.log("Couldn't find user");
-        }
-    });
+         else{
+             console.log("user did not participate in transaction");
+         }
+ });
 });
 app.get('/feedback/:transactionId', requireLogin, function(request, response){
     //some query to check if this is valid feedback for a COMPLETED transaction. Since it's still kind of fluid right now, there won't be a check here
@@ -676,7 +699,14 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
                     else{
                         feedbackuserrating = rows[0].lender_rating;
                     }
-                    response.render("feedback.html",{curuser:request.session.username,transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image,rating:feedbackuserrating,duration:row.duration,date:row.inital_date});
+                    connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.params.transactionId, request.session.user,request.session.user], function (err,rows) {
+                        if(rows.length>0){
+                            response.render("feedback.html",{curuser:request.session.username,transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image,rating:feedbackuserrating,duration:row.duration,date:row.inital_date});
+                        }
+                        else{
+                            console.log("user is not involved in this transaction");
+                        }
+                     });
                 }
                 else{
                     //user doesn't exist. This shouldn't happen
@@ -853,7 +883,8 @@ app.post('/login', function(request, response){
                  }
             }
             else{
-                //send back error code or something
+                //login error
+                response.send('<div class = \'logo\' style = "color: red !important"> Incorrect Username or Password. </div>');
             }
         }
     });
@@ -863,7 +894,7 @@ app.get("/items", function(req, res){
     get_items_from_user(req.session.user, function(err, items){
         if(err){
             res.status(404);
-            res.render("something_wrong.html", {url: req.url});
+            res.render("error.html", {url: req.url});
         }else{
             res.render("items.html", {items: items});
         }
