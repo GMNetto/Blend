@@ -2,6 +2,7 @@
  * Created by Gustavo on 4/3/2016.
  */
 var https = require('https');
+var http = require('http');
 var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -18,34 +19,87 @@ var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
 
-//create db connection to localhost (at this point)
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'blend_user',
-    password: 'blend_password',
-    database: 'blend_db'
-});
+var db_config = undefined;
+if(process.env.PRODUCTION != undefined){
 
-var options_session = {
-    host: 'localhost',
-    port: 3306,
-    user: 'blend_user',
-    password: 'blend_password',
-    database: 'blend_db',
-    checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
-    expiration: 86400000,// The maximum age of a valid session; milliseconds.
-    createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
-    schema: {
-        tableName: 'sessions',
-        columnNames: {
-            session_id: 'session_id',
-            expires: 'expires',
-            data: 'data'
-        }
+    db_config = {
+        host: process.env.CLEARDB_DATABASE_HOST,
+        user: process.env.CLEARDB_DATABASE_USER,
+        password: process.env.CLEARDB_DATABASE_PASSWORD,
+        database: process.env.CLEARDB_DATABASE_SCHEMA
     }
-};
 
-connection.connect();
+    var options_session = {
+        host: process.env.CLEARDB_DATABASE_HOST,
+        port: 3306,
+        user: process.env.CLEARDB_DATABASE_USER,
+        password: process.env.CLEARDB_DATABASE_PASSWORD,
+        database: process.env.CLEARDB_DATABASE_SCHEMA,
+        checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
+        expiration: 86400000,// The maximum age of a valid session; milliseconds.
+        createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    };
+
+
+}else{
+    db_config = {
+        host: 'localhost',
+        user: 'blend_user',
+        password: 'blend_password',
+        database: 'blend_db'
+    }
+
+    var options_session = {
+        host: 'localhost',
+        port: 3306,
+        user: 'blend_user',
+        password: 'blend_password',
+        database: 'blend_db',
+        checkExpirationInterval: 900000,// How frequently expired sessions will be cleared; milliseconds.
+        expiration: 86400000,// The maximum age of a valid session; milliseconds.
+        createDatabaseTable: true,// Whether or not to create the sessions database table, if one does not already exist.
+        schema: {
+            tableName: 'sessions',
+            columnNames: {
+                session_id: 'session_id',
+                expires: 'expires',
+                data: 'data'
+            }
+        }
+    };
+}
+
+
+
+var connection;
+console.log(db_config);
+function handleDisconnect() {
+  connection = mysql.createConnection(db_config);
+  connection.connect(function(err) {
+    if(err) {               
+      console.log('error when connecting to db:', err);
+      setTimeout(handleDisconnect, 2000);
+    }                                    
+  });                                    
+  connection.on('error', function(err) {
+    console.log('db error', err);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+      handleDisconnect();                        
+    } else {                                     
+      throw err;                                 
+    }
+  });
+}
+
+handleDisconnect();
 var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',
@@ -74,11 +128,12 @@ app.set('views', __dirname + '/templates'); // tell Express where to find templa
 app.use(express.static('static'));
 //static file server stuff
 app.use('/static', express.static('static'));
-app.use('/static2', express.static('static2'));
+app.use('/css', express.static('css'));
 app.use('/css', express.static('css'));
 app.use('/font-awesome', express.static('font-awesome'))
 app.use('/js', express.static('js'));
 app.use('/img/portfolio', express.static('img/portfolio'));
+app.use('/fonts', express.static('fonts'));
 app.use(express.static('bootstrap'));
 
 //google maps distance api
@@ -89,9 +144,15 @@ var distance = require('google-distance');
 var multer  = require('multer');
 var upload = multer({ dest: './static/images/' });
 
+connection.query('SELECT COUNT(*) FROM User', function(err, rows){
+        console.log(rows);
+    });
+
+
 app.get('/', function(request, response) {
+    console.log("###################################");
     console.log(request.session.user);
-    response.render("../index.html");
+    response.render("index.html");
 });
 app.get('/signup', function(request, response) {
     response.render("register.html");
@@ -103,17 +164,21 @@ app.get('/forgetpassword', function(request, response) {
 app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
     getUser(req.params.username, function(err, user){
-        if(err)
-            next();
-        else
-	        render_profile(user, res);
+        if(req.session.user == user.idUser) {
+          res.redirect('/my_profile');
+        }  else {
+          if(err)
+              next();
+          else
+  	        render_profile(user, res);
+        }
     });
 });
 
 app.get('/my_profile', requireLogin, function(req, res){
     get_user_by_id(req.session.user, function(err, user){
         if(err)
-            res.render("something_wrong.html");
+            res.render("error.html");
         else{
             console.log("Page my profile")
             render_my_profile(user, res);
@@ -130,20 +195,24 @@ app.get('/search', requireLogin, function(request, response){
 });
 function getOngoingBorrows(username, callback){
     connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.finished = 0;', [username], function(err, result){
-        if(err || isEmpty(result)){
-            console.log("No ongoing borrow transactions");
+        if(err){
             callback(true, undefined);
         }else{
+            if(isEmpty(result)){
+                console.log("No ongoing borrow transactions");
+            }
             callback(err, result);
         }
     })
 };
 function getOngoingLends(userid, callback){
     connection.query('select * from Borrows, User as U,Item as I where Borrows.idProduct = I.idItem and U.idUser=Borrows.idUser and Borrows.idProduct in (select idItem from Item where Item.owner=?);', [userid], function(err, result){
-        if(err || isEmpty(result)){
-            console.log("No ongoing lent item transactions");
+        if(err){
             callback(true, undefined);
         }else{
+            if(isEmpty(result)){
+                console.log("No ongoing lent item transactions");
+            }
             callback(err, result);
         }
     }
@@ -223,7 +292,7 @@ app.get('/lend', requireLogin, function(request, response) {
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
-            res.render("something_wrong.html");
+            response.render("error.html");
         else
             render_transactions(user, response);
     });
@@ -234,9 +303,11 @@ function render_transactions(user, res){
     getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
         getOngoingLends(user.idUser, function(err_lend, list_items_lend){
             if(err_borrow || err_lend){
-                res.render("page_not_found.html");
+                console.log("An error just happened");
+                res.render("error.html");
                 res.end();
             }
+            else{
             var l_B = list_items_borrow, l_L = list_items_lend;
             //l_B["borrow"] = [{"name": 'Hello'}, {'name': 'Bye'}];
             console.log(l_B);
@@ -245,7 +316,7 @@ function render_transactions(user, res){
             var hasL;
             if(l_L===undefined){
                 hasL=false;
-                l_L={};
+
             }
             else{
                 hasL=(l_L.length>0);
@@ -254,13 +325,17 @@ function render_transactions(user, res){
             var hasB;
             if(l_B===undefined){
                 hasB=false;
-                l_B={};
             }
             else{
                 hasB =(l_B.length>0);
             }
-            res.render("transactions.html",{ borrows: l_B,haslend:hasL,lend: l_L});
-            console.log("end");
+            console.log("hasB:"+hasB);
+            console.log("hasL:"+hasL);
+            res.render("transactions.html",{has_borrows:(l_B.length>0),borrows: l_B,haslend:hasL,lend:l_L});
+            //res.send({ has_borrows:true,haslend:true});
+            //res.render("transactions.html");
+            //console.log("end");
+            }
         });
     });
 };
@@ -331,7 +406,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
              //insert into db. Note: does prevent duplicate offers, since each is unique
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
              //first check if there is an ongoing transaction concerning that item however
-             connection.query('select * from Borrows where accepted = 1 and finished = 0', [request.session.user,request.params.itemId], function (err,rows) {
+             connection.query('select * from Borrows where accepted = 1 and finished = 0 and idProduct = ?', [request.params.itemId], function (err,rows) {
                  if(rows.length>0){
                      //currently an ongoing transactions, block the borrowing
                      console.log("detected ongoing transaction. Blocking");
@@ -511,6 +586,8 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                     if(err){
                         console.log('Adding new item failed');
                         console.log(err);
+                    } else {
+                      response.redirect('/lend');
                     }
             });
         }
@@ -575,59 +652,83 @@ app.post('/newfeedback', requireLogin, function(request, response){
     var feedbackuser = request.body.feedbackUser;
     var feedbacktype = request.body.transactionType;
     var feedbackuserid = request.body.feedbackuserId;
-    console.log("Adding new feedback for "+feedbackuserid+ " "+feedbackuser);
-    connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
-        if(rows.length>0){
-            console.log("updating row:");
-            console.log(rows[0]);
-            var row = rows[0];
-            //calc new cumulative moving average = (new rating + old total*current average)/(old total+1)
-            var newaverage;
-            if(feedbacktype=="borrower"){
-                var curborrows = row.total_borrow_ratings;//n
-                newaverage = ((newrating +(curborrows*row.borrower_rating))/parseFloat(curborrows+1)).toFixed(1);
-                console.log("borrow newaverage:"+newaverage);
-                //http://stackoverflow.com/questions/2762851/increment-a-database-field-by-1
-                connection.query('UPDATE User SET borrower_rating = ?, total_borrow_ratings = total_borrow_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
-                    if(err){
-                        //feedback update failed
-                        console.log("updating borrower rating failed");
+    //make sure that logged in user can actually comment on transaction
+     connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.body.transactionId, request.session.user,request.session.user], function (err,rows) {
+         if(rows.length>0){
+            connection.query('SELECT * from User WHERE idUser = ?', [feedbackuserid], function (err,rows) {
+                if(rows.length>0){
+                    //console.log("updating row:");
+                    //console.log(rows[0]);
+                    var row = rows[0];
+                    //calc new cumulative moving average = (new rating + old total*current average)/(old total+1)
+                    var newaverage;
+                    if(feedbacktype=="borrower"){
+                        connection.query('SELECT * from Borrows WHERE idBorrows = ? AND finished=0 AND lender_commented=0', [request.body.transactionId], function (err,rows) {
+                            if(rows.length>0){
+                                var curborrows = row.total_borrow_ratings;//n
+                                newaverage = ((newrating +(curborrows*row.borrower_rating))/parseFloat(curborrows+1)).toFixed(1);
+                                console.log("borrow newaverage:"+newaverage);
+                                //http://stackoverflow.com/questions/2762851/increment-a-database-field-by-1
+                                connection.query('UPDATE User SET borrower_rating = ?, total_borrow_ratings = total_borrow_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                                    if(err){
+                                        //feedback update failed
+                                        console.log("updating borrower rating failed");
+                                    }
+                                 });
+                                //if comment on borrower, set finished.
+                                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                            else{
+                                //no nonfinished transaction to comment on
+                                console.log("Transaction already has been commented on by lender ")
+                            }
+                       }); 
                     }
-                 });
-                //if comment on borrower, set finished.
-                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
-            }
-            else{
-                //lender update logic
-                var curlender = row.total_lend_ratings;
+                    else{
+                        connection.query('SELECT * from Borrows WHERE idBorrows = ? AND borrower_commented=0', [request.body.transactionId], function (err,rows) {
+                            if(rows.length>0){
+                                //lender update logic
 
-                newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
-                console.log("lender newaverage:"+newaverage);
-                connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
-                    if(err){
-                        //feedback update failed
-                        console.log("updating lender rating failed");
+                                var curlender = row.total_lend_ratings;
+
+                                newaverage = ((newrating +(curlender*row.lender_rating))/parseFloat(curlender+1.0)).toFixed(1);
+                                console.log("lender newaverage:"+newaverage);
+                                connection.query('UPDATE User SET lender_rating = ?, total_lend_ratings = total_lend_ratings + 1 WHERE idUser = ?', [newaverage,feedbackuserid], function (err) {
+                                    if(err){
+                                        //feedback update failed
+                                        console.log("updating lender rating failed");
+                                    }
+                                 });
+                                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                            else{
+                                console.log("Borrower has already commmented on transaction")
+                            }
+                        });
                     }
-                 });
-                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                    if(err){
-                        console.log(err);
-                    }
-            });
-            }
+                }
+                else{
+                    console.log("Couldn't find user");
+                }
+        });
         }
-        else{
-            console.log("Couldn't find user");
-        }
-    });
+         else{
+             console.log("user did not participate in transaction");
+         }
+ });
 });
 app.get('/feedback/:transactionId', requireLogin, function(request, response){
     //some query to check if this is valid feedback for a COMPLETED transaction. Since it's still kind of fluid right now, there won't be a check here
     connection.query('SELECT * from Borrows LEFT JOIN Item ON Borrows.idProduct=Item.idItem WHERE idBorrows= ?', [request.params.transactionId], function (err,rows) {
+        //won't do anything if this condition is true
         if(rows.length==0){
             //no such transaction
         }
@@ -650,7 +751,22 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
             connection.query('SELECT * from User WHERE idUser= ?', [usertorate], function (err,rows) {
                 //params are {{feedbackuser}},{{itemName}},{{image}}, probably should send feedbackuser id to store in meta tag or something
                 if(rows.length>0){
-                    response.render("feedback.html",{transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image});
+                    var feedbackuserrating;
+                    //shows rating on feedback page
+                    if(usertype=="borrower"){
+                        feedbackuserrating = rows[0].borrower_rating;
+                    }
+                    else{
+                        feedbackuserrating = rows[0].lender_rating;
+                    }
+                    connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.params.transactionId, request.session.user,request.session.user], function (err,rows) {
+                        if(rows.length>0){
+                            response.render("feedback.html",{curuser:request.session.username,transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image,rating:feedbackuserrating,duration:row.duration,date:row.inital_date});
+                        }
+                        else{
+                            console.log("user is not involved in this transaction");
+                        }
+                     });
                 }
                 else{
                     //user doesn't exist. This shouldn't happen
@@ -766,7 +882,7 @@ function render_profile(user, res){
     getRecentBorrow(user.Username, 3, function(err_borrow, list_items_borrow){
         getRecentLend(user.Username, 3, function(err_lend, list_items_lend){
             if(err_borrow || err_lend){
-                res.render("page_not_found.html");
+                res.render("error.html");
                 res.end();
             }
             var l_B = list_items_borrow, l_L = list_items_lend;
@@ -784,7 +900,7 @@ function render_my_profile(user, res){
         getRecentLend(user.Username, 3, function(err_lend, list_items_lend){
             get_items_from_user(user.idUser, function(err_items, list_items){
                 if(err_borrow || err_lend || err_items)
-                    res.render("page_not_found.html");
+                    res.render("error.html");
                 else
                     var list_items_borrow_has_items = (list_items_borrow.length > 0)
                     var list_items_lend_has_items = (list_items_lend.length > 0)
@@ -808,21 +924,28 @@ app.post('/login', function(request, response){
         }
         else{
             console.log(rows);
-            if(rows[0].Username===uname||rows[0].email===uname){
-                console.log("FOUND:"+rows[0]);
-                if(bCrypt.compareSync(pw,rows[0].password)){
-                    console.log("FOUND ROW");
-                    //request.session.user = "a";
-		            var u = getUser(uname, function(err, u){
-                        console.log("returned id " + u.idUser);
-			            request.session.user = u.idUser;
-                        request.session.latitude = u.latitude;
-                        request.session.longitude = u.longitude;
+            if(rows.length>0){
+                if(rows[0].Username===uname||rows[0].email===uname){
+                    console.log("FOUND:"+rows[0]);
+                    if(bCrypt.compareSync(pw,rows[0].password)){
+                        console.log("FOUND ROW");
+                        //request.session.user = "a";
+                        var u = getUser(uname, function(err, u){
+                            console.log("returned id " + u.idUser);
+                            request.session.user = u.idUser;
+                            request.session.username = u.Username;
+                            request.session.latitude = u.latitude;
+                            request.session.longitude = u.longitude;
 
-                        response.redirect('/search')
-                     });
-                }
-             }
+                            response.redirect('/search')
+                         });
+                    }
+                 }
+            }
+            else{
+                //login error
+                response.send('<div class = \'logo\' style = "color: red !important"> Incorrect Username or Password. </div>');
+            }
         }
     });
 });
@@ -831,7 +954,7 @@ app.get("/items", function(req, res){
     get_items_from_user(req.session.user, function(err, items){
         if(err){
             res.status(404);
-            res.render("something_wrong.html", {url: req.url});
+            res.render("error.html", {url: req.url});
         }else{
             res.render("items.html", {items: items});
         }
@@ -988,10 +1111,14 @@ function calcDuration(period){
 app.use(function(req, res, next){
     res.status(404);
     if(req.accepts("html")){
-        res.render('page_not_found.html', {url: req.url});
+        res.render('error.html', {url: req.url});
         return;
     }
 });
+
+//app.set('port', (process.env.PORT || 5000));
+
+//var serverhttp = http.createServer(app).listen(app.get('port'));
 
 var server = https.createServer({
   key: fs.readFileSync('private.key'),

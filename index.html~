@@ -34,9 +34,9 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link href="static2/login_info.css" rel="stylesheet">
-    <script src="static2/login_info.js" type="text/javascript"></script>
-    <link href="static2/signin.css" rel="stylesheet">
+    <link href="css/login_info.css" rel="stylesheet">
+    <script src="css/login_info.js" type="text/javascript"></script>
+    <link href="css/signin.css" rel="stylesheet">
     <script src="static/index.js" type="text/javascript"></script>
 
 </head>

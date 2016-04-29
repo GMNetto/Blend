@@ -14,16 +14,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 	
-	<link href="../static/search.css" rel="stylesheet">
-	<script src="../static/feedback.js" type="text/javascript"></script>
+	<link href="https://localhost:8080/static/search.css" rel="stylesheet">
 
     <title>Blend</title>
 
     <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://localhost:8080/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="../static/trans.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -37,10 +34,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     
-    <link href="../static/login_info.css" rel="stylesheet">
-    <script src="../static/login_info.js" type="text/javascript"></script> 
-    <link href="../static/signin.css" rel="stylesheet">
-    <script src="../static/index.js" type="text/javascript"></script> 
 
 </head>
 
@@ -65,16 +58,16 @@
                         <a href="#page-top"></a>
                     </li>
                     <li class="page-scroll">
-                        <a href="/search">Borrow</a>
+                        <a href="search.html">Borrow</a>
                     </li>
                     <li class="page-scroll">
-                        <a href="/lend">Lend</a>
+                        <a href="lend.html">Lend</a>
                     </li>
                     <li class="page-scroll">
-                        <a href="/transactions">Activity</a>
+                        <a href="transactions.html">Activity</a>
                     </li>
                     <li class="page-scroll">
-                        <a href="/my_profile">Profile</a>
+                        <a href="profile.html">Profile</a>
                     </li>
                     <li class="page-scroll">
                         <a href="../index.html">Logout</a>
@@ -87,121 +80,22 @@
         <!-- /.container-fluid -->
     </nav>
 
-
-	
-	
     <!-- Header -->
     <header>
         <div class="footer-above">
             <div class="container">
                 <div class="row">
-                    <div class="footer-col col-md-4" style = "width:100%" id = "div-main-feedback">
-                        	
-                    <div class="logo">feedback: </div>
-                        <meta name="duration" content={{duration}}>
-                        <meta name="startdate" content={{date}}>
-                    <hr />
-					<div class="login-form-1" id = "feedback_main">
-						<form id="register-form" class="text-left" action="/newfeedback" method="POST">
-                            <input type="hidden" name="transactionType" id="transactiontype" value={{type}} /> 
-                            <input type="hidden" name="feedbackuserId" id="fbid" value={{feedbackuserid}} />
-                            <input type="hidden" name="feedbackUser" id="fbuser" value={{feedbackuser}} />
-                            <input type="hidden" name="transactionId" id="transid" value={{transactionid}} />
-							<div class="login-form-main-message">
-							</div>
-							<div class="main-login-form">
-								<div class="login-group">	
-									<div class="form-group">
-									<br />	
-										<div class="form-group">
-											<div style = "text-align:center"> transaction between: 
-												<a href = "#">
-													<span id = "feedback-user"> {{feedbackuser}} </span>
-												</a>
-												
-													<span > and</span>
-													
-												<a href = "#">
-													<span id = "cur-user"> {{curuser}} </span>
-												</a>
-										</div>
-										<br />
-                                        </div>
-										<!-- List for items Lent -->
-										<ul style = "list-style:none;" class = "list-group">
-							
-											<!-- Item 1 -->
-											<li class = "list-group-item">
-												<!-- Section 1, item image and title -->
-												<div class="footer-col col-md-4" >
-													<!-- Item Image and title, opens up modal when clicked -->
-													<div class="portfolio-item" >
-														<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-															<img class = "img_fade" src = "/static/images/{{image}}">
-															<span id = "item_fade">{{itemName}}</span>
-														</a>
-													</div>
-
-												</div>
-									
-												<!-- Section 2, User and Rating -->
-												<div class="footer-col col-md-4" id = "div2">
-										
-													<!-- Text/Link for user profile -->
-													<a href = "#" > 
-														<div id = "feedback-user2">user: {{feedbackuser}}</div>
-													</a>
-										
-													<!-- Text/Link for user rating-->
-													<a href = "#" > 
-														<div id = "trans-rating">rating: {{rating}}</div>
-													</a>
-
-												</div>
-									
-												<!-- Section 3, start and end date -->
-												<div class="footer-col col-md-4" id = "period_contact_feedback">
-										
-													<!-- text for start date -->
-													<div id = "start_date">start date: {{date}}</div>
-										
-										
-													<!-- text for end date -->
-													<div id = "end_date">end date: {{end}}</div>
-									
-												</div>
-											</li>
-                                            </ul>
-											
-										<div class="form-group login-group-checkbox">
-											<br />
-											<select class="form-control" name= "rating" id="ratingSelector" placeholder = 1>
-                                            
-											  <option value=1 disabled selected hidden>Rate your transaction</option>
-											  <option>1</option>
-											  <option>2</option>
-											  <option>3</option>
-											  <option>4</option>
-											  <option>5</option>
-											</select>
-											<br />
-										</div>
-										<div class="form-group">
-											<br />
-											<label for="reg_feedback" class="sr-only">Price </label>
-											<textarea class="form-control" name="feedback" id="itemDescription" placeholder= "Please Provide Feedback" rows="3"></textarea>
-											<br />
-										</div>
-									</div>
-									<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
-								</div>
-                                </div>
-							</form>
-						
-                   	</div>
+			<hr />
+					
+			<div class = "logo" style = "text-align:center"> 404: There was an error. </div>
+			<br />
+			<br />
+					
+			<div style = "text-align:center">
+				<img src = "../static/img/blender.png" width = "100px" height = "153px">
+			</div>
                 </div>
             </div>
-        </div>
         </div>
     </header>
     
@@ -258,22 +152,22 @@
 
 
     <!-- jQuery -->
-    <script src="../js/jquery.js"></script>
+    <script src="https://localhost:8080/js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../js/bootstrap.min.js"></script>
+    <script src="https://localhost:8080/js/bootstrap.min.js"></script>
 
     <!-- Plugin JavaScript -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="../js/classie.js"></script>
-    <script src="../js/cbpAnimatedHeader.js"></script>
+    <script src="https://localhost:8080/js/classie.js"></script>
+    <script src="https://localhost:8080/js/cbpAnimatedHeader.js"></script>
 
     <!-- Contact Form JavaScript -->
-    <script src="../js/jqBootstrapValidation.js"></script>
-    <script src="../js/contact_me.js"></script>
+    <script src="https://localhost:8080/js/jqBootstrapValidation.js"></script>
+    <script src="https://localhost:8080/js/contact_me.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../js/freelancer.js"></script>
+    <script src="https://localhost:8080/js/freelancer.js"></script>
 
 </body>
 

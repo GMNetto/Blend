@@ -68,7 +68,7 @@ function loadItem(){
     initrequest.send(null);
 
 }
-function borrowThing(){
+function borrowThing(itemId){
     alert("Request to borrow sent");
     console.log("Attempting to borrow item of id:"+itemId);
     borrowrequest.open('POST', '/borrow/'+itemId, true);
