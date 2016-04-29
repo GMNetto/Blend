@@ -38,6 +38,7 @@
     "mysql2": "~1.0.0-rc.1",
     "node-geocoder": "^3.9.1",
     "session": "~0.1.0",
-    "email-existence": "~0.1.5"
+    "email-existence": "~0.1.5",
+    "crypto": "0.0.3"
   }
 }

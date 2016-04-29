@@ -923,6 +923,7 @@ app.post('/login', function(request, response){
                 if(rows[0].Username===uname||rows[0].email===uname){
                     console.log("FOUND:"+rows[0]);
                     if(bCrypt.compareSync(pw,rows[0].password)){
+                    //if(pw == rows[0].password){
                         console.log("FOUND ROW");
                         //request.session.user = "a";
                         var u = getUser(uname, function(err, u){
