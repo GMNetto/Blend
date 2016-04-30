@@ -90,16 +90,19 @@ function handleDisconnect() {
     }                                    
   });                                    
   connection.on('error', function(err) {
-    console.log('db error', err);
-    //if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+    console.log("A BIG PROBLEM");
+    console.log('db error', err, err.code);
+    if(err.code === 'PROTOCOL_CONNECTION_LOST') {
       handleDisconnect();                        
-    //} else {                                     
-    //  throw err;                                 
-    //}
+    } else {                                     
+      throw err;                                 
+    }
   });
 }
 
 handleDisconnect();
+
+
 
 var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
