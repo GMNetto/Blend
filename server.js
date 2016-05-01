@@ -80,6 +80,7 @@ if(process.env.PRODUCTION != undefined){
 
 
 var connection;
+var sessionStore;
 console.log(db_config);
 function handleDisconnect() {
   connection = mysql.createConnection(db_config);
@@ -88,6 +89,7 @@ function handleDisconnect() {
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
     }else{
+      sessionStore = new MySQLStore(options_session, connection);
       console.log("CONNECTED")      
     }                                    
   });                                    
@@ -107,12 +109,12 @@ handleDisconnect();
 
 
 
-var sessionStore = new MySQLStore(options_session, connection);
+//var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',
     secret: 'my express secret',
     saveUninitialized: false,
-    resave: true,
+    resave: false,
     rolling: false,
     store: sessionStore,
 }));
