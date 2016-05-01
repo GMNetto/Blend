@@ -87,6 +87,8 @@ function handleDisconnect() {
     if(err) {               
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
+    }else{
+      console.log("CONNECTED")      
     }                                    
   });                                    
   connection.on('error', function(err) {
