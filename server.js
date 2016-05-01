@@ -12,7 +12,7 @@ var async = require("async");
 //number parsing for distance library
 //var numeral = require('numeral');
 app.use(bodyParser.urlencoded({ extended: false }));
-var mysql = require("mysql2");
+var mysql = require("mysql");
 var bCrypt = require("bcrypt-nodejs");
 app.use(require('morgan')('dev'));
 var session = require("express-session");

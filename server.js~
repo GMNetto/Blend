@@ -97,7 +97,7 @@ function handleDisconnect() {
     if(err.code === 'PROTOCOL_CONNECTION_LOST') {
       handleDisconnect();                        
     } else {
-      console.log('got different error: ' + err)                                     
+      console.log('got different error: ' + err);                                     
       throw err;                                 
     }
   });
