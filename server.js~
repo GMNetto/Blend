@@ -87,6 +87,8 @@ function handleDisconnect() {
     if(err) {               
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
+    }else{
+      console.log("CONNECTED")      
     }                                    
   });                                    
   connection.on('error', function(err) {
@@ -94,7 +96,8 @@ function handleDisconnect() {
     console.log('db error', err, err.code);
     if(err.code === 'PROTOCOL_CONNECTION_LOST') {
       handleDisconnect();                        
-    } else {                                     
+    } else {
+      console.log('got different error: ' + err)                                     
       throw err;                                 
     }
   });
