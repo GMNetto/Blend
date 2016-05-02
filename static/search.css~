@@ -21,3 +21,7 @@ ul#searchResults li{
     border-style:inset;
     max-height:50%;
 }
+a{
+    color: #FFFFFF;
+    text-decoration: none;
+}
