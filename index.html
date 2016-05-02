@@ -102,9 +102,16 @@
 						<div class="text-center" style="padding:50px 0">
 							<div class="logo">login</div>
 							<!-- Main Form -->
+                            {{#has_error}}
+                            <!-- http://v4-alpha.getbootstrap.com/components/forms/-->
+                            <div class="form-group has-danger">
+                            <label class="login-form-1" for="main-login-form" style = "color:#e74c3c">Incorrect username or password</label>
+                            </div>
+                            {{/has_error}}
 							<div class="login-form-1">
 								<form id="login-form" class="text-left" action="/login" method="post">
 									<div class="login-form-main-message"></div>
+
 									<div class="main-login-form">
 										<div class="login-group">
 											<div class="form-group">

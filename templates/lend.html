@@ -42,7 +42,7 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" style = "background-color: #1ABC9C !important">
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -94,6 +94,11 @@
 			<div class="row">
 						<!-- REGISTRATION FORM -->
 						<div class="text-center" >
+                            {{#success}}
+                            <div class="alert alert-info" role="alert">
+                            <strong>Item Successfully Uploaded! </strong> Other users can now request to borrow the item.
+                            </div>
+                            {{/success}}
 							<div class="logo">Lend An Item</div>
 							<!-- Main Form -->
 							<div class="login-form-1">
