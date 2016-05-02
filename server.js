@@ -155,7 +155,7 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("../index.html");
+    response.render("../index.html",{has_error:false});
 });
 app.get('/signup', function(request, response) {
     response.render("register.html");
@@ -269,7 +269,13 @@ app.post('/searchquery', requireLogin, function(request, response){
                   console.log('Processing item ' + item);
                 findDistance(originallat,originallon,item.lat,item.lon,function(result){
                         console.log("done");
-                        item.distance =result.replace(',','');
+                        //should not happen, only happened when google went down for some reason
+                        if(result===undefined){
+                            item.distance = Number.MAX_VALUE+ " km";
+                        }
+                        else{
+                            item.distance =result.replace(',','');
+                        }
                         callback();
                     });
 
@@ -290,7 +296,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
-    response.render("lend.html");
+    response.render("lend.html",{success:false});
 });
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
@@ -582,6 +588,9 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         if(err){
 
         }
+        if(rows.length==0){
+            //should not happen, but just adding in a condition in the unlikely event this happens
+        }
         else{
             console.log(rows[0]);
             var userid = rows[0].idUser;
@@ -590,7 +599,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                         console.log('Adding new item failed');
                         console.log(err);
                     } else {
-                      response.redirect('/lend');
+                      response.render('lend.html',{success:true});
                     }
             });
         }
@@ -924,6 +933,7 @@ app.post('/login', function(request, response){
         if(err){
             console.log('User lookup failed');
             console.log(err);
+            response.render('../index.html',{has_error:true});
         }
         else{
             console.log(rows);
@@ -944,11 +954,21 @@ app.post('/login', function(request, response){
                             response.redirect('/search')
                          });
                     }
+                    else{
+                        //incorrect password
+                        response.render('../index.html',{has_error:true});
+                    }
                  }
+                else{
+                    //login error
+                    //no matching username
+                    response.render('../index.html',{has_error:true});
+                }
             }
             else{
                 //login error
-                response.send('<div class = \'logo\' style = "color: red !important"> Incorrect Username or Password. </div>');
+                //empty
+                response.render('../index.html',{has_error:true});
             }
         }
     });
