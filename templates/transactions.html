@@ -332,10 +332,12 @@
 										</a>
                                         {{/borrower_commented}}
 										{{/accepted}}
+                                        {{^accepted}}
 										<!-- Image/Link for decline transaction, opens up modal when clicked -->
-										<a href = "#portfolioModal4" class="portfolio-link" data-toggle="modal" id = "trans_cancel" >
+										<a href = "#cancel{{idBorrows}}" class="portfolio-link" data-toggle="modal" id = "trans_cancel" >
 											<img class = "trans_x2" src = "../img/fail.png">
 										</a>
+                                        {{/accepted}}
 									</div>
                                     <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
                                     <div class="modal-content">
@@ -376,6 +378,30 @@
 								</li>
 
                         </ul>
+                        <div class="portfolio-modal modal fade" id="cancel{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-content">
+                                        <div class="close-modal" data-dismiss="modal">
+                                            <div class="lr">
+                                                <div class="rl">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-8 col-lg-offset-2">
+                                                    <div class="modal-body">
+                                                        <h2>Are you sure you want to cancel this transaction?</h2>
+                                                        <button type="button" class="btn btn-danger" onclick="cancelTrans({{idBorrows}});window.location.reload();">Reject Offer</button>
+
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         {{/borrows}}
                         {{/has_borrows}}
                     </div>

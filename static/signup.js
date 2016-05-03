@@ -11,6 +11,8 @@ function testUserName(username){
     return usernameregex.test(username);
 }
 function submitForm(){
+    document.getElementById("badusername").style.display="none";
+    document.getElementById("badaddress").style.display="none";
     console.log("clicked");
     var validated = true;
     var email = document.getElementById("inputEmail").value;
@@ -74,8 +76,28 @@ function submitForm(){
     }
     if(validated){
       console.log("SUCCESS");
-        var usereq = new XMLHttpRequest();
-        
+        //var usereq = new XMLHttpRequest();
+        var req = new XMLHttpRequest();
+        //probably should encrypt password or something. This doesn't seem very safe
+        var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
+        req.open('POST', '/newuser', true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.addEventListener("load", function(e) {
+            console.log(req.status);
+            if(req.status==404){
+                //doesn't seem to trigger, even if gibberish
+                document.getElementById("badaddress").style.display ="block";
+            }
+            if(req.status==500){
+                document.getElementById("badusername").style.display="block";
+            }
+            else{
+                window.location="/success";
+            }
+        },false);
+        req.send(params);
+        return false;
+        /**
         usereq.addEventListener('load', function(e){
         //login request if successful
         if (usereq.status == 200) {
@@ -91,12 +113,7 @@ function submitForm(){
                 }
                 else{
                     alert("Registration Successful");
-                    var req = new XMLHttpRequest();
-                    //probably should encrypt password or something. This doesn't seem very safe
-                    var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
-                    req.open('POST', '/newuser', true);
-                    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                    req.send(params);
+                    
                 }
             }
 
@@ -109,11 +126,13 @@ function submitForm(){
         usereq.open('POST', '/usernameverif', true);
         usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         usereq.send(userparams);
-        return false;
+        **/
+        //return false;
+        
    }else{
-        return false;
+        //return false;
    }
-   return false;
+   //return false;
 }
 
 function treat_load(e){

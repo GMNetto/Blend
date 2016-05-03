@@ -155,10 +155,13 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("../index.html",{has_error:false});
+    response.render("../index.html",{has_error:false,has_success:false});
+});
+app.get('/success', function(request, response){
+      response.render("../index.html",{has_error:false,reg_success:true});  
 });
 app.get('/signup', function(request, response) {
-    response.render("register.html");
+    response.render("register.html",{success:false,nameerror:false,addresserror:false});
 });
 app.get('/forgetpassword', function(request, response) {
     response.render("forgot_password.html");
@@ -370,20 +373,38 @@ app.post('/newuser', function(request, response){
     console.log(profileurl);
     //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
     var salt = pw;
-    geocoder.geocode(address, function(error, res) {
-        //if err probably not an actual address
-        if(error){
-            console.log("Did not find address")
-        }
+    connection.query('SELECT * from User WHERE Username = ? OR email = ?', [username,email], function (err,rows) {
+        console.log(rows);
+         if (rows.length>0||err) {
+             console.log("user exists already");
+             //return response.render("register.html",{success:false,nameerror:true,addresserror:false});
+             response.sendStatus(500);
+         }
         else{
-            connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
-            if(err){
-                console.log(err);
-            }
+            geocoder.geocode(address, function(error, res) {
+                //if err probably not an actual address
+                //tries to catch one or the other
+                if(error||res[0]===undefined){
+                    console.log("Did not find address");
+                    //return response.render("register.html",{success:false,nameerror:false,addresserror:true})
+                    response.sendStatus(404);
+                }
+                else{
+                    console.log("Found address");
+                    connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log("Created new user");
+                            //response.render("../index.html",{has_error:true,reg_success:true});
+                            response.sendStatus(200);
+                        }
+                    });
+                }
             });
         }
     });
-
 });
 app.post('/usernameverif', function(req, res){
      console.log("Verifying username");
@@ -475,6 +496,17 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
                     }
             });
     }
+});
+app.post('/borrowercancel/:transactionId', requireLogin, function(request, response){
+    //declined, remove transaction if not finished
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? AND accepted!=1', [request.params.transactionId], function (err) {
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    console.log("Borrower canceled transaction");
+                }
+            });
 });
 // borrower transaction logic
 app.post('/borrower/:transactionId', requireLogin, function(request, response){
@@ -948,7 +980,7 @@ app.post('/login', function(request, response){
         if(err){
             console.log('User lookup failed');
             console.log(err);
-            response.render('../index.html',{has_error:true});
+            response.render('../index.html',{has_error:true,reg_success:false});
         }
         else{
             console.log(rows);
@@ -971,19 +1003,19 @@ app.post('/login', function(request, response){
                     }
                     else{
                         //incorrect password
-                        response.render('../index.html',{has_error:true});
+                        response.render('../index.html',{has_error:true,reg_success:false});
                     }
                  }
                 else{
                     //login error
                     //no matching username
-                    response.render('../index.html',{has_error:true});
+                    response.render('../index.html',{has_error:true,reg_success:false});
                 }
             }
             else{
                 //login error
                 //empty
-                response.render('../index.html',{has_error:true});
+                response.render('../index.html',{has_error:true,reg_success:false});
             }
         }
     });
