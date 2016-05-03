@@ -242,9 +242,9 @@ app.post('/searchquery', requireLogin, function(request, response){
     if(minrating.toString().length==0){
         minrating = 0;
     }
-    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating);
+    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating + " itemname " + itemName);
     console.log("query made by:"+request.session.user);
-    connection.query('SELECT * FROM (SELECT * from Item WHERE name LIKE "%?%" AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
+    connection.query('SELECT * FROM (SELECT * from Item WHERE name LIKE "%"?"%" AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
             if(err){
                 console.log(err);
             }
@@ -256,13 +256,13 @@ app.post('/searchquery', requireLogin, function(request, response){
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
-
+                console.log("rows " + rows)
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
 
                     console.log(row);
 
-                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
@@ -284,6 +284,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                       console.log('A row failed to process');
                     } else {
                       console.log('All rows processsed');
+                        console.log(tosend);
                         response.json(tosend);
 
                     }
@@ -416,17 +417,20 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
              //first check if there is an ongoing transaction concerning that item however
              connection.query('select * from Borrows where accepted = 1 and finished = 0 and idProduct = ?', [request.params.itemId], function (err,rows) {
-                 if(rows.length>0){
-                     //currently an ongoing transactions, block the borrowing
-                     console.log("detected ongoing transaction. Blocking");
-                 }
-                 else{
-                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
+                 checkAlreadyRequested(borrowuser, request.params.itemId, function(check){
+                    if(rows.length>0 || check){
+                        //currently an ongoing transactions, block the borrowing
+                        console.log("detected ongoing transaction. Blocking");
+                    }else{
+                        connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
                             if(err){
                                 console.log(err);
+                            }else{
+                                console.log("Borrowed!!!!!");                            
                             }
-                    });
-                 }
+                        });
+                    }
+                 });   
              });
          }
       });
@@ -817,6 +821,17 @@ function convertCondition(condition){
         return 0;
     }
 };
+
+function checkAlreadyRequested(itemId, userId, callback){
+    connection.query('select * from Borrows where idUser=? and idProduct=? and accepted=0',[userId, itemId], function(err, result){
+        if(err || !isEmpty(result)){
+            return callback(true);
+        }else{
+            return callback(false);
+        }    
+    });
+};
+
 function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err || isEmpty(result)){

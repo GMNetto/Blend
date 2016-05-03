@@ -155,7 +155,7 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("../index.html");
+    response.render("../index.html",{has_error:false});
 });
 app.get('/signup', function(request, response) {
     response.render("register.html");
@@ -242,9 +242,9 @@ app.post('/searchquery', requireLogin, function(request, response){
     if(minrating.toString().length==0){
         minrating = 0;
     }
-    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating);
+    console.log("Filtering for condition:"+convertCondition(condition) + " priceCeil:"+priceCeil+ " minrating:"+minrating + " itemname " + itemName);
     console.log("query made by:"+request.session.user);
-    connection.query('SELECT * FROM (SELECT * from Item WHERE name LIKE "%?%" AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
+    connection.query('SELECT * FROM (SELECT * from Item WHERE name LIKE "%"?"%" AND price<=? AND duration>=?) AS Items LEFT JOIN User ON Items.owner=User.idUser WHERE lender_rating>=? AND Items.condition>= ?', [itemName,priceCeil,calcDuration(period), minrating,convertCondition(condition)], function (err,rows) {
             if(err){
                 console.log(err);
             }
@@ -256,20 +256,26 @@ app.post('/searchquery', requireLogin, function(request, response){
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
-
+                console.log("rows " + rows)
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
 
                     console.log(row);
 
-                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});  //tosend.push({name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem,distance:findDistance(originallat,originallon,row.latitude,row.longitude)});
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
                   console.log('Processing item ' + item);
                 findDistance(originallat,originallon,item.lat,item.lon,function(result){
                         console.log("done");
-                        item.distance =result.replace(',','');
+                        //should not happen, only happened when google went down for some reason
+                        if(result===undefined){
+                            item.distance = Number.MAX_VALUE+ " km";
+                        }
+                        else{
+                            item.distance =result.replace(',','');
+                        }
                         callback();
                     });
 
@@ -278,6 +284,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                       console.log('A row failed to process');
                     } else {
                       console.log('All rows processsed');
+                        console.log(tosend);
                         response.json(tosend);
 
                     }
@@ -290,7 +297,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
-    response.render("lend.html");
+    response.render("lend.html",{success:false});
 });
 app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
@@ -410,17 +417,20 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
              //first check if there is an ongoing transaction concerning that item however
              connection.query('select * from Borrows where accepted = 1 and finished = 0 and idProduct = ?', [request.params.itemId], function (err,rows) {
-                 if(rows.length>0){
-                     //currently an ongoing transactions, block the borrowing
-                     console.log("detected ongoing transaction. Blocking");
-                 }
-                 else{
-                     connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
+                 checkAlreadyRequested(borrowuser, request.params.itemId, function(check){
+                    if(rows.length>0 || check){
+                        //currently an ongoing transactions, block the borrowing
+                        console.log("detected ongoing transaction. Blocking");
+                    }else{
+                        connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
                             if(err){
                                 console.log(err);
+                            }else{
+                                console.log("Borrowed!!!!!");                            
                             }
-                    });
-                 }
+                        });
+                    }
+                 });   
              });
          }
       });
@@ -582,6 +592,9 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         if(err){
 
         }
+        if(rows.length==0){
+            //should not happen, but just adding in a condition in the unlikely event this happens
+        }
         else{
             console.log(rows[0]);
             var userid = rows[0].idUser;
@@ -590,7 +603,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                         console.log('Adding new item failed');
                         console.log(err);
                     } else {
-                      response.redirect('/lend');
+                      response.render('lend.html',{success:true});
                     }
             });
         }
@@ -808,6 +821,17 @@ function convertCondition(condition){
         return 0;
     }
 };
+
+function checkAlreadyRequested(itemId, userId, callback){
+    connection.query('select * from Borrows where idUser=? and idProduct=? and accepted=0',[userId, itemId], function(err, result){
+        if(err || !isEmpty(result)){
+            return callback(true);
+        }else{
+            return callback(false);
+        }    
+    });
+};
+
 function getUser(username, callback){
     connection.query('Select * from User where username=?',[username], function(err, result){
         if(err || isEmpty(result)){
@@ -924,6 +948,7 @@ app.post('/login', function(request, response){
         if(err){
             console.log('User lookup failed');
             console.log(err);
+            response.render('../index.html',{has_error:true});
         }
         else{
             console.log(rows);
@@ -944,11 +969,21 @@ app.post('/login', function(request, response){
                             response.redirect('/search')
                          });
                     }
+                    else{
+                        //incorrect password
+                        response.render('../index.html',{has_error:true});
+                    }
                  }
+                else{
+                    //login error
+                    //no matching username
+                    response.render('../index.html',{has_error:true});
+                }
             }
             else{
                 //login error
-                response.send('<div class = \'logo\' style = "color: red !important"> Incorrect Username or Password. </div>');
+                //empty
+                response.render('../index.html',{has_error:true});
             }
         }
     });
