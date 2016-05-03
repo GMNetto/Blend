@@ -75,6 +75,15 @@
 						<!-- REGISTRATION FORM -->
 						<div class="text-center" style="padding:50px 0">
 							<div class="logo">register</div>
+                            <div class="alert alert-danger" id="badusername" style="display:none">
+                                <strong>Username or email already exists. Choose another</strong> 
+                            </div>
+                            
+                            
+                            <div class="alert alert-danger" id="badaddress" style="display:none">
+                                <strong>Error with address. Try a different one</strong> 
+                            </div>
+                            
 							<!-- Main Form -->
 							<div class="login-form-1">
 								<form id="register-form" class="text-left">
@@ -133,7 +142,7 @@
 												<label for="reg_agree">i agree with <a href="#" id = "terms">terms</a></label>
 											</div>
 										</div>
-										<button type="submit" class="login-button" onclick="submitForm();"><i class="fa fa-chevron-right"></i></button>
+										<button type="submit" class="login-button" onclick="submitForm();return false;"><i class="fa fa-chevron-right"></i></button>
 									</div>
 									<div class="etc-login-form">
 										<div>already have an account? <a href="/">login here</a></div>
