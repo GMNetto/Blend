@@ -5,6 +5,7 @@ window.addEventListener('load', function(){
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
+    cancelreq = new XMLHttpRequest();
     //acceptBorrower(1);
     //finishLender(1);
     populateDateField(720);
@@ -66,6 +67,9 @@ function populateDateField(duration){
     console.log(enddate);
 }
 //for ongoing transactions with others with a known start date
-function calcEnd(duration){
-    
+function cancelTrans(transactionId){
+    finishreq.open('POST','/borrowercancel/'+transactionId);
+    finishreq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    finishreq.withCredentials = true;
+    finishreq.send(null);
 }

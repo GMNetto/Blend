@@ -493,6 +493,17 @@ app.post('/lender/:transactionId', requireLogin, function(request, response){
             });
     }
 });
+app.post('/borrowercancel/:transactionId', requireLogin, function(request, response){
+    //declined, remove transaction if not finished
+        connection.query('DELETE FROM Borrows WHERE idBorrows= ? AND accepted!=1', [request.params.transactionId], function (err) {
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    console.log("Borrower canceled transaction");
+                }
+            });
+});
 // borrower transaction logic
 app.post('/borrower/:transactionId', requireLogin, function(request, response){
     console.log("received borrower response for transaction:"+request.params.transactionId);
