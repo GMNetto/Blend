@@ -18,8 +18,17 @@ app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
+var cloudinary = require('cloudinary');
 run_local = 0;
 
+cloudinary.config({ 
+  cloud_name: 'blendproject', 
+  api_key: '578416333291361', 
+  api_secret: 'ViWiRs9ECUrJda5TEVLaUV72qSw' 
+});
+
+cloudinary.api.resource('sample', 
+  function(result)  { console.log(result) });
 
 var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
@@ -614,6 +623,11 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     var periodHours = calcDuration(period);
     var condition = convertCondition(request.body.condition);
     var description = request.body.description;
+    cloudinary.uploader.upload("static/images/"+image, function(result){
+        console.log("static/images/"+image);
+        console.log("Uploading image");
+        console.log(result);    
+    //});
     //var image =
     //deposit thing in db along with filename
     /**
@@ -631,7 +645,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         else{
             console.log(rows[0]);
             var userid = rows[0].idUser;
-            connection.query('INSERT INTO Item VALUES(?,?,?,?,?,?,?,?)', [null,name, condition, userid,price,description,periodHours,image], function (err) {
+            connection.query('INSERT INTO Item VALUES(?,?,?,?,?,?,?,?)', [null,name, condition, userid,price,description,periodHours,result.secure_url], function (err) {
                     if(err){
                         console.log('Adding new item failed');
                         console.log(err);
@@ -640,6 +654,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
                     }
             });
         }
+      });
     });
 });
 
