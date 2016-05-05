@@ -1,3 +1,15 @@
+Running project locally:
+db loader script is blend.sql.There needs to be a user with a specific username and password that has certain privileges. These are:
+user: 'blend_user',
+password: 'blend_password'
+This user must be able to INSERT, UPDATE, DELETE, and SELECT.
+
+After this user is setup, the correct node modules have to be installed using npm install.
+
+The app can then be run locally via node server.js.
+
+There is an online version of the app. It can be reached at https://blendproject.herokuapp.com/.
+
 # [Start Bootstrap](http://startbootstrap.com/) - [Freelancer](http://startbootstrap.com/template-overviews/freelancer/)
 
 [Freelancer](http://startbootstrap.com/template-overviews/freelancer/) is a one page freelancer portfolio theme for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/). This theme features several content sections, a responsive portfolio grid with hover effects, full page portfolio item modals, and a working PHP contact form.

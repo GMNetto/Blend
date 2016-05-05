@@ -84,14 +84,16 @@ function submitForm(){
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         req.addEventListener("load", function(e) {
             console.log(req.status);
-            if(req.status==404){
+            if(req.status===404){
                 //doesn't seem to trigger, even if gibberish
                 document.getElementById("badaddress").style.display ="block";
+                return false;
             }
-            if(req.status==500){
+            if(req.status===500){
                 document.getElementById("badusername").style.display="block";
+                return false;
             }
-            else{
+            if(req.status===200){
                 window.location="/success";
             }
         },false);
