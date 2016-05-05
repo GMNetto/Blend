@@ -266,7 +266,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                     console.log(row);
 
-                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"https://localhost:8080/item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"https://localhost:8080/static/images/"+row.image});
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"static/images/"+row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
@@ -363,7 +363,7 @@ app.post('/newuser', function(request, response){
     var address = request.body.address;
     var username = request.body.username;
     var phone = request.body.phone;
-    var profileurl = "https://localhost:8080/profile/"+username;
+    var profileurl = "/profile/"+username;
     console.log(email);
     console.log(pw);
     console.log(fn);
@@ -665,7 +665,7 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
     var address = request.body.address;
     var username = request.body.username;
     var phone = request.body.phone;
-    var profileurl = "https://localhost:8080/profile/"+username;
+    var profileurl = "/profile/"+username;
     console.log(email);
     console.log(pw);
     console.log(fn);
@@ -1116,7 +1116,7 @@ app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
             console.log("Found item");
             console.log(rows);
             var res=[];
-            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:"https://localhost:8080/static/images/"+row.image });
+            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:"static/images/"+row.image });
             response.json(res);
         }
     });
