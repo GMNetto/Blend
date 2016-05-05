@@ -18,10 +18,11 @@ app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
+run_local = 0;
 
 
 var db_config = undefined;
-if(process.env.PRODUCTION != undefined){
+if(process.env.PRODUCTION != undefined || run_local == 1){
 
     db_config = {
         host: process.env.CLEARDB_DATABASE_HOST,
@@ -438,7 +439,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
              //transaction ownerid, accepted (boolean), itemId, finished (boolean),date
              //first check if there is an ongoing transaction concerning that item however
              connection.query('select * from Borrows where accepted = 1 and finished = 0 and idProduct = ?', [request.params.itemId], function (err,rows) {
-                 checkAlreadyRequested(borrowuser, request.params.itemId, function(check){
+                 checkAlreadyRequested(request.params.itemId, borrowuser, function(check){
                     if(rows.length>0 || check){
                         //currently an ongoing transactions, block the borrowing
                         console.log("detected ongoing transaction. Blocking");
@@ -681,7 +682,7 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
             console.log("Did not find address")
         }
         else{
-            connection.query('UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, pw, salt, email,phone,image,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
+            connection.query('UPDATE User SET Username=?,email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, email,phone,image,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
               response.redirect('/my_profile');
             if(err){
                 console.log(err);
