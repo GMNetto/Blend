@@ -201,7 +201,7 @@ app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
 function getOngoingBorrows(username, callback){
-    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.finished = 0;', [username], function(err, result){
+    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.borrower_commented = 0;', [username], function(err, result){
         if(err){
             callback(true, undefined);
         }else{
@@ -723,13 +723,25 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                         //feedback update failed
                                         console.log("updating borrower rating failed");
                                     }
+                                    else{
+                                        //if comment on borrower, set finished.
+                                        connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                            if(err){
+                                                console.log(err);
+                                            }
+                                            else{
+                                                //done
+                                                get_user_by_id(request.session.user, function(err, user){
+                                                if(err)
+                                                    response.render("error.html");
+                                                else
+                                                    render_transactions(user, response);
+                                                });
+                                            }
+                                        });
+                                        }
                                  });
-                                //if comment on borrower, set finished.
-                                connection.query('UPDATE Borrows SET finished=1,lender_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                                    if(err){
-                                        console.log(err);
-                                    }
-                                });
+                                
                             }
                             else{
                                 //no nonfinished transaction to comment on
@@ -751,12 +763,23 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                         //feedback update failed
                                         console.log("updating lender rating failed");
                                     }
-                                 });
-                                connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
-                                    if(err){
-                                        console.log(err);
+                                    else{
+                                        connection.query('UPDATE Borrows SET borrower_commented=1 WHERE idBorrows= ? ', [request.body.transactionId], function (err) {
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        else{
+                                             get_user_by_id(request.session.user, function(err, user){
+                                                if(err)
+                                                    response.render("error.html");
+                                                else
+                                                    render_transactions(user, response);
+                                            });
+                                        }
+                                        });
                                     }
-                                });
+                                 });
+                                
                             }
                             else{
                                 console.log("Borrower has already commmented on transaction")
@@ -808,9 +831,14 @@ app.get('/feedback/:transactionId', requireLogin, function(request, response){
                     else{
                         feedbackuserrating = rows[0].lender_rating;
                     }
+                    var userrow = rows[0];
+                    console.log(request.params.transactionId+" "+" "+ request.session.user+ " "+ request.session.user+" "+request.session.username);
                     connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.params.transactionId, request.session.user,request.session.user], function (err,rows) {
                         if(rows.length>0){
-                            response.render("feedback.html",{curuser:request.session.username,transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:rows[0].Username,feedbackuserid:usertorate,image:row.image,rating:feedbackuserrating,duration:row.duration,date:row.inital_date});
+                            console.log(rows[0]);
+                            console.log(feedbackuserrating);
+                            console.log()
+                            response.render("feedback.html",{curuser:request.session.username,transactionid:request.params.transactionId,type:usertype,itemName:row.name,feedbackuser:userrow.Username,feedbackuserid:usertorate,image:row.image,rating:feedbackuserrating,duration:row.duration,date:row.inital_date});
                         }
                         else{
                             console.log("user is not involved in this transaction");
