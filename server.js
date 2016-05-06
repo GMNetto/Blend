@@ -190,6 +190,11 @@ app.get('/forgetpassword', function(request, response) {
 app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
     getUser(req.params.username, function(err, user){
+        console.log(user);
+        if(user===undefined){
+            //do nothing?
+            return;
+        }
         if(req.session.user == user.idUser) {
           res.redirect('/my_profile');
         }  else {
@@ -452,6 +457,7 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
          //some logic to check for if item owner matches session user
          if(rows.length>=1){
              //if there are rows, borrower is same as lender
+             response.sendStatus(409);
          }
          else{
              //insert into db. Note: does prevent duplicate offers, since each is unique
@@ -462,12 +468,15 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
                     if(rows.length>0 || check){
                         //currently an ongoing transactions, block the borrowing
                         console.log("detected ongoing transaction. Blocking");
+                        response.sendStatus(500);
                     }else{
                         connection.query('INSERT INTO Borrows VALUES(?,?,?,0,0,CURDATE(),0,0)', [null, request.session.user,request.params.itemId], function (err) {
                             if(err){
                                 console.log(err);
+                                response.sendStatus(404);
                             }else{
-                                console.log("Borrowed!!!!!");                            
+                                console.log("Borrowed!!!!!");  
+                                response.sendStatus(200);
                             }
                         });
                     }

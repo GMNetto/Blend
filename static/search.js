@@ -43,7 +43,7 @@ function submitItem(){
                         //construct list element
                         if(compareDistances(distancefilter,data[i].distance)>=0){
                             li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + counter + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'300 em\' width = \'300 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
-                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid + ');return false;"></li></ul></div></div></div></div></div></div>'
+                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
                             // li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
                             //add to list html on frontend
                             ul.appendChild(li,ul.childNodes[0]);
@@ -101,27 +101,35 @@ function compareDistances(dist1,dist2){
     }
 }
 
-function borrowThing(itemId){
-    alert("Request to borrow sent");
-    console.log("Attempting to borrow item of id:"+itemId);
+function borrowThing(itemId,modalId){
+    // used to be used for testing alert("Request to borrow sent");
+    console.log("Attempting to borrow item of id:"+itemId+ "modal #"+modalId);
+    document.getElementById("success").style.display = "none";
+    document.getElementById("redundant").style.display = "none";
+    document.getElementById("alreadyBorrowed").style.display = "none";
+    document.getElementById("error").style.display = "none";
+    //http://getbootstrap.com/javascript/
     borrowrequest.open('POST', '/borrow/'+itemId, true);
     borrowrequest.addEventListener('load', function(e){
-         if (borrowrequest.status == 200) {
-                // do something with the loaded content
-                var content = borrowrequest.responseText;
-                //console.log(initrequest.responseText);
-                //console.log(initrequest);
-                // check if there is prior messages to load at all
-                if(content.length>0){
-                    // list appending code
-                    // should be array of message objects
-                    var data = JSON.parse(content);
-
-
-                }
-            } else {
-               //for some reason request didn't succeed. Do nothing
-            }
+        $('#portfolioModal'+modalId).modal('hide');
+        var status = borrowrequest.status;
+         if (status=== 200) {
+            //borrowrequest suceeded 
+             document.getElementById("success").style.display = "block";
+        } 
+        if(status===409){
+            //owner tried to borrow own thing 
+            document.getElementById("redundant").style.display = "block";
+       }
+        if(status===500){
+            //item has been borrowed already
+            document.getElementById("alreadyBorrowed").style.display = "block";
+        }
+        if(status===404){
+            //error on insert
+            document.getElementById("error").style.display = "block";
+        }
+        
     }, false);
 
     // start the request, optionally with a request body for POST requests
