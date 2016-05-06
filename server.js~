@@ -33,7 +33,7 @@ if(process.env.PRODUCTION != undefined || run_local == 1){
     });
 
     db_config = {
-        host: process.env.CLOUD_NAME,
+        host: process.env.CLEARDB_DATABASE_HOST,
         user: process.env.CLEARDB_DATABASE_USER,
         password: process.env.CLEARDB_DATABASE_PASSWORD,
         database: process.env.CLEARDB_DATABASE_SCHEMA
@@ -98,8 +98,10 @@ if(process.env.PRODUCTION != undefined || run_local == 1){
 var connection;
 var sessionStore;
 console.log(db_config);
+connection = mysql.createConnection(db_config);
+
 function handleDisconnect() {
-  connection = mysql.createConnection(db_config);
+  
   connection.connect(function(err) {
     if(err) {               
       console.log('error when connecting to db:', err);
