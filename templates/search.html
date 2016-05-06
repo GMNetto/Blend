@@ -96,10 +96,21 @@
 
     <!-- Header -->
     <header>
-
+        
 		<!-- SEARCH bar -->
 		<div class="container" id="modal-container">
-
+                <div class="alert alert-info" id="success" role="alert"  style="display: none">
+        <strong>Success</strong> Sent request to borrow item
+          </div>
+          <div class="alert alert-danger" id="redundant" style="display: none">
+            <strong> Cannot borrow item that user owns</strong> 
+          </div>
+        <div class="alert alert-danger" id="alreadyBorrowed" style="display: none">
+            <strong> Item is already lent out or you already requested to borrow it</strong> 
+          </div>
+        <div class="alert alert-danger" id="error" style="display: none">
+            <strong> Error processing borrow request. Please try again later</strong> 
+          </div>
 				<div class="col-sm-6 col-sm-offset-3">
 					<div id="imaginary_container">
 						<div class="input-group stylish-input-group">
