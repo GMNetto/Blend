@@ -1,27 +1,19 @@
-/**
- * Created by Gustavo on 4/3/2016.
- */
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
-//asynchronous handling stuff
 var async = require("async");
-//number parsing for distance library
-//var numeral = require('numeral');
 app.use(bodyParser.urlencoded({ extended: false }));
 var mysql = require("mysql");
 var bCrypt = require("bcrypt-nodejs");
 app.use(require('morgan')('dev'));
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
-//var emailExistence = require('email-existence'); defunct
 var cloudinary = require('cloudinary');
 var xssFilters = require('xss-filters');
 var csrf = require('csurf');
-var cookieParser = require('cookie-parser');
 run_local = 0;
 
 var db_config = undefined;
@@ -127,7 +119,6 @@ handleDisconnect();
 
 
 sessionStore = new MySQLStore(options_session, connection);
-//var sessionStore = new MySQLStore(options_session, connection);
 app.use(session({
     name: 'server-session-cookie-id',
     secret: 'my express secret',
@@ -139,10 +130,8 @@ app.use(session({
 
 var csrfProtection = csrf({cookie: false});
 
-//setup geocoder (for lat/lon)
 var geocoderProvider = 'google';
 var httpAdapter = 'https';
-// optional
 var extra = {
     formatter: null         // 'gpx', 'string', ...
 };
@@ -212,7 +201,7 @@ app.get('/my_profile', requireLogin, function(req, res){
             res.render("error.html");
         else{
             console.log("Page my profile")
-            render_my_profile(user, res);
+            render_my_profile(user, req, res);
         }
     });
 });
@@ -677,6 +666,14 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     });
 });
 
+
+function aux(req, res, next){
+    console.log("CSRF TOKEN");
+    console.log(req.session.user);
+    console.log(req.body._csrf);
+    console.log(req.body.phone);
+};
+
 app.post('/update_user', requireLogin, upload.single("img"), function(request, response){
     console.log("Received user to update");
     console.log("Uploading item from:"+request.session.user);
@@ -1022,7 +1019,7 @@ function render_profile(user, res){
     });
 };
 
-function render_my_profile(user, res){
+function render_my_profile(user, req, res){
     getRecentBorrow(user.Username, 3, function(err_borrow, list_items_borrow){
         getRecentLend(user.Username, 3, function(err_lend, list_items_lend){
             get_items_from_user(user.idUser, function(err_items, list_items){
@@ -1034,7 +1031,7 @@ function render_my_profile(user, res){
                     console.log(list_items_borrow);
                     console.log("rendering my profile");
                     user.password = "";
-                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
+                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken: req.csrfToken()});
             });
         });
     });
