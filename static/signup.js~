@@ -79,7 +79,7 @@ function submitForm(){
         //var usereq = new XMLHttpRequest();
         var req = new XMLHttpRequest();
         //probably should encrypt password or something. This doesn't seem very safe
-        var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone;
+        var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone+"&_csrf="+document.getElementById("csrf").value;
         req.open('POST', '/newuser', true);
         req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         req.addEventListener("load", function(e) {
