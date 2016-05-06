@@ -27,13 +27,13 @@ var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
     
     cloudinary.config({ 
-        cloud_name: process.env.CLEARDB_DATABASE_HOST, 
+        cloud_name: process.env.CLOUD_NAME, 
         api_key:  process.env.API_KEY, 
         api_secret:  process.env.API_SECRET 
     });
 
     db_config = {
-        host: process.env.CLOUD_NAME,
+        host: process.env.CLEARDB_DATABASE_HOST,
         user: process.env.CLEARDB_DATABASE_USER,
         password: process.env.CLEARDB_DATABASE_PASSWORD,
         database: process.env.CLEARDB_DATABASE_SCHEMA

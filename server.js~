@@ -27,7 +27,7 @@ var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
     
     cloudinary.config({ 
-        cloud_name: process.env.CLEARDB_DATABASE_HOST, 
+        cloud_name: process.env.CLOUD_NAME, 
         api_key:  process.env.API_KEY, 
         api_secret:  process.env.API_SECRET 
     });
