@@ -122,7 +122,7 @@
                                                 </i>
                                             </div>
                                         </div>
-                                        <img height="300 px" width="300 px" src="static/images/{{image}}" class='img-responsive' alt=''>
+                                        <img height="300 px" width="300 px" src="{{image}}" class='img-responsive' alt=''>
                                     </a>
                                 </div>
                         	</li>
@@ -146,7 +146,7 @@
                                             <div class="modal-body">
                                                 <h2>Item</h2>
                                                 <hr class="star-primary">
-                                                <img src="static/images/{{image}}" class="img-responsive img-centered">
+                                                <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>
@@ -250,7 +250,7 @@
                     {{/user}}
                     </div>
                     <div class="footer-col col-md-4">
-                        <h3>Recently Borrowed:</h3>
+                        <h3>Recently Lent:</h3>
                         <hr />
                         <p></p>
                         <!---<section id="portfolio">-->
@@ -267,7 +267,7 @@
                                                 </i>
                                             </div>
                                         </div>
-                                        <img height="300 px" width="300 px" src="static/images/{{image}}" class='img-responsive' alt=''>
+                                        <img height="300 px" width="300 px" src="{{image}}" class='img-responsive' alt=''>
                                     </a>
                                 </div>
                         	</li>
@@ -291,7 +291,7 @@
                                             <div class="modal-body">
                                                 <h2>Item</h2>
                                                 <hr class="star-primary">
-                                                <img src="static/images/{{image}}" class="img-responsive img-centered">
+                                                <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>

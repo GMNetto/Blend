@@ -21,20 +21,19 @@ var MySQLStore = require('express-mysql-session')(session);
 var cloudinary = require('cloudinary');
 run_local = 0;
 
-cloudinary.config({ 
-  cloud_name: 'blendproject', 
-  api_key: '578416333291361', 
-  api_secret: 'ViWiRs9ECUrJda5TEVLaUV72qSw' 
-});
 
-cloudinary.api.resource('sample', 
-  function(result)  { console.log(result) });
 
 var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
+    
+    cloudinary.config({ 
+        cloud_name: process.env.CLEARDB_DATABASE_HOST, 
+        api_key:  process.env.API_KEY, 
+        api_secret:  process.env.API_SECRET 
+    });
 
     db_config = {
-        host: process.env.CLEARDB_DATABASE_HOST,
+        host: process.env.CLOUD_NAME,
         user: process.env.CLEARDB_DATABASE_USER,
         password: process.env.CLEARDB_DATABASE_PASSWORD,
         database: process.env.CLEARDB_DATABASE_SCHEMA
@@ -61,6 +60,13 @@ if(process.env.PRODUCTION != undefined || run_local == 1){
 
 
 }else{
+
+    cloudinary.config({ 
+        cloud_name: 'blendproject', 
+        api_key: '578416333291361', 
+        api_secret: 'ViWiRs9ECUrJda5TEVLaUV72qSw' 
+    });    
+
     db_config = {
         host: 'localhost',
         user: 'blend_user',
@@ -275,7 +281,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 
                     console.log(row);
 
-                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:"static/images/"+row.image});
+                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
@@ -624,7 +630,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     var condition = convertCondition(request.body.condition);
     var description = request.body.description;
     cloudinary.uploader.upload("static/images/"+image, function(result){
-        console.log(image);
+        console.log("static/images/"+image);
         console.log("Uploading image");
         console.log(result);    
     //});
@@ -697,12 +703,17 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
             console.log("Did not find address")
         }
         else{
-            connection.query('UPDATE User SET Username=?,email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, email,phone,image,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
+          cloudinary.uploader.upload("static/images/"+image, function(result){
+            console.log("static/images/"+image);
+            console.log("Uploading image");
+            console.log(result); 
+            connection.query('UPDATE User SET Username=?,email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
               response.redirect('/my_profile');
             if(err){
                 console.log(err);
             }
             });
+           });
         }
     });
 
@@ -1131,7 +1142,7 @@ app.get('/item/:itemId/retrieve', requireLogin,function(request,response){
             console.log("Found item");
             console.log(rows);
             var res=[];
-            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:"static/images/"+row.image });
+            res.push({name:row.name,condition:row.condition,owner:row.owner,price:row.price, description:row.description,duration:row.duration,image:row.image });
             response.json(res);
         }
     });
@@ -1144,7 +1155,7 @@ app.get('/item/:itemId/retrieveImage', requireLogin, function(request,response){
         }
         else{
             var row=rows[0];
-            response.sendFile(__dirname+'/static/images/'+row.image);
+            response.sendFile(row.image);
         }
     });
 });
