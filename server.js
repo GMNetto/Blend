@@ -187,6 +187,11 @@ app.get('/forgetpassword', function(request, response) {
 app.get('/profile/:username', requireLogin, function(req, res, next){
     console.log("params " + req.params.username);
     getUser(req.params.username, function(err, user){
+        console.log(user);
+        if(user===undefined){
+            //do nothing?
+            return;
+        }
         if(req.session.user == user.idUser) {
           res.redirect('/my_profile');
         }  else {
