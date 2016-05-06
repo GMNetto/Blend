@@ -21,7 +21,6 @@ var MySQLStore = require('express-mysql-session')(session);
 var cloudinary = require('cloudinary');
 var xssFilters = require('xss-filters');
 var csrf = require('csurf');
-var cookieParser = require('cookie-parser');
 run_local = 0;
 
 var db_config = undefined;
