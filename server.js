@@ -201,6 +201,7 @@ app.get('/my_profile', requireLogin, function(req, res){
             res.render("error.html");
         else{
             console.log("Page my profile")
+            console.log(user)
             render_my_profile(user, req, res);
         }
     });
@@ -273,21 +274,22 @@ app.post('/searchquery', requireLogin, function(request, response){
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
+                console.log("lat "+originallat)
                 console.log("rows " + rows)
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
 
                     console.log(row);
-
-                   tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
+                    console.log("image "+row.image);                   
+                    tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
                   console.log('Processing item ' + item);
-                findDistance(originallat,originallon,item.lat,item.lon,function(result){
+                  findDistance(originallat,originallon,item.lat,item.lon,function(result){
                         console.log("done");
                         //should not happen, only happened when google went down for some reason
-                        if(result===undefined){
+                        if(result===undefined || result == Number.POSITIVE_INFINITY){
                             item.distance = Number.MAX_VALUE+ " km";
                         }
                         else{
@@ -299,6 +301,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                 }, function(err){
                     if( err ) {
                       console.log('A row failed to process');
+                      response.json([]);  
                     } else {
                       console.log('All rows processsed');
                         console.log(tosend);
@@ -1030,6 +1033,8 @@ function render_my_profile(user, req, res){
                     var list_items_lend_has_items = (list_items_lend.length > 0)
                     console.log(list_items_borrow);
                     console.log("rendering my profile");
+                    console.log(user.address);
+                    user.address = String(user.address)
                     user.password = "";
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken: ""});
             });
