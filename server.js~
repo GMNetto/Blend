@@ -19,9 +19,10 @@ var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 //var emailExistence = require('email-existence'); defunct
 var cloudinary = require('cloudinary');
+var xssFilters = require('xss-filters');
+var csrf = require('csurf');
+var cookieParser = require('cookie-parser');
 run_local = 0;
-
-
 
 var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
@@ -106,6 +107,7 @@ function handleDisconnect() {
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
     }else{
+      sessionStore.connection = connection;
       console.log("CONNECTED")      
     }                                    
   });                                    
@@ -134,6 +136,8 @@ app.use(session({
     rolling: false,
     store: sessionStore,
 }));
+
+var csrfProtection = csrf({cookie: false});
 
 //setup geocoder (for lat/lon)
 var geocoderProvider = 'google';
@@ -176,8 +180,8 @@ app.get('/', function(request, response) {
 app.get('/success', function(request, response){
       response.render("../index.html",{has_error:false,reg_success:true});  
 });
-app.get('/signup', function(request, response) {
-    response.render("register.html",{success:false,nameerror:false,addresserror:false});
+app.get('/signup', csrfProtection, function(request, response) {
+    response.render("register.html",{success:false,nameerror:false,addresserror:false, csrftoken:request.csrfToken()});
 });
 app.get('/forgetpassword', function(request, response) {
     response.render("forgot_password.html");
@@ -368,16 +372,17 @@ function render_transactions(user, res){
         });
     });
 };
-app.post('/newuser', function(request, response){
+app.post('/newuser', csrfProtection, function(request, response){
     //adding new user
-    var email = request.body.email;
+    var email = xssFilters.inHTMLData(request.body.email);
     //extract params and hash pw
-    var pw = bCrypt.hashSync(request.body.pw, bCrypt.genSaltSync(10));//request.body.pw;
-    var ln = request.body.ln;
-    var fn = request.body.fn;
-    var address = request.body.address;
-    var username = request.body.username;
-    var phone = request.body.phone;
+    var salt = bCrypt.genSaltSync(10);
+    var pw = bCrypt.hashSync(request.body.pw, salt);//request.body.pw;
+    var ln = xssFilters.inHTMLData(request.body.ln);
+    var fn = xssFilters.inHTMLData(request.body.fn);
+    var address = xssFilters.inHTMLData(request.body.address);
+    var username = xssFilters.inHTMLData(request.body.username);
+    var phone = xssFilters.inHTMLData(request.body.phone);
     var profileurl = "/profile/"+username;
     console.log(email);
     console.log(pw);
@@ -388,7 +393,6 @@ app.post('/newuser', function(request, response){
     console.log(username);
     console.log(profileurl);
     //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
-    var salt = pw;
     connection.query('SELECT * from User WHERE Username = ? OR email = ?', [username,email], function (err,rows) {
         console.log(rows);
          if (rows.length>0||err) {
@@ -622,13 +626,13 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
         image="No_image_available.png";
     }
     console.log(request.body);
-    var user = request.session.user;
-    var name = request.body.itemName;
-    var price = request.body.price;
-    var period = request.body.period;
+    var user = xssFilters.inHTMLData(request.session.user);
+    var name = xssFilters.inHTMLData(request.body.itemName);
+    var price = xssFilters.inHTMLData(request.body.price);
+    var period = xssFilters.inHTMLData(request.body.period);
     var periodHours = calcDuration(period);
     var condition = convertCondition(request.body.condition);
-    var description = request.body.description;
+    var description = xssFilters.inHTMLData(request.body.description);
     cloudinary.uploader.upload("static/images/"+image, function(result){
         console.log("static/images/"+image);
         console.log("Uploading image");
@@ -724,9 +728,9 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
 app.post('/newfeedback', requireLogin, function(request, response){
     console.log(request.body);
     var newrating = parseFloat(request.body.rating);
-    var feedbackuser = request.body.feedbackUser;
-    var feedbacktype = request.body.transactionType;
-    var feedbackuserid = request.body.feedbackuserId;
+    var feedbackuser = xssFilters.inHTMLData(request.body.feedbackUser);
+    var feedbacktype = xssFilters.inHTMLData(request.body.transactionType);
+    var feedbackuserid = xssFilters.inHTMLData(request.body.feedbackuserId);
     //make sure that logged in user can actually comment on transaction
      connection.query('Select * from (Select * from Borrows where idBorrows=?) as B left join Item on B.idProduct=Item.idItem where idUser = ? or owner= ?', [request.body.transactionId, request.session.user,request.session.user], function (err,rows) {
          if(rows.length>0){
@@ -1020,6 +1024,7 @@ function render_my_profile(user, res){
                     var list_items_lend_has_items = (list_items_lend.length > 0)
                     console.log(list_items_borrow);
                     console.log("rendering my profile");
+                    user.password = "";
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items});
             });
         });
