@@ -336,7 +336,7 @@ app.get('/transactions', function(request, response) {
                 for (var i = 0; i < result.length; i++) {
                   console.log("wihtin for loop");
                   row = result[i];
-                  items.push({item_name:row.name, item_picture:row.image});
+                  items.push({item_name:row.name, item_picture:row.image, idItem:row.idItem});
                 }
 
                 // Should I send JSON.parse(tosend) or response.json?
@@ -1257,6 +1257,23 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.latitude = latiture,
     this.longitude = longitude
 }
+
+app.post("/removeItem", function(request, response) {
+  console.log("apples");
+  console.log(request.body);
+
+  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND ((idItem NOT IN (SELECT idProduct from Borrows)) OR (idItem IN ( SELECT idProduct from Borrows WHERE finished = 1)))", [request.session.user, request.body.idItem], function (err) {
+              if(err){
+                  console.log(err);
+              } else {
+
+                console.log(request.session.user);
+                console.log(request.body.idItem);
+                console.log("Successfully removed from db!");
+                response.json({status: "true"});
+              }
+  });
+});
 
 function isEmpty(object){
     return Object.keys(object).length === 0;

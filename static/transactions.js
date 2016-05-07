@@ -9,9 +9,28 @@ window.addEventListener('load', function(){
     //acceptBorrower(1);
     //finishLender(1);
     populateDateField(720);
+
+    $('.remove_btn').on('click', function(){
+      console.log(this);
+      var elem = this.closest('li');
+      console.log(elem);
+      elem.parentNode.removeChild(elem);
+      alert(this.getAttribute('data-value'));
+      var params = {
+        idItem: this.getAttribute('data-value')
+      };
+
+      alert(params.idItem);
+
+      $.post("/removeItem", params);
+
+    });
 }, false);
 
-//assuming now that transactionId can be harcoded into transaction elements or passed in 
+
+
+
+//assuming now that transactionId can be harcoded into transaction elements or passed in
 function acceptBorrower(transactionId,response){
     acceptreqb.open('POST','/borrower/'+transactionId,true);
     //var response = 0;//will probably get out of transaction html element or something
@@ -47,7 +66,7 @@ function populateDateField(duration){
         console.log(curdate.getTime());
         enddate.setHours(curdate.getHours()+1);
         enddate.setDate(curdate.getDay()-7);
-        
+
     }
     if(duration==24){
         console.log("day");
@@ -58,7 +77,7 @@ function populateDateField(duration){
     if(duration==148){
         console.log("week");
         enddate.setDate(enddate.getDate()+7);
-        
+
     }
     else
     {//duration is 720, which is a month

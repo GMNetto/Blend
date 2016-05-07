@@ -412,51 +412,54 @@
                         <hr />
 
                         	<!-- List for items Lent -->
-                            <ul style = "list-style:none;" class = "list-group">
+                  <ul style="list-style:none;" class = "list-group">
+                    {{#items}}
+    								<li class = "list-group-item">
 
-                            	<!-- Item 1 -->
-                {{#items}}
-								<li class = "list-group-item">
- 									<!-- Section 1, item image and title -->
-									<div class="footer-col col-md-4">
-										<!-- Item Image and title, opens up modal when clicked -->
-										<div class="portfolio-item" >
-											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-												<img class = "img_fade" src = "{{item_picture}}"> <!-- Do I use quotes here? -->
-												<span id = "item_fade">{{item_name}}</span>
-											</a>
-										</div>
+    									<div class="footer-col col-md-4">
 
-									</div>
+    										<div class="portfolio-item" >
+    											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+    												<img class = "img_fade" src = "{{item_picture}}">
+    												<span id = "item_fade">{{item_name}}</span>
+    											</a>
+    										</div>
 
-									<!-- Section 2, User and Rating -->
-									<div class="footer-col col-md-4" id = "period_contact">
-
-										<!-- text for start date -->
-										<div id = "start_date">start date: {{start}}</div>
+    									</div>
 
 
-										<!-- text for end date -->
-										<div id = "end_date">end date: {{end}}</div>
+    									<div class="footer-col col-md-4" id = "period_contact">
 
-										<!-- link for contacting buyer -->
-										<a href = "#" >
-											<div id = "end_date"><strong>Contact Borrower</strong></div>
-										</a>
 
-									</div>
+    										<div id = "start_date">start date: {{start}}</div>
 
-									<!-- Section 3, Transaction accept or cancel -->
-									<div class="footer-col col-md-4" id = "div3">
 
-										<!-- Image/Link for check transaction, opens up modal -->
-										<a href = "#" >
-											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
-										</a>
-									</div>
-								</li>
 
-                {{/items}}
+    										<div id = "end_date">end date: {{end}}</div>
+
+
+    										<a href = "#" >
+    											<div id = "end_date"><strong>Contact Borrower</strong></div>
+    										</a>
+
+    									</div>
+
+
+    									<div class="footer-col col-md-4" id = "div3">
+
+
+    										<a href = "#" >
+    											<button type="button" class="btn btn-info transaction_btn" id = "feedback_btn">Feedback</button>
+    										</a>
+                        <a href = "#" >
+    											<button data-value="{{idItem}}"type="button" class="btn btn-info transaction_btn remove_btn">Remove</button>
+    										</a>
+    									</div>
+    								</li>
+
+                    {{/items}}
+                  </ul>
+
 
 
 								<!-- <li class = "list-group-item">
@@ -623,7 +626,7 @@
 										</a>
 									</div>
 								</li>  -->
-							<ul>
+
 
 
                    	</div>
