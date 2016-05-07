@@ -332,9 +332,8 @@ app.get('/transactions', function(request, response) {
       if(err) {
         response.render("error.htm");
       } else {
-        console.log("Listing all the items of current user");
-        console.log(result[0].price);
-        console.log(result[0].description);
+        console.log("Listing all the items of current user console.log(result[0])" );
+        console.log(result[0]);
       }
     });
 
