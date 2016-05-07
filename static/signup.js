@@ -96,6 +96,9 @@ function submitForm(){
             if(req.status===200){
                 window.location="/success";
             }
+            if(req.status===201){
+                window.location="/successconditional";
+            }
         },false);
         req.send(params);
         return false;

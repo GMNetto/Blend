@@ -164,10 +164,13 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("../index.html",{has_error:false,has_success:false});
+    response.render("../index.html",{has_error:false,has_success:false,multiple:false});
 });
 app.get('/success', function(request, response){
-      response.render("../index.html",{has_error:false,reg_success:true});
+      response.render("../index.html",{has_error:false,reg_success:true,multiple:false});
+});
+app.get('/successconditional', function(request, response){
+      response.render("../index.html",{has_error:false,reg_success:false,multiple:true});
 });
 app.get('/signup', csrfProtection, function(request, response) {
     response.render("register.html",{success:false,nameerror:false,addresserror:false, csrftoken:request.csrfToken()});
@@ -433,14 +436,21 @@ app.post('/newuser', csrfProtection, function(request, response){
                 }
                 else{
                     console.log("Found address");
+                    //insert into db
                     connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
                         if(err){
                             console.log(err);
                         }
                         else{
                             console.log("Created new user");
-                            //response.render("../index.html",{has_error:true,reg_success:true});
-                            response.sendStatus(200);
+                            //success
+                            if(res.length>1){
+                                console.log("multiple addresses found:"+res.length);
+                                response.sendStatus(201);
+                            }
+                            else{
+                                response.sendStatus(200);
+                            }
                         }
                     });
                 }
