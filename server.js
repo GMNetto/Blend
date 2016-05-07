@@ -333,7 +333,8 @@ app.get('/transactions', function(request, response) {
         response.render("error.htm");
       } else {
         console.log("Listing all the items of current user");
-        console.log(result);
+        console.log(result[0].price);
+        console.log(result[0].description);
       }
     });
 
