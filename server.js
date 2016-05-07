@@ -996,7 +996,7 @@ function getRecentLend(username, limit, callback){
 
 function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
-    connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
+    connection.query('select * from Item as I where I.owner = ?', [idUser], function(err, result){
         if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
