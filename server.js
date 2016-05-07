@@ -1010,10 +1010,7 @@ function get_items_from_user(idUser, callback){
             callback(true, undefined);
         }else{
             console.log("within get_items_from_user method");
-            if(result.RowDataPacket != null) {
-              console.log("THIS IS THE CORRECT FIELD TO ACCESS")
-              console.log(result.RowDataPacket);
-            }
+            console.log(result);
             callback(err, result);
         }
     }
