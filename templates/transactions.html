@@ -415,14 +415,15 @@
                             <ul style = "list-style:none;" class = "list-group">
 
                             	<!-- Item 1 -->
+                {{#items}}
 								<li class = "list-group-item">
  									<!-- Section 1, item image and title -->
 									<div class="footer-col col-md-4">
 										<!-- Item Image and title, opens up modal when clicked -->
 										<div class="portfolio-item" >
 											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-												<img class = "img_fade" src = "../img/img.png">
-												<span id = "item_fade">Item 1</span>
+												<img class = "img_fade" src = "{{item_picture}}"> <!-- Do I use quotes here? -->
+												<span id = "item_fade">{{item_name}}</span>
 											</a>
 										</div>
 
@@ -455,12 +456,13 @@
 									</div>
 								</li>
 
+                {{/items}}
 
-								<!-- Item 2 -->
-								<li class = "list-group-item">
- 									<!-- Section 1, item image and title -->
+
+								<!-- <li class = "list-group-item">
+
 									<div class="footer-col col-md-4">
-										<!-- Item Image and title, opens up modal when clicked -->
+
 										<div class="portfolio-item" >
 											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = "../img/img.png">
@@ -470,27 +472,27 @@
 
 									</div>
 
-									<!-- Section 2, User and Rating -->
+
 									<div class="footer-col col-md-4" id = "period_contact">
 
-										<!-- text for start date -->
+
 										<div id = "start_date">start date: {{start}}</div>
 
 
-										<!-- text for end date -->
+
 										<div id = "end_date">end date: {{end}}</div>
 
-										<!-- link for contacting buyer -->
+
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
 
-									<!-- Section 3, Transaction accept or cancel -->
+
 									<div class="footer-col col-md-4" id = "div3">
 
-										<!-- Image/Link for check transaction, opens up modal -->
+
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
@@ -498,11 +500,11 @@
 								</li>
 
 
-								<!-- Item 3 -->
+
 								<li class = "list-group-item">
- 									<!-- Section 1, item image and title -->
+
 									<div class="footer-col col-md-4">
-										<!-- Item Image and title, opens up modal when clicked -->
+
 										<div class="portfolio-item" >
 											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = "../img/img.png">
@@ -512,26 +514,26 @@
 
 									</div>
 
-									<!-- Section 2, User and Rating -->
+
 									<div class="footer-col col-md-4" id = "period_contact">
 
-										<!-- text for start date -->
+
 										<div id = "start_date">start date: {{start}}</div>
 
 
-										<!-- text for end date -->
+
 										<div id = "end_date">end date: {{end}}</div>
 
-										<!-- link for contacting buyer -->
+
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 									</div>
 
-									<!-- Section 3, Transaction accept or cancel -->
+
 									<div class="footer-col col-md-4" id = "div3">
 
-										<!-- Image/Link for check transaction, opens up modal -->
+
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
@@ -539,11 +541,11 @@
 								</li>
 
 
-								<!-- Item 4 -->
+
 								<li class = "list-group-item">
- 									<!-- Section 1, item image and title -->
+
 									<div class="footer-col col-md-4">
-										<!-- Item Image and title, opens up modal when clicked -->
+
 										<div class="portfolio-item" >
 											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = "../img/img.png">
@@ -553,27 +555,27 @@
 
 									</div>
 
-									<!-- Section 2, User and Rating -->
+
 									<div class="footer-col col-md-4" id = "period_contact">
 
-										<!-- text for start date -->
+
 										<div id = "start_date">start date: {{start}}</div>
 
 
-										<!-- text for end date -->
+
 										<div id = "end_date">end date: {{end}}</div>
 
-										<!-- link for contacting buyer -->
+
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
 
-									<!-- Section 3, Transaction accept or cancel -->
+
 									<div class="footer-col col-md-4" id = "div3">
 
-										<!-- Image/Link for check transaction, opens up modal -->
+
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
@@ -581,11 +583,11 @@
 								</li>
 
 
-								<!-- Item 5 -->
+
 								<li class = "list-group-item">
- 									<!-- Section 1, item image and title -->
+
 									<div class="footer-col col-md-4">
-										<!-- Item Image and title, opens up modal when clicked -->
+
 										<div class="portfolio-item" >
 											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = "../img/img.png">
@@ -595,32 +597,32 @@
 
 									</div>
 
-									<!-- Section 2, User and Rating -->
+
 									<div class="footer-col col-md-4" id = "period_contact">
 
-										<!-- text for start date -->
+
 										<div id = "start_date">start date: {{start}}</div>
 
 
-										<!-- text for end date -->
+
 										<div id = "end_date">end date: {{end}}</div>
 
-										<!-- link for contacting buyer -->
+
 										<a href = "#" >
 											<div id = "end_date"><strong>Contact Borrower</strong></div>
 										</a>
 
 									</div>
 
-									<!-- Section 3, Transaction accept or cancel -->
+
 									<div class="footer-col col-md-4" id = "div3">
 
-										<!-- Image/Link for check transaction, opens up modal -->
+
 										<a href = "#" >
 											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
 									</div>
-								</li>
+								</li>  -->
 							<ul>
 
 

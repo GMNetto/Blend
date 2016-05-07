@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `blend_db`.`Item` (
   `price` DECIMAL NULL,
   `description` VARCHAR(100) NULL,
   `duration` INT NOT NULL,
-  `image` VARCHAR(45) NULL,
+  `image` VARCHAR(120) NULL,
   PRIMARY KEY (`idItem`),
   CONSTRAINT `owner`
     FOREIGN KEY (`owner`)

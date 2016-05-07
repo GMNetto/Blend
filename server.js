@@ -323,23 +323,37 @@ app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
             response.render("error.html");
-        else
-            render_transactions(user, response);
+        else {
+          get_items_from_user(request.session.user, function(err, result) {
+            if(err) {
+              response.render("error.html");
+            } else {
+
+                var row;
+                var items = [];
+                console.log("length of result");
+                console.log(result.length);
+                for (var i = 0; i < result.length; i++) {
+                  console.log("wihtin for loop");
+                  row = result[i];
+                  items.push({item_name:row.name, item_picture:row.image});
+                }
+
+                // Should I send JSON.parse(tosend) or response.json?
+                render_transactions(user, response, items);
+
+              }
+          });
+        }
+
     });
     //response.render("transactions.html");
 
-    get_items_from_user(request.session.user, function(err, result) {
-      if(err) {
-        response.render("error.htm");
-      } else {
 
-        }
-    });
 
-    console.log("Reaching lololol testing");
 
 });
-function render_transactions(user, res){
+function render_transactions(user, res, items){
     console.log("render: "+user.idUser);
     getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
         getOngoingLends(user.idUser, function(err_lend, list_items_lend){
@@ -372,7 +386,7 @@ function render_transactions(user, res){
             }
             console.log("hasB:"+hasB);
             console.log("hasL:"+hasL);
-            res.render("transactions.html",{has_borrows:(l_B.length>0),borrows: l_B,haslend:hasL,lend:l_L});
+            res.render("transactions.html",{has_borrows:(l_B.length>0), borrows:l_B, haslend:hasL, lend:l_L, items: items });
             //res.send({ has_borrows:true,haslend:true});
             //res.render("transactions.html");
             //console.log("end");
