@@ -107,6 +107,11 @@
                             <strong>Success</strong> Account created
                             </div>
                             {{/reg_success}}
+                            {{#multiple}}
+                            <div class="alert alert-warning" role="alert">
+                            <strong>Warning</strong> Account created with ambiguous address. Distance to other users may be incorrect
+                            </div>
+                            {{/multiple}}
                             {{#has_error}}
                             <!-- http://v4-alpha.getbootstrap.com/components/forms/-->
                             <div class="form-group has-danger">

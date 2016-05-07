@@ -17,62 +17,62 @@ function submitForm(){
     var validated = true;
     var email = document.getElementById("inputEmail").value;
     if(email.indexOf("@")<0){
-        document.getElementById("2").className+=" has-error";
+        document.getElementById("invalidemail").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("2").className="form-group";
+        document.getElementById("invalidemail").style.display="none";
     }
     var pw = document.getElementById("inputPassword").value;
-    if(pw.length>20){
-        document.getElementById("3").className+=" has-error";
+    if(pw.length<6||pw.length>20){
+        document.getElementById("invalidpw").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("3").className="form-group";
+        document.getElementById("invalidpw").style.display="none";
     }
     var fn = document.getElementById("firstName").value;
     if(!testName(fn)){
-        document.getElementById("4").className+=" has-error";
+        document.getElementById("invalidfirstname").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("4").className="form-group";
+        document.getElementById("invalidfirstname").style.display="none";
     }
     var ln = document.getElementById("lastName").value;
     if(!testName(ln)){
-        document.getElementById("5").className+=" has-error";
+        document.getElementById("invalidlastname").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("5").className="form-group";
+        document.getElementById("invalidlastname").style.display="none";
     }
     var address = document.getElementById("address").value;
 
-    // if(address.length===0){
-    //     document.getElementById("6").className+=" has-error";
-    //     validated=false;
-    // }
-    // else{
-    //     document.getElementById("6").className="form-group";
-    // }
+    if(address.length===0){
+         document.getElementById("invalidaddress").style.display="block";
+         validated=false;
+    }
+    else{
+         document.getElementById("invalidaddress").style.display="none";
+    }
 
     var username = document.getElementById("username").value;
     //username check, will have to come up with a username regex
     if(!testUserName(username)||username.indexOf(" ")>=0){
-        document.getElementById("1").className+=" has-error";
+        document.getElementById("invalidusername").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("1").className="form-group";
+        document.getElementById("invalidusername").style.display="none";
     }
     var phone = document.getElementById("phone").value;
     if(!testPhone(phone)){
-        document.getElementById("7").className+=" has-error";
+        document.getElementById("invalidphone").style.display="block";
         validated=false;
     }
     else{
-        document.getElementById("7").className="form-group";
+        document.getElementById("invalidphone").style.display="none";
     }
     if(validated){
       console.log("SUCCESS");
@@ -96,13 +96,16 @@ function submitForm(){
             if(req.status===200){
                 window.location="/success";
             }
+            if(req.status===201){
+                window.location="/successconditional";
+            }
         },false);
         req.send(params);
         return false;
    }else{
-        //return false;
+        return false;
    }
-   //return false;
+   return false;
 }
 
 function treat_load(e){
