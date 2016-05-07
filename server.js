@@ -335,7 +335,7 @@ app.get('/transactions', function(request, response) {
         console.log("Listing all the items of current user console.log(result[i])" );
         for (var i = 0 ; i < result.length; i++) {
           console.log(i);
-          console.log("RESULT AT i: " + result[i]);
+          console.log(result[i]);
         }
       }
     });
