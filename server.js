@@ -332,9 +332,8 @@ app.get('/transactions', function(request, response) {
       if(err) {
         response.render("error.htm");
       } else {
-        
+
         }
-      }
     });
 
     console.log("Reaching lololol testing");
