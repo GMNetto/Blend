@@ -328,7 +328,7 @@ app.get('/transactions', function(request, response) {
     });
     //response.render("transactions.html");
 
-    console.log("Reaching this");
+    console.log("Reaching lololol");
 
 });
 function render_transactions(user, res){
