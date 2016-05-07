@@ -332,10 +332,10 @@ app.get('/transactions', function(request, response) {
       if(err) {
         response.render("error.htm");
       } else {
-        console.log("Listing all the items of current user console.log(result[i])" );
-        for (var i = 0 ; i < result.length; i++) {
+        console.log("Listing all the items of current user console.log(result.rows[i])" );
+        for (var i = 0 ; i < result.rows.length; i++) {
           console.log(i);
-          console.log(result[i]);
+          console.log(result.rows[i]);
         }
       }
     });
