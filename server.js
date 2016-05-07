@@ -332,10 +332,7 @@ app.get('/transactions', function(request, response) {
       if(err) {
         response.render("error.htm");
       } else {
-        console.log("Listing all the items of current user console.log(result.rows[i])" );
-        for (var i = 0 ; i < result.rows.length; i++) {
-          console.log(i);
-          console.log(result.rows[i]);
+        
         }
       }
     });
@@ -1013,6 +1010,8 @@ function get_items_from_user(idUser, callback){
             console.log("No item");
             callback(true, undefined);
         }else{
+            console.log("within get_items_from_user method");
+            console.log(result);
             callback(err, result);
         }
     }
