@@ -332,12 +332,15 @@ app.get('/transactions', function(request, response) {
       if(err) {
         response.render("error.htm");
       } else {
-        console.log("Listing all the items of current user console.log(result[0])" );
-        console.log(result[0]);
+        console.log("Listing all the items of current user console.log(result[i])" );
+        for (var i = 0 ; i < result.length; i++) {
+          console.log(i);
+          console.log("RESULT AT i: " + result[i]);
+        }
       }
     });
 
-    console.log("Reaching lololol");
+    console.log("Reaching lololol testing");
 
 });
 function render_transactions(user, res){
