@@ -328,6 +328,15 @@ app.get('/transactions', function(request, response) {
     });
     //response.render("transactions.html");
 
+    get_items_from_user(request.session.user, function(err, result) {
+      if(err) {
+        response.render("error.htm");
+      } else {
+        console.log("Listing all the items of current user");
+        console.log(result);
+      }
+    });
+
     console.log("Reaching lololol");
 
 });
