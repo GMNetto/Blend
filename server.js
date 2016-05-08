@@ -267,27 +267,27 @@ app.post('/searchquery', requireLogin, function(request, response){
                 console.log(err);
             }
             else{
-                console.log("FOUND SEARCH STUFF");
-                console.log("USER?");
-                console.log(request.session.user);
+                //console.log("FOUND SEARCH STUFF");
+                //console.log("USER?");
+                //console.log(request.session.user);
                 var row;
                 var tosend =[];
                 var originallat = request.session.latitude;
                 var originallon = request.session.longitude;
-                console.log("lat "+originallat)
-                console.log("rows " + rows)
+                //console.log("lat "+originallat)
+                //console.log("rows " + rows)
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
 
-                    console.log(row);
-                    console.log("image "+row.image);                   
+                    //console.log(row);
+                    console.log("pushed item " + row.name);                   
                     tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
                 }
                 async.each(tosend, function(item, callback) {
                   // Perform operation on file here.
-                  console.log('Processing item ' + item);
+                  console.log('Processing item ' + item.name);
                   findDistance(originallat,originallon,item.lat,item.lon,function(result){
-                        console.log("done");
+                        //console.log("done");
                         //should not happen, only happened when google went down for some reason
                         if(result===undefined || result == Number.POSITIVE_INFINITY){
                             item.distance = Number.MAX_VALUE+ " km";
@@ -403,7 +403,6 @@ app.post('/newuser', csrfProtection, function(request, response){
                 //tries to catch one or the other
                 if(error||res[0]===undefined){
                     console.log("Did not find address");
-                    //return response.render("register.html",{success:false,nameerror:false,addresserror:true})
                     response.sendStatus(404);
                 }
                 else{
@@ -677,6 +676,19 @@ function aux(req, res, next){
     console.log(req.body.phone);
 };
 
+function update_user_db(query, list_prepared_statements, request, response, res){
+    connection.query(query, list_prepared_statements, function (err) {
+                
+        if(err){
+            response.sendStatus(500);
+        }else{
+            request.session.latitude = res[0]['latitude'];
+            request.session.longitude = res[0]['longitude'];
+            response.sendStatus(200);
+        }
+    });
+}
+
 app.post('/update_user', requireLogin, upload.single("img"), function(request, response){
     console.log("Received user to update");
     console.log("Uploading item from:"+request.session.user);
@@ -692,40 +704,47 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
     }
     //adding new user
     var email = request.body.email;
-    //extract params and hash pw
-    var pw = bCrypt.hashSync(request.body.pw, bCrypt.genSaltSync(10));//request.body.pw;
+    var salt = bCrypt.genSaltSync(10)
+    var pw = bCrypt.hashSync(request.body.pw, salt);//request.body.pw;
     var ln = request.body.ln;
     var fn = request.body.fn;
     var address = request.body.address;
     var username = request.body.username;
     var phone = request.body.phone;
-    var profileurl = "/profile/"+username;
-    console.log(email);
-    console.log(pw);
-    console.log(fn);
-    console.log(ln);
-    console.log(address);
-    console.log(phone);
-    console.log(username);
-    console.log(image);
-    //pretty sure this is going to be assigned to a different variable, pw is just a standin for now so the sql query doesn't bug out
-    var salt = pw;
+
     geocoder.geocode(address, function(error, res) {
-        //if err probably not an actual address
         if(error){
-            console.log("Did not find address")
+            console.log("Did not find address");
+            response.sendStatus(404);
         }
         else{
-          cloudinary.uploader.upload("static/images/"+image, function(result){
-            console.log("static/images/"+image);
-            console.log("Uploading image");
-            console.log(result); 
-            connection.query('UPDATE User SET Username=?,email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
-              response.redirect('/my_profile');
-            if(err){
-                console.log(err);
-            }
-            });
+            cloudinary.uploader.upload("static/images/"+image, function(result){
+                console.log("static/images/"+image);
+                console.log("Uploading image");
+                console.log(result); 
+                console.log(request.body.password_agree);
+                
+                if(request.body.password_agree === "true"){
+                    console.log("UPDATING!!!!!!!!!!!");
+                    query = 'UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?';
+                    list = [username, pw, salt, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user];
+                    update_user_db(query, list, request, response, res);
+                }else{
+                    query = 'UPDATE User SET Username=?,email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?';
+                    list = [username, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user];
+                    update_user_db(query, list, request, response, res);
+                }
+
+                /*connection.query('UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, password, salt, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
+                
+                    if(err){
+                        response.sendStatus(500);
+                    }else{
+                        request.session.latitude = res[0]['latitude'];
+                        request.session.longitude = res[0]['longitude'];
+                        response.sendStatus(200);
+                    }
+                });*/
            });
         }
     });
@@ -1035,7 +1054,7 @@ function render_my_profile(user, req, res){
                     console.log("rendering my profile");
                     console.log(user.address);
                     user.address = String(user.address)
-                    user.password = "";
+                    user.password = "11111111111111";
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken: ""});
             });
         });
@@ -1186,11 +1205,12 @@ function findDistance(originlat,originlon, destinationlat,destinationlon,callbac
       function(err, data) {
         if (err) {
             console.log("err:"+err);
+            console.log("Error distance");
             callback(Number.POSITIVE_INFINITY);
         }
         else{
             console.log("Found distance?")
-            console.log(data);
+            //console.log(data);
             console.log(data.distance);
             callback(data.distance);
         }

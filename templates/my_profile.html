@@ -172,6 +172,14 @@
                     </div>
 
                     <div class="footer-col col-md-4">
+                        <div class="alert alert-danger" id="badusername" style="display:none">
+                            <strong>Could not update profile. Maybe username already exists</strong> 
+                        </div>
+                        
+                        
+                        <div class="alert alert-danger" id="badaddress" style="display:none">
+                            <strong>Error with address. Try a different one</strong> 
+                        </div>
                         {{#user}}
                         <h3>{{Username}}</h3>
                         <hr class="vertical"/>
@@ -180,8 +188,8 @@
 						<!-- Main Form -->
 						<div class="login-form-1">
                             <img src="{{profile_url}}" alt="Profile Image" class="img-responsive"/>
-							<form class="form-lend" id="lendform" action="/update_user" method="POST" enctype="multipart/form-data">
-
+							<!--<form class="form-lend" id="lendform" action="/update_user" method="POST" enctype="multipart/form-data">-->
+                                <form class="form-lend" id="lendform" enctype="multipart/form-data">
 								<div class="main-login-form">
 									<div class="login-group">
 
@@ -222,8 +230,9 @@
                                         </div>
                                         <div class="form-group" id="3">
                                             <label for="inputPassword" class="sr-only">Password</label>
-                                            <input type="password" name="password" id="inputPassword" class="form-control" value="{{password}}" required>
+                                            <input type="password" name="password" id="inputPassword" class="form-control" value="{{password}}">
                                         </div>
+                                        
                                         <div class="form-group" id="4">
                                             <label for="firstName" class="sr-only">First Name</label>
                                             <input type="text" id="firstName" name="fn" class="form-control" value="{{first_name}}" required>
@@ -243,8 +252,13 @@
                                         <div class="form-group" id="8">
                                             <input type="hidden" id="csrf" name="_csrf" value="{{csrftoken}}"/>                                        
                                         </div>
+                                        </div class="form-group" id="9">
+
+											<input type="checkbox" class="" id="password_agree" name="password_agree">
+											<label for="password_agree">Change password</label>
+										</div>
 									</div>                                     
-                                       <button type="submit" class="btn-submit" style="color:black">Update</button>
+                                       <button type="submit" class="btn-submit" onclick="submitForm();return false;" style="color:black">Update</button>
 								</div>
 
 							</form>
