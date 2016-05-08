@@ -18,11 +18,11 @@ run_local = 0;
 
 var db_config = undefined;
 if(process.env.PRODUCTION != undefined || run_local == 1){
-    
-    cloudinary.config({ 
-        cloud_name: process.env.CLOUD_NAME, 
-        api_key:  process.env.API_KEY, 
-        api_secret:  process.env.API_SECRET 
+
+    cloudinary.config({
+        cloud_name: process.env.CLOUD_NAME,
+        api_key:  process.env.API_KEY,
+        api_secret:  process.env.API_SECRET
     });
 
     db_config = {
@@ -54,11 +54,11 @@ if(process.env.PRODUCTION != undefined || run_local == 1){
 
 }else{
 
-    cloudinary.config({ 
-        cloud_name: 'blendproject', 
-        api_key: '578416333291361', 
-        api_secret: 'ViWiRs9ECUrJda5TEVLaUV72qSw' 
-    });    
+    cloudinary.config({
+        cloud_name: 'blendproject',
+        api_key: '578416333291361',
+        api_secret: 'ViWiRs9ECUrJda5TEVLaUV72qSw'
+    });
 
     db_config = {
         host: 'localhost',
@@ -95,22 +95,22 @@ console.log(db_config);
 function handleDisconnect() {
   connection = mysql.createConnection(db_config);
   connection.connect(function(err) {
-    if(err) {               
+    if(err) {
       console.log('error when connecting to db:', err);
       setTimeout(handleDisconnect, 2000);
     }else{
       sessionStore.connection = connection;
-      console.log("CONNECTED")      
-    }                                    
-  });                                    
+      console.log("CONNECTED")
+    }
+  });
   connection.on('error', function(err) {
     console.log("A BIG PROBLEM");
     console.log('db error', err, err.code);
     if(err.code === 'PROTOCOL_CONNECTION_LOST') {
-      handleDisconnect();                        
+      handleDisconnect();
     } else {
-      console.log('got different error: ' + err);                                     
-      throw err;                                 
+      console.log('got different error: ' + err);
+      throw err;
     }
   });
 }
@@ -164,10 +164,13 @@ var upload = multer({ dest: './static/images/' });
 
 app.get('/', function(request, response) {
     console.log(request.session.user);
-    response.render("../index.html",{has_error:false,has_success:false});
+    response.render("../index.html",{has_error:false,has_success:false,multiple:false});
 });
 app.get('/success', function(request, response){
-      response.render("../index.html",{has_error:false,reg_success:true});  
+      response.render("../index.html",{has_error:false,reg_success:true,multiple:false});
+});
+app.get('/successconditional', function(request, response){
+      response.render("../index.html",{has_error:false,reg_success:false,multiple:true});
 });
 app.get('/signup', csrfProtection, function(request, response) {
     response.render("register.html",{success:false,nameerror:false,addresserror:false, csrftoken:request.csrfToken()});
@@ -278,9 +281,6 @@ app.post('/searchquery', requireLogin, function(request, response){
                 //console.log("rows " + rows)
                 for(i = 0;i<rows.length;i++){
                     row = rows[i];
-
-                    //console.log(row);
-                    console.log("pushed item " + row.name);                   
                     tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem, distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
                 }
                 async.each(tosend, function(item, callback) {
@@ -301,7 +301,7 @@ app.post('/searchquery', requireLogin, function(request, response){
                 }, function(err){
                     if( err ) {
                       console.log('A row failed to process');
-                      response.json([]);  
+                      response.json([]);
                     } else {
                       console.log('All rows processsed');
                         console.log(tosend);
@@ -323,12 +323,37 @@ app.get('/transactions', function(request, response) {
      get_user_by_id(request.session.user, function(err, user){
         if(err)
             response.render("error.html");
-        else
-            render_transactions(user, response);
+        else {
+          get_items_from_user(request.session.user, function(err, result) {
+            if(err) {
+              response.render("error.html");
+            } else {
+
+                var row;
+                var items = [];
+                console.log("length of result");
+                console.log(result.length);
+                for (var i = 0; i < result.length; i++) {
+                  console.log("wihtin for loop");
+                  row = result[i];
+                  items.push({item_name:row.name, item_picture:row.image, idItem:row.idItem});
+                }
+
+                // Should I send JSON.parse(tosend) or response.json?
+                render_transactions(user, response, items);
+
+              }
+          });
+        }
+
     });
     //response.render("transactions.html");
+
+
+
+
 });
-function render_transactions(user, res){
+function render_transactions(user, res, items){
     console.log("render: "+user.idUser);
     getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
         getOngoingLends(user.idUser, function(err_lend, list_items_lend){
@@ -361,7 +386,7 @@ function render_transactions(user, res){
             }
             console.log("hasB:"+hasB);
             console.log("hasL:"+hasL);
-            res.render("transactions.html",{has_borrows:(l_B.length>0),borrows: l_B,haslend:hasL,lend:l_L});
+            res.render("transactions.html",{has_borrows:(l_B.length>0), borrows:l_B, haslend:hasL, lend:l_L, items: items });
             //res.send({ has_borrows:true,haslend:true});
             //res.render("transactions.html");
             //console.log("end");
@@ -407,14 +432,21 @@ app.post('/newuser', csrfProtection, function(request, response){
                 }
                 else{
                     console.log("Found address");
+                    //insert into db
                     connection.query('INSERT INTO User VALUES(?,?,?,?,?,?,0.0,0,0.0,0,?,?,?,?,?,?)', [null, username, pw, salt, email,phone,profileurl,fn,ln,address,res[0]['latitude'],res[0]['longitude']], function (err) {
                         if(err){
                             console.log(err);
                         }
                         else{
                             console.log("Created new user");
-                            //response.render("../index.html",{has_error:true,reg_success:true});
-                            response.sendStatus(200);
+                            //success
+                            if(res.length>1){
+                                console.log("multiple addresses found:"+res.length);
+                                response.sendStatus(201);
+                            }
+                            else{
+                                response.sendStatus(200);
+                            }
                         }
                     });
                 }
@@ -466,12 +498,12 @@ app.post('/borrow/:itemId', requireLogin, function(request, response){
                                 console.log(err);
                                 response.sendStatus(404);
                             }else{
-                                console.log("Borrowed!!!!!");  
+                                console.log("Borrowed!!!!!");
                                 response.sendStatus(200);
                             }
                         });
                     }
-                 });   
+                 });
              });
          }
       });
@@ -636,7 +668,7 @@ app.post('/itemupload', requireLogin, upload.single('img'),function(request, res
     cloudinary.uploader.upload("static/images/"+image, function(result){
         console.log("static/images/"+image);
         console.log("Uploading image");
-        console.log(result);    
+        console.log(result);
     //});
     //var image =
     //deposit thing in db along with filename
@@ -734,17 +766,6 @@ app.post('/update_user', requireLogin, upload.single("img"), function(request, r
                     list = [username, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user];
                     update_user_db(query, list, request, response, res);
                 }
-
-                /*connection.query('UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?', [username, password, salt, email,phone,result.secure_url,fn,ln,address,res[0]['latitude'],res[0]['longitude'], request.session.user], function (err) {
-                
-                    if(err){
-                        response.sendStatus(500);
-                    }else{
-                        request.session.latitude = res[0]['latitude'];
-                        request.session.longitude = res[0]['longitude'];
-                        response.sendStatus(200);
-                    }
-                });*/
            });
         }
     });
@@ -799,13 +820,13 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                         });
                                         }
                                  });
-                                
+
                             }
                             else{
                                 //no nonfinished transaction to comment on
                                 console.log("Transaction already has been commented on by lender ")
                             }
-                       }); 
+                       });
                     }
                     else{
                         connection.query('SELECT * from Borrows WHERE idBorrows = ? AND borrower_commented=0', [request.body.transactionId], function (err,rows) {
@@ -837,7 +858,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                         });
                                     }
                                  });
-                                
+
                             }
                             else{
                                 console.log("Borrower has already commmented on transaction")
@@ -947,7 +968,7 @@ function checkAlreadyRequested(itemId, userId, callback){
             return callback(true);
         }else{
             return callback(false);
-        }    
+        }
     });
 };
 
@@ -1012,11 +1033,13 @@ function getRecentLend(username, limit, callback){
 
 function get_items_from_user(idUser, callback){
     console.log('user '+ idUser)
-    connection.query('select * from Item as I, User as U where I.owner = ?', [idUser], function(err, result){
+    connection.query('select * from Item as I where I.owner = ?', [idUser], function(err, result){
         if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
         }else{
+            console.log("within get_items_from_user method");
+            console.log(result);
             callback(err, result);
         }
     }
@@ -1251,6 +1274,23 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.longitude = longitude
 }
 
+app.post("/removeItem", function(request, response) {
+  console.log("apples");
+  console.log(request.body);
+
+  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND ((idItem NOT IN (SELECT idProduct from Borrows)) OR (idItem IN ( SELECT idProduct from Borrows WHERE finished = 1)))", [request.session.user, request.body.idItem], function (err) {
+              if(err){
+                  console.log(err);
+              } else {
+
+                console.log(request.session.user);
+                console.log(request.body.idItem);
+                console.log("Successfully removed from db!");
+                response.json({status: "true"});
+              }
+  });
+});
+
 function isEmpty(object){
     return Object.keys(object).length === 0;
 };
@@ -1286,4 +1326,3 @@ var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
 }, app).listen(8080);
-

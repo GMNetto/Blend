@@ -96,7 +96,7 @@ header .container {
 }
 
 header img {
-/* 
+/*
     display: block;
     margin: 0 auto 20px;
  */
@@ -287,15 +287,15 @@ section.success a.active {
 
 #items_sec {
 	background-color:#1ABC9C;
-}	
+}
 
 #filter {
 	background-color: white;
 	color: #1ABC9C;
 	border-style:none;
 	border-radius: 6px;
-	
-	
+
+
 }
 
 #filter:hover {
@@ -909,8 +909,9 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 }
 
 
-#feedback_btn{
+.transaction_btn{
 	padding: 5px; 6px;
+  width: 100px;
 }
 
 #trans_cancel{
@@ -926,7 +927,7 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 	height:34px;
 	width:34px;
 }
- 
+
 @media screen and (max-width: 800px){
     /* rules in this block will only apply to screens at least 640px in width */
 	.list-group-item {

@@ -107,6 +107,11 @@
                             <strong>Success</strong> Account created
                             </div>
                             {{/reg_success}}
+                            {{#multiple}}
+                            <div class="alert alert-warning" role="alert">
+                            <strong>Warning</strong> Account created with ambiguous address. Distance to other users may be incorrect
+                            </div>
+                            {{/multiple}}
                             {{#has_error}}
                             <!-- http://v4-alpha.getbootstrap.com/components/forms/-->
                             <div class="form-group has-danger">
@@ -136,7 +141,7 @@
 									</div>
 									<div class="etc-login-form">
 										<div>forgot your password? <a href="forgetpassword">click here</a></div>
-										<div>new user? <a href="signup">create new account</a></div>
+										<div>new user? <a href="signup">create an account</a></div>
 									</div>
 								</form>
 							</div>
@@ -163,18 +168,38 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 col-lg-offset-2">
+                    <div class="col-lg-4" >
+                    	<div style = "text-align:center">
+                    		<img src = "static/img/lock.png" width = "60" height = "60" />
+                    		<hr />
+                    	</div>
+                    	
                         <p>Blend is a free and easy to use platform for borrowing and lending items safely and conveniently.</p>
                     </div>
                     <div class="col-lg-4">
+                    	<div style = "text-align:center">
+                    		<img src = "static/img/check.png" width = "60" height = "60" />
+                    		<hr />
+                    	</div>
+                
                         <p>How it works: Search for items around you. Borrow from people who are near you and who you can trust. Lending out items is just as easy and safe.  </p>
                     </div>
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
+                    
+                    <div class="col-lg-4">
+                    	<div style = "text-align:center">
+                    		<img src = "static/img/friends.png" width = "60" height = "60" />
+                    		<hr />
+                    	</div>
+                
+                        <p> Blend is built around a community that is safe and reliable.  </p>
                     </div>
+
+
                 </div>
             </div>
         </div>
     </section>
+    
 
     <!-- Footer -->
     <footer class="text-center">
