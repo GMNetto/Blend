@@ -198,7 +198,7 @@ app.get('/profile/:username', requireLogin, function(req, res, next){
     });
 });
 
-app.get('/my_profile', requireLogin, function(req, res){
+app.get('/my_profile', csrfProtection, requireLogin, function(req, res){
     get_user_by_id(req.session.user, function(err, user){
         if(err)
             res.render("error.html");
@@ -721,7 +721,7 @@ function update_user_db(query, list_prepared_statements, request, response, res)
     });
 }
 
-app.post('/update_user', requireLogin, upload.single("img"), function(request, response){
+app.post('/update_user', csrfProtection, requireLogin, upload.single("img"), function(request, response){
     console.log("Received user to update");
     console.log("Uploading item from:"+request.session.user);
     //console.log(request);
@@ -1078,7 +1078,7 @@ function render_my_profile(user, req, res){
                     console.log(user.address);
                     user.address = String(user.address)
                     user.password = "11111111111111";
-                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken: ""});
+                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken:req.csrfToken()});
             });
         });
     });

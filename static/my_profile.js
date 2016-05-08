@@ -66,7 +66,8 @@ function submitForm(){
         document.getElementById("7").className="form-group";
     }
     if(validated){
-      console.log("SUCCESS");
+        console.log("SUCCESS");
+        document.getElementById("badusername").style.display="none";
         //var usereq = new XMLHttpRequest();
         var req = new XMLHttpRequest();
         //probably should encrypt password or something. This doesn't seem very safe
@@ -91,7 +92,8 @@ function submitForm(){
         req.send(params);
         return false;
    }else{
-        //return false;
+        document.getElementById("badusername").style.display="block";
+        return false;
    }
    //return false;
 }
