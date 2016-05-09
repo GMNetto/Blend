@@ -22,7 +22,9 @@ window.addEventListener('load', function(){
 
       alert(params.idItem);
 
-      $.post("/removeItem", params);
+      $.post("/removeItem", params, function(server_response) {
+
+      });
 
     });
 }, false);
