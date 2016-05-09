@@ -14,6 +14,8 @@ var MySQLStore = require('express-mysql-session')(session);
 var cloudinary = require('cloudinary');
 var xssFilters = require('xss-filters');
 var csrf = require('csurf');
+
+
 run_local = 0;
 
 var db_config = undefined;
@@ -217,6 +219,11 @@ app.get('/search?*', requireLogin, function(req, res, next){
 app.get('/search', requireLogin, function(request, response){
     response.render("search.html");
 });
+
+app.get('/feed', requireLogin, function(request, response){
+    response.render("feed.html");
+});
+
 function getOngoingBorrows(username, callback){
     connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.borrower_commented = 0;', [username], function(err, result){
         if(err){
@@ -810,11 +817,13 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             }
                                             else{
                                                 //done
-                                                get_user_by_id(request.session.user, function(err, user){
-                                                if(err)
-                                                    response.render("error.html");
-                                                else
-                                                    render_transactions(user, response);
+                                                updateFeed(idBorrows, function(){
+                                                    get_user_by_id(request.session.user, function(err, user){
+                                                        if(err)
+                                                            response.render("error.html");
+                                                        else
+                                                            render_transactions(user, response);
+                                                    });                                                
                                                 });
                                             }
                                         });
@@ -1078,7 +1087,7 @@ function render_my_profile(user, req, res){
                     console.log(user.address);
                     user.address = String(user.address)
                     user.password = "11111111111111";
-                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken:request.csrfToken()});
+                    res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken:req.csrfToken()});
             });
         });
     });
@@ -1326,3 +1335,46 @@ var server = https.createServer({
   key: fs.readFileSync('private.key'),
   cert: fs.readFileSync('certificate.pem')
 }, app).listen(8080);
+
+
+var io = require('socket.io').listen(server);
+
+function get_ten_transactions(callback){
+     connection.query("select Username, name from Borrows, Item, User where idItem = idProduct and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10",function(err1,transactions) {
+        connection.query("select Username from Borrows, Item, User where idItem = idProduct and Borrows.owner=User.idUser order by Borrows.inital_date desc limit 10",function(err2,lenders) {        
+            if(err1){
+                console.log('err1'+err1);
+            }else if(err2){
+                console.log('err2'+err2);
+            }
+            else{
+                callback(transactions, lenders);
+            }
+        });
+     });
+};
+
+io.sockets.on('connection', function(socket){
+    socket.on('join', function(callback){
+        console.log("emiting%%%%%%%%%%%%%%%%%%%5");
+        get_ten_transactions(function(transactions, lenders){
+            callback(transactions, lenders);       
+        });    
+    });
+});
+
+function updateFeed(idBorrows, callback){
+        connection.query("select Username, name from Borrows, Item, User where idBorrows = ? and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10", [idBorrows], function(err1,transactions) {
+        connection.query("select Username from Borrows, Item, User where idBorrows = ? and Item.owner=User.idUser order by Borrows.inital_date desc limit 10", [idBorrows],function(err2,lenders) {        
+            if(err1){
+                console.log('err1'+err1);
+            }else if(err2){
+                console.log('err2'+err2);
+            }else{
+                io.sockets.emit("new_transaction", transactions, lenders);
+            }
+     });
+    });
+};
+
+
