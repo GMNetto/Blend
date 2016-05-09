@@ -5,11 +5,15 @@ window.addEventListener('load', function(){
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
-    cancelreq = new XMLHttpRequest();
+    //cancelreq = new XMLHttpRequest();
     //acceptBorrower(1);
     //finishLender(1);
-    populateDateField(720);
-
+    //populateDateField(720);
+    var nums = document.getElementById("curborrows");
+    var listItem = nums.getElementsByTagName("li");
+    for (var i=0; i < listItem.length; i++) {
+        console.log(listItem[i].id);
+    }
     $('.remove_btn').on('click', function(){
       console.log(this);
       var elem = this.closest('li');
@@ -22,7 +26,9 @@ window.addEventListener('load', function(){
 
       alert(params.idItem);
 
-      $.post("/removeItem", params);
+      $.post("/removeItem", params, function(server_response) {
+
+      });
 
     });
 }, false);
@@ -55,10 +61,10 @@ function finishLender(transactionId){
     finishreq.withCredentials = true;
     finishreq.send(param);
 }
-function populateDateField(duration){
+function populateDateField(date,duration){
     //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
     //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
-    var curdate = new Date();
+    var curdate = date;
     var enddate = new Date(curdate);
     console.log(curdate);
     if(duration==1){
