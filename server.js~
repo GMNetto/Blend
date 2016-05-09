@@ -186,16 +186,17 @@ app.get('/profile/:username', requireLogin, function(req, res, next){
     getUser(req.params.username, function(err, user){
         console.log(user);
         if(user===undefined){
-            //do nothing?
-            return;
-        }
-        if(req.session.user == user.idUser) {
-          res.redirect('/my_profile');
-        }  else {
-          if(err)
-              next();
-          else
-  	        render_profile(user, res);
+            console.log("hhhheeerrreee")
+            res.render('page_not_found.html');
+        }else{
+            if(req.session.user == user.idUser) {
+              res.redirect('/my_profile');
+            }  else {
+              if(err)
+                  next();
+              else
+      	        render_profile(user, res);
+            }
         }
     });
 });
@@ -320,7 +321,22 @@ app.post('/searchquery', requireLogin, function(request, response){
     });
 });
 
-
+app.get('/recentitems',function(request, response){
+    connection.query('select * from Item left join User on Item.owner=User.idUser order by idItem DESC LIMIT 3', function (err,rows) {
+        if(err){
+            
+        }
+        else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem,lon:row.longitude,lat:row.latitude,image:row.image});
+            }
+            response.json(tosend);
+        }
+    });
+});
 
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
@@ -988,6 +1004,7 @@ function getUser(username, callback){
             return callback(true, undefined);
         }else{
             user = result
+            console.log(user.Uername);
             return callback(err, user[0]);
         }
     });

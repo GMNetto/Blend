@@ -186,16 +186,17 @@ app.get('/profile/:username', requireLogin, function(req, res, next){
     getUser(req.params.username, function(err, user){
         console.log(user);
         if(user===undefined){
-            //do nothing?
-            return;
-        }
-        if(req.session.user == user.idUser) {
-          res.redirect('/my_profile');
-        }  else {
-          if(err)
-              next();
-          else
-  	        render_profile(user, res);
+            console.log("hhhheeerrreee")
+            res.render('page_not_found.html');
+        }else{
+            if(req.session.user == user.idUser) {
+              res.redirect('/my_profile');
+            }  else {
+              if(err)
+                  next();
+              else
+      	        render_profile(user, res);
+            }
         }
     });
 });
@@ -1003,6 +1004,7 @@ function getUser(username, callback){
             return callback(true, undefined);
         }else{
             user = result
+            console.log(user.Uername);
             return callback(err, user[0]);
         }
     });
