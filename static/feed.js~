@@ -1,16 +1,43 @@
-var socket = io.connect();
 
+var socket = io.connect();
 window.addEventListener('load', function(){
 
-    socket.on('new_transaction', function(user1_name, user2_name, item_name){
+    socket.on('new_transaction', function(transaction, lender){
         var li = document.createElement('li');
-        li.innerHTML = '<p id="transaction">' + user1_name + ' ' + user2_name + ' ' + item_name + '</p>';
-        $("#list-transactions").append(li);
+        li.className = "list-group-item";
+        var user1_name = transactions;
+        var user2_name = lender;
+        var item_name = transactions;
+        li.innerHTML = '<div class="portfolio-item" style = "text-align:center"  >' +
+										'<img class = "img_fade" src = "' + user1.profile_url + '">'+
+									
+										'<a href = "' + '#' + '" />' + 
+											'<span id = "item_fade">' + user1.Username + '</span>' + 
+										'</a>' +
+										
+										'<span style = "color:grey; margin-left: 30px; margin-right:30px;">borrowed from </span>' + 
+										
+										'<img class = "img_fade" src = "' + user2.profile_url + '">' + 
+									
+										'<a href = "' + '#' + '" />' +
+											'<span id = "item_fade">' + user2.Username + '</span>' +
+										'</a>' +
+										
+										'<span style = "color:grey; margin-left: 50px; margin-right:10px;">item:</span>' +
+										
+										'<img class = "img_fade" src = "' + item.image + '">' + '<span id = "item_fade">' + item.name + '</span>' +	
+									'</div>';
+        $(".list-transactions").append(li);
     });
 
-
-    socket.emit('join', function(transactions, lenders){
-        update(transactions, lenders);
+    socket.on('connect', function(){
+        socket.emit('join', function(transactions, lenders){
+            console.log(transactions.Username);
+            update(transactions, lenders);
+        });
+    });
+    socket.on('disconnect', function(){
+        var ul_el = document.getElementsByClassName('list-transactions');
     });
 });
 
@@ -18,10 +45,31 @@ var update = function(transactions, lenders){
     $("#list-transactions").empty();
     for(var i = 0; i< transactions.length; ++i){
         var li = document.createElement('li');
-        var user1_name = transactions[i].Username;
-        var user2_name = lender[i].Username;
-        var item_name = transactions[i].name;
-        li.innerHTML = '<p id="transaction">' + user1_name + ' ' + user2_name + ' ' + item_name + '</p>';
-        $("#list-transactions").append(li);
+        li.className = "list-group-item";
+        var user1 = transactions[i];
+        var user2 = lenders[i];
+        var item = transactions[i];
+        li.innerHTML = '<div class="portfolio-item" style = "text-align:center"  >' +
+										'<img class = "img_fade" src = "' + user1.profile_url + '">'+
+									
+										'<a href = "' + '#' + '" />' + 
+											'<span id = "item_fade">' + user1.Username + '</span>' + 
+										'</a>' +
+										
+										'<span style = "color:grey; margin-left: 30px; margin-right:30px;">borrowed from </span>' + 
+										
+										'<img class = "img_fade" src = "' + user2.profile_url + '">' + 
+									
+										'<a href = "' + '#' + '" />' +
+											'<span id = "item_fade">' + user2.Username + '</span>' +
+										'</a>' +
+										
+										'<span style = "color:grey; margin-left: 50px; margin-right:10px;">item:</span>' +
+										
+										'<img class = "img_fade" src = "' + item.image + '">' +
+									
+										'<span id = "item_fade">' + item.name + '</span>' +	
+									'</div>';
+        $(".list-transactions").append(li);
     }
 };
