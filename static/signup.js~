@@ -99,38 +99,6 @@ function submitForm(){
         },false);
         req.send(params);
         return false;
-        /**
-        usereq.addEventListener('load', function(e){
-        //login request if successful
-        if (usereq.status == 200) {
-             var content = usereq.responseText;
-            if(content.length>0){
-                // list appending code
-                // should be array of message objects
-                var data = JSON.parse(content);
-           
-                if(data[0].result == true) {
-                    //alert(data[0].err);
-                    document.getElementById("1").className+=" has-error";;
-                }
-                else{
-                    alert("Registration Successful");
-                    
-                }
-            }
-
-        } else {
-            // something went wrong, check the request status
-            // hint: 403 means Forbidden, maybe you forgot your username?
-        }
-    }, false);
-        var userparams = 'username='+username+'&email='+email;
-        usereq.open('POST', '/usernameverif', true);
-        usereq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        usereq.send(userparams);
-        **/
-        //return false;
-        
    }else{
         //return false;
    }

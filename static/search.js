@@ -20,12 +20,16 @@ function submitItem(){
                 var content = searchrequest.responseText;
                 // check if there is prior messages to load at all
                 console.log(content);
+                document.getElementById("emptyresult").style.display = "none";
                 if(content.length>0){
                     // list appending code
                     // should be array of message objects
                     var data = JSON.parse(content);
                     console.log("content?");
                     console.log(data);
+                    if(data.length===0){
+                        document.getElementById("emptyresult").style.display = "block";
+                    }
                     // grab ul
                     var ul = document.getElementById('mod_results');
                     var ul2 = document.getElementById('popup_portfolio');
@@ -54,8 +58,13 @@ function submitItem(){
                     }
 
                 }
+             else{
+                 //returned empty result. 
+                
+             }
             } else {
                //for some reason request didn't succeed. Do nothing
+               
             }
     }, false);
 
