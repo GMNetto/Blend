@@ -1,15 +1,61 @@
 var searchrequest;
 var counter = 0;
 var borrowrequest;
+var recentrequest;
 window.addEventListener('load', function(){
     //change username in form field on load based on session. For time being, hardcoded
     searchrequest = new XMLHttpRequest();
     borrowrequest = new XMLHttpRequest();
+    recentrequest = new XMLHttpRequest();
+    
 }, false);
 function hideFilters(){
     $('#portfolioModal').modal('hide');
 }
-//now not needed
+function loadRecents(){
+    recentrequest.open('GET', '/recentitems', true);
+    recentrequest.addEventListener('load', function(e){
+         if (recentrequest.status == 200) {
+             // do something with the loaded content
+                var content = recentrequest.responseText;
+                // check if there is prior messages to load at all
+                console.log(content);
+                if(content.length>0){
+                    // list appending code
+                    // should be array of message objects
+                    var data = JSON.parse(content);
+                    
+                    var ul = document.getElementById('mod_results');
+                    var ul2 = document.getElementById('popup_portfolio');
+                    // create a new li element for the message, and append it
+                    ul.innerHTML="";
+                    var curid;
+                    for(i = 0;i<data.length;i++){
+                        //add only new messages to list
+                        var li = document.createElement('li');
+                        var li2 = document.createElement('li');
+                        //construct list element
+                        
+                        li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + counter + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'300 em\' width = \'300 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
+                        li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
+                        ul.appendChild(li,ul.childNodes[0]);
+                        ul2.appendChild(li2, ul.childNodes[0]);
+                        counter++;
+                        
+
+                    }
+
+                }
+             else{
+                 //returned empty result. 
+                
+             }
+         }
+    }, false); 
+    recentrequest.send(null);
+    return false;
+}
+//now needed
 function submitItem(){
     // specify the HTTP method, URL, and asynchronous flag
     searchrequest.open('POST', '/searchquery', true);

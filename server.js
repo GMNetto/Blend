@@ -320,7 +320,22 @@ app.post('/searchquery', requireLogin, function(request, response){
     });
 });
 
-
+app.get('/recentitems',function(request, response){
+    connection.query('select * from Item left join User on Item.owner=User.idUser order by idItem DESC LIMIT 3', function (err,rows) {
+        if(err){
+            
+        }
+        else{
+            var row;
+            var tosend =[];
+            for(i = 0;i<rows.length;i++){
+                row = rows[i];
+                tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem,lon:row.longitude,lat:row.latitude,image:row.image});
+            }
+            response.json(tosend);
+        }
+    });
+});
 
 app.get('/lend', requireLogin, function(request, response) {
     console.log(request.session.user);
