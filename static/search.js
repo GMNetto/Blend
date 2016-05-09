@@ -6,6 +6,9 @@ window.addEventListener('load', function(){
     searchrequest = new XMLHttpRequest();
     borrowrequest = new XMLHttpRequest();
 }, false);
+function hideFilters(){
+    $('#portfolioModal').modal('hide');
+}
 //now not needed
 function submitItem(){
     // specify the HTTP method, URL, and asynchronous flag
