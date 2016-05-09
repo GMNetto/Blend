@@ -174,45 +174,142 @@
                         </ul>
 
                     </div>
+      <!--              <div class="footer-col col-md-4">-->
+      <!--                  {{#user}}-->
+      <!--                  <div class = "logo" style = "text-align:center">{{Username}}</div>-->
+      <!--                  <hr class="vertical"/>-->
+
+                        <!--<div class="text-center" >-->
+						<!-- Main Form -->
+						<!--<div class="login-form-1">-->
+      <!--                      <img src="{{profile_url}}" alt="Profile Image" class="img-responsive"/>-->
+
+						<!--		<div class="main-login-form">-->
+						<!--			<div class="login-group">-->
+
+						<!--				<div class="form-group" id="1">-->
+      <!--                                      <label>Username: </label>-->
+      <!--                                      <label>{{Username}}</label>-->
+      <!--                                  </div>-->
+      <!--                                  <div class="form-group" id="2">-->
+      <!--                                      <label>Email: </label>-->
+      <!--                                      <label>{{email}}</label>-->
+      <!--                                  </div>-->
+      <!--                                  <div class="form-group" id="4">-->
+      <!--                                      <label>First Name: </label>-->
+      <!--                                      <label>{{first_name}}</label>-->
+      <!--                                  </div>-->
+      <!--                                  <div class="form-group" id="5">-->
+      <!--                                      <label>Last Name: </label>-->
+      <!--                                      <label>{{last_name}}</label>-->
+      <!--                                  </div>-->
+      <!--                                  <div class="form-group link_maps" id="6">-->
+      <!--                                      <label>Address: </label>-->
+      <!--                                      <a href="http://maps.google.com/?q={{address}}" target="_blank"><label>{{address}}</label></a>-->
+      <!--                                  </div>-->
+      <!--                                  <div class="form-group" id="7">-->
+      <!--                                      <label>Phone: </label>-->
+      <!--                                      <label>{{phone}}</label>-->
+      <!--                                  </div>-->
+      <!--                              </div>-->
+						<!--		</div>-->
+						<!--</div>-->
+
+      <!--              {{/user}}-->
+      <!--              </div>-->
+      
+      
                     <div class="footer-col col-md-4">
+                        <div class="alert alert-danger" id="badusername" style="display:none">
+                            <strong>Could not update profile</strong> 
+                        </div>
+                        
+                        
+                        <div class="alert alert-danger" id="badaddress" style="display:none">
+                            <strong>Error with address. Try a different one</strong> 
+                        </div>
                         {{#user}}
                         <div class = "logo" style = "text-align:center">{{Username}}</div>
-                        <hr class="vertical"/>
+                        <!--<hr class="vertical"/>-->
 
                         <!--<div class="text-center" >-->
 						<!-- Main Form -->
 						<div class="login-form-1">
                             <img src="{{profile_url}}" alt="Profile Image" class="img-responsive"/>
-
+							<!--<form class="form-lend" id="lendform" action="/update_user" method="POST" enctype="multipart/form-data">-->
+                                <form class="form-lend" id="lendform" enctype="multipart/form-data">
 								<div class="main-login-form">
 									<div class="login-group">
 
+
+                                    <div class="form-group">
+											<br />
+											<input type="text" class="form-control" id="reg_itemname" name="reg_itemname" placeholder="Image">
+											<div class="container4">
+											  <div class="panel panel-default">
+
+												<div class="panel-body">
+
+												  <!-- Standars Form -->
+
+												  <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+													<div class="form-inline">
+													  <div class="form-group2">
+														<input type="file" class="form-control-file" id="imgFile" name="img">
+													  </div>
+													  <!-- <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button> -->
+													</div>
+												  </form>
+
+
+												</div>
+											  </div>
+											</div> <!-- /container -->
+											<br />
+										</div>
+
 										<div class="form-group" id="1">
-                                            <label>Username: </label>
-                                            <label>{{Username}}</label>
+                                            <label for="username" class="sr-only">Username</label>
+                                            <input type="text" name="username" id="username" class="form-control"  value="{{Username}}" required>
                                         </div>
                                         <div class="form-group" id="2">
-                                            <label>Email: </label>
-                                            <label>{{email}}</label>
+                                            <label for="inputEmail" class="sr-only">Email</label>
+                                            <input type="email" name="email" id="inputEmail" class="form-control" value="{{email}}" required autofocus>
                                         </div>
+                                        <div class="form-group" id="3">
+                                            <label for="inputPassword" class="sr-only">Password</label>
+                                            <input type="password" name="password" id="inputPassword" class="form-control" value="{{password}}">
+                                        </div>
+                                        
                                         <div class="form-group" id="4">
-                                            <label>First Name: </label>
-                                            <label>{{first_name}}</label>
+                                            <label for="firstName" class="sr-only">First Name</label>
+                                            <input type="text" id="firstName" name="fn" class="form-control" value="{{first_name}}" required>
                                         </div>
                                         <div class="form-group" id="5">
-                                            <label>Last Name: </label>
-                                            <label>{{last_name}}</label>
+                                            <label for="lastName" class="sr-only">Last Name</label>
+                                            <input type="text" id="lastName" name="ln" class="form-control" value="{{last_name}}" required>
                                         </div>
-                                        <div class="form-group link_maps" id="6">
-                                            <label>Address: </label>
-                                            <a href="http://maps.google.com/?q={{address}}" target="_blank"><label>{{address}}</label></a>
+                                        <div class="form-group" id="6">
+                                            <label for="address" class="sr-only">Address</label>
+                                            <input type="text" id="address" name="address" class="form-control" value="{{address}}" required>
                                         </div>
                                         <div class="form-group" id="7">
-                                            <label>Phone: </label>
-                                            <label>{{phone}}</label>
+                                            <label for="phone" class="sr-only">Phone</label>
+                                            <input type="tel" id="phone" name="phone" class="form-control" value="{{phone}}" required>
                                         </div>
-                                    </div>
+                                        <div class="form-group" id="8">
+                                            <input type="hidden" id="csrf" name="_csrf" value="{{csrftoken}}"/>                                        
+                                        </div>
+                                        </div class="form-group" id="9">
+
+											<input type="checkbox" class="" id="password_agree" name="password_agree">
+											<label for="password_agree">Change password</label>
+										</div>
+									</div>                                     
+                                       <button type="submit" class="btn-submit" onclick="submitForm();return false;" style="color:black">Update</button>
 								</div>
+
+							</form>
 						</div>
 
                     {{/user}}
