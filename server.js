@@ -224,8 +224,8 @@ app.get('/feed', requireLogin, function(request, response){
     response.render("feed.html");
 });
 
-function getOngoingBorrows(username, callback){
-    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = U.idUser and U.Username=? and B.borrower_commented = 0;', [username], function(err, result){
+function getOngoingBorrows(userid, callback){
+    connection.query('select * from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and B.idUser = ? and I.owner=U.idUser and B.borrower_commented = 0;', [userid], function(err, result){
         if(err){
             callback(true, undefined);
         }else{
@@ -362,7 +362,7 @@ app.get('/transactions', function(request, response) {
 });
 function render_transactions(user, res, items){
     console.log("render: "+user.idUser);
-    getOngoingBorrows(user.Username, function(err_borrow, list_items_borrow){
+    getOngoingBorrows(user.idUser, function(err_borrow, list_items_borrow){
         getOngoingLends(user.idUser, function(err_lend, list_items_lend){
             if(err_borrow || err_lend){
                 console.log("An error just happened");

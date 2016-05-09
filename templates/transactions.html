@@ -134,7 +134,7 @@
 										</a>
 
 										<!-- Text/Link for user rating-->
-										<a href = "#" >
+										<a href = "/profile/{{Username}}" >
 											<div id = "trans-rating">rating: {{borrower_rating}}</div>
 										</a>
 
@@ -177,23 +177,15 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
+                                                    <div class="modal-body" style="color:black">
                                                         <h2>{{name}}</h2>
                                                         <hr class="star-primary">
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
                                                         <ul class="list-inline item-details">
-                                                            <li>Client:
-                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
-                                                                </strong>
+                                                            <li>Price: {{price}}
                                                             </li>
-                                                            <li>Date:
-                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
-                                                                </strong>
-                                                            </li>
-                                                            <li>Service:
-                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
-                                                                </strong>
+                                                            <li>Lend Period: {{duration}} hours
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -307,7 +299,7 @@
 									</div>
 
 									<!-- Section 2, start and end date -->
-									<div class="footer-col col-md-4" id = "period_contact">
+									<div class="footer-col col-md-4" id = "period_contact" style="color:black">
 
 										<!-- text for start date -->
 										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
@@ -376,7 +368,7 @@
 										</a>
                                         {{/accepted}}
 									</div>
-                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style="color:black">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -393,17 +385,11 @@
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
                                                         <ul class="list-inline item-details">
-                                                            <li>Client:
-                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
-                                                                </strong>
+                                                            <li>Price:{{price}}
                                                             </li>
-                                                            <li>Date:
-                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
-                                                                </strong>
+                                                            <li>Owner:<a href={{profile_url}}>{{Username}}</a>
                                                             </li>
-                                                            <li>Service:
-                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
-                                                                </strong>
+                                                            <li>Lend Period: {{duration}} hours
                                                             </li>
                                                         </ul>
                                                     </div>
