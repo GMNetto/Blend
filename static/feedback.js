@@ -34,6 +34,7 @@ function populateDateField(duration){
     //console.log(enddate);
     //http://stackoverflow.com/questions/2554149/html-javascript-change-div-content
     //document.getElementById("start_date").innerHTML = "start date:"+curdate;
+    //console.log(enddate.toDateString());
     document.getElementById("end_date").innerHTML = "end date:"+enddate;
 }
 function meta(name) {

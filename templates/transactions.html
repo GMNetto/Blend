@@ -288,11 +288,11 @@
                         <div class="logo" style = "text-align:center">Borrowing:</div>
                         <hr class="vertical"/>
 
-                        	<ul style = "list-style:none; color:black" class = "list-group">
+                        	<ul style = "list-style:none; color:black" class = "list-group" id="curborrows">
                                 {{#has_borrows}}
                                 {{#borrows}}
                             	<!-- Item 1 -->
-								<li class = "list-group-item">
+								<li class = "list-group-item" id=borrows{{idBorrows}}>
                                     <meta name="transactionId" value={{idBorrows}}>
  									<!-- Section 1, item image and title -->
 									<div class="footer-col col-md-4">
@@ -310,12 +310,46 @@
 									<div class="footer-col col-md-4" id = "period_contact">
 
 										<!-- text for start date -->
-										<div id = "start_date">start date:{{inital_date}} </div>
+										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
 
 
 										<!-- text for end date -->
-										<div id = "end_date">end date: </div>
+										<div id = "end_dateborrows{{idBorrows}}">end date: </div>
+                                        <script type="text/javascript">
+                                        function populateDateField(duration){
+                                            //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+                                            //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
+                                            var curdate = new Date(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
+                                            var enddate = new Date(curdate);
+                                            console.log(curdate);
+                                            if(duration==1){
+                                                //console.log("hour");
+                                                //console.log(curdate.getTime());
+                                                enddate.setHours(curdate.getHours()+1);
+                                                enddate.setDate(curdate.getDay()-7);
 
+                                            }
+                                            if(duration==24){
+                                                //console.log("day");
+                                                //enddate.setHours(curdate.getHours()+24);
+                                                enddate.setDate(curdate.getDate()+1);
+                                                enddate.setMonth(curdate.getMonth()-1);
+                                            }
+                                            if(duration==148){
+                                                //console.log("week");
+                                                enddate.setDate(enddate.getDate()+7);
+
+                                            }
+                                            else
+                                            {//duration is 720, which is a month
+                                                enddate.setMonth(enddate.getMonth()+1);
+                                            ;}
+                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: "+curdate.toDateString();
+                                             document.getElementById("end_dateborrows{{idBorrows}}").innerHTML = "end date: "+enddate.toDateString();
+                                            console.log(enddate.toDateString());
+                                        }
+                                        window.onload = populateDateField({{duration}});
+                                        </script>
 										<!-- link for contacting buyer -->
 										<a href = "{{profile_url}}" >
 											<div id = "lender_link"><strong>Contact Lender</strong></div>
