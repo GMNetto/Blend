@@ -833,6 +833,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             }
                                             else{
                                                 //done
+                                                /**
                                                 updateFeed(request.body.transactionId, function(){
                                                     get_user_by_id(request.session.user, function(err, user){
                                                         if(err)
@@ -841,6 +842,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                                             render_transactions(user, response);
                                                     });
                                                 });
+                                                **/
                                             }
                                         });
                                         }
