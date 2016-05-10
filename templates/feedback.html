@@ -16,6 +16,7 @@
 
 	<link href="../static/search.css" rel="stylesheet">
 	<script src="../static/feedback.js" type="text/javascript"></script>
+	<script src="../static/search.js" type="text/javascript"></script>
 
     <title>Blend</title>
 
@@ -37,16 +38,17 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <link href="../static/login_info.css" rel="stylesheet">
-    <script src="../static/login_info.js" type="text/javascript"></script>
-    <link href="../static/signin.css" rel="stylesheet">
-    <script src="../static/index.js" type="text/javascript"></script>
+
+    <link href="../css/login_info.css" rel="stylesheet">
+    <script src="../css/login_info.js" type="text/javascript"></script>
+    <link href="../css/signin.css" rel="stylesheet">
+    
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" style = "background-color: #1ABC9C !important">
 
-    <!-- Navigation -->
+   <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -59,31 +61,31 @@
                 </button>
                 <a class="navbar-brand" href="#page-top">Blend</a>
             </div>
-           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden">
-                        <a href="#page-top"></a>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                 <ul class="nav navbar-nav navbar-right">
+                     <li class="hidden">
+                         <a href="#page-top"></a>
+                     </li>
+                     <li class="page-scroll">
+                        <a href="../feed">Feed</a>
                     </li>
-                    <li class="page-scroll">
-                        <a href="feed">Feed</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="search">Borrow</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="lend">Lend</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="transactions">Activity</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="my_profile">Profile</a>
-                    </li>
-                    <li class="page-scroll">
-                        <a href="logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
+                     <li class="page-scroll">
+                         <a href="../search">Borrow</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="../lend">Lend</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="../transactions">Activity</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="../my_profile">Profile</a>
+                     </li>
+                     <li class="page-scroll">
+                         <a href="../logout">Logout</a>
+                     </li>
+                 </ul>
+             </div>
 
             <!-- /.navbar-collapse -->
         </div>
@@ -117,16 +119,18 @@
 									<div class="form-group">
 									<br />
 										<div class="form-group">
+
 											<div style = "text-align:center"> transaction between:
-												<a href = "#">
+
 													<span id = "feedback-user"> {{feedbackuser}} </span>
-												</a>
+
 
 													<span > and</span>
 
-												<a href = "#">
+
+
 													<span id = "cur-user"> {{curuser}} </span>
-												</a>
+
 										</div>
 										<br />
                                         </div>
@@ -139,10 +143,10 @@
 												<div class="footer-col col-md-4" >
 													<!-- Item Image and title, opens up modal when clicked -->
 													<div class="portfolio-item" >
-														<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
-															<img class = "img_fade" src = "/static/images/{{image}}">
+
+															<img class = "img_fade" src = "{{image}}">
 															<span id = "item_fade">{{itemName}}</span>
-														</a>
+
 													</div>
 
 												</div>
@@ -151,8 +155,9 @@
 												<div class="footer-col col-md-4" id = "div2">
 
 													<!-- Text/Link for user profile -->
-													<a href = "#" >
-														<div id = "feedback-user2">user: {{feedbackuser}}</div>
+
+													<a href = "/profile/{{feedbackuser}}" > 
+														<div id = "feedback-user2" style="color:grey">user: {{feedbackuser}}</div>
 													</a>
 
 													<!-- Text/Link for user rating-->
@@ -189,12 +194,7 @@
 											</select>
 											<br />
 										</div>
-										<div class="form-group">
-											<br />
-											<label for="reg_feedback" class="sr-only">Price </label>
-											<textarea class="form-control" name="feedback" id="itemDescription" placeholder= "Please Provide Feedback" rows="3"></textarea>
-											<br />
-										</div>
+
 									</div>
 									<button type="submit" class="login-button"><i class="fa fa-chevron-right"></i></button>
 								</div>
