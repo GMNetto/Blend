@@ -6,7 +6,7 @@ This user must be able to INSERT, UPDATE, DELETE, and SELECT.
 
 After this user is setup, the correct node modules have to be installed using npm install.
 
-The app can then be run locally via node server.js.
+The app can then be run locally via node server.js. It can then be accessed in a browser using https://localhost:8080/
 
 There is an online version of the app. It can be reached at https://blendproject.herokuapp.com/.
 
