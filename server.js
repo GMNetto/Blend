@@ -1421,7 +1421,8 @@ var server = https.createServer({
 }, app).listen(8080);
 
 
-var io = require('socket.io').listen(server);
+var io = require('socket.io').listen(serverhttp);
+var ios = require('socket.io').listen(server);
 
 function get_ten_transactions(callback){
      connection.query("select Username, name, profile_url, image from Borrows, Item, User where idItem = idProduct and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10",function(err1,transactions) {
@@ -1440,6 +1441,17 @@ function get_ten_transactions(callback){
 };
 
 io.sockets.on('connection', function(socket){
+    socket.on('join', function(callback){
+        console.log("emiting%%%%%%%%%%%%%%%%%%%5");
+        get_ten_transactions(function(transactions, lenders){
+            console.log("Calling last 10 items ");
+            callback(transactions, lenders);
+        });
+    });
+});
+
+
+ios.sockets.on('connection', function(socket){
     socket.on('join', function(callback){
         console.log("emiting%%%%%%%%%%%%%%%%%%%5");
         get_ten_transactions(function(transactions, lenders){
