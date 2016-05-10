@@ -60,10 +60,57 @@
 </head>
 
 <body id="page-top" class="index" style = "background-color: #1ABC9C !important">
+	<script type="text/javascript">
+                function populateDateField(duration){
+                                            //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+                                            //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
+                                            //http://stackoverflow.com/questions/3257460/new-date-is-working-in-chrome-but-not-firefox
+                                            //console.log(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
+                                            var array = document.getElementById("start_dateborrows{{idBorrows}}").innerHTML.split(" ");
+                                            var datestring = array[3]+ " "+ array[4]+ " ,"+array[5];
+                                            console.log(array[3]);
+                                            console.log(array[4]);
+                                            console.log(array[5]);
+                                            
+                                            console.log(new Date(datestring));
+                                            console.log(datestring);
+                                            var curdate = new Date(datestring);
+                                            var enddate = new Date(curdate);
+                                            console.log(curdate);
+                                            if(duration==1){
+                                                //console.log("hour");
+                                                //console.log(curdate.getTime());
+                                                enddate.setHours(curdate.getHours()+1);
+                                                enddate.setDate(curdate.getDay()-7);
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
+                                            }
+                                            if(duration==24){
+                                                //console.log("day");
+                                                //enddate.setHours(curdate.getHours()+24);
+                                                enddate.setDate(curdate.getDate()+1);
+                                                enddate.setMonth(curdate.getMonth()-1);
+                                            }
+                                            if(duration==148){
+                                                //console.log("week");
+                                                enddate.setDate(enddate.getDate()+7);
+
+                                            }
+                                            else
+                                            {//duration is 720, which is a month
+                                                enddate.setMonth(enddate.getMonth()+1);
+                                            ;}
+                                            
+                                            
+                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: " + curdate.toDateString();
+                                            document.getElementById("end_dateborrows{{idBorrows}}").innerHTML = "end date: "+ enddate.toDateString();
+                                            console.log(enddate.toDateString());
+                                        }
+                window.onload = populateDateField({{duration}});
+        </script>
+
+ 	<!-- Navigation -->
+    	<nav class="navbar navbar-default navbar-fixed-top">
+        	<div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -104,13 +151,10 @@
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container-fluid -->
-    </nav>
+    	</nav>
 
-
-
-
-    <!-- Header -->
-    <header>
+    	<!-- Header -->
+    	<header>
         <div class="footer-above">
             <div class="container">
                 <div class="row">
@@ -323,93 +367,7 @@
 										<!-- text for end date -->
 									<!--	<div id = "end_dateborrows{{idBorrows}}">  </div>-->
 									<!--</span>-->
-                                        <script type="text/javascript">
-                                        function populateDateField(duration){
-                                            //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
-                                            //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
-                                            //http://stackoverflow.com/questions/3257460/new-date-is-working-in-chrome-but-not-firefox
-                                            //console.log(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
-                                            var array = document.getElementById("start_dateborrows{{idBorrows}}").innerHTML.split(" ");
-                                            var datestring = array[3]+ " "+ array[4]+ " ,"+array[5];
-                                            console.log(array[3]);
-                                            console.log(array[4]);
-                                            console.log(array[5]);
-                                            
-                                            console.log(new Date(datestring));
-                                            console.log(datestring);
-                                            var curdate = new Date(datestring);
-                                            var enddate = new Date(curdate);
-                                            console.log(curdate);
-                                            if(duration==1){
-                                                //console.log("hour");
-                                                //console.log(curdate.getTime());
-                                                enddate.setHours(curdate.getHours()+1);
-                                                enddate.setDate(curdate.getDay()-7);
-
-                                            }
-                                            if(duration==24){
-                                                //console.log("day");
-                                                //enddate.setHours(curdate.getHours()+24);
-                                                enddate.setDate(curdate.getDate()+1);
-                                                enddate.setMonth(curdate.getMonth()-1);
-                                            }
-                                            if(duration==148){
-                                                //console.log("week");
-                                                enddate.setDate(enddate.getDate()+7);
-
-                                            }
-                                            else
-                                            {//duration is 720, which is a month
-                                                enddate.setMonth(enddate.getMonth()+1);
-                                            ;}
-                                            
-         //                                   var n = curdate.getMonth();
-
-    					//     if (n == 0){
-					    //   n = "Jan"
-					    //}
-					    //if (n == 1){
-					    //   n = "Feb"
-					    //}
-					    //if (n == 2){
-					    //   n = "March"
-					    //}
-					    //if (n == 3){
-					    //   n = "Apr"
-					    //}
-					    //if (n == 4){
-					    //   n = "May"
-					    //}
-					    //if (n == 5){
-					    //   n = "June"
-					    //}
-					    //if (n == 6){
-					    //   n = "July"
-					    //}
-					    //if (n == 7){
-					    //   n = "Aug"
-					    //}
-					    //if (n == 8){
-					    //   n = "Sept"
-					    //}
-					    //if (n == 9){
-					    //   n = "Oct"
-					    //}
-					    //if (n == 10){
-					    //   n = "Nov"
-					    //}
-					    //if (n == 11){
-					    //   n = "Dec"
-					    //}
-					    
-					    //var m = curdate.getDate();
-                                            
-                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: " + curdate.toDateString();
-                                            document.getElementById("end_dateborrows{{idBorrows}}").innerHTML = "end date: "+ enddate.toDateString();
-                                            console.log(enddate.toDateString());
-                                        }
-                                        window.onload = populateDateField({{duration}});
-                                        </script>
+                                        
 
 
 
@@ -727,7 +685,7 @@
 	<!-- Portfolio Modals -->
 
 	<!-- Modal 1, Item Preview -->
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
+    	<div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -764,8 +722,8 @@
         </div>
     </div>
 
-    <!-- Modal 2, Item accept -->
-    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
+    	<!-- Modal 2, Item accept -->
+    	<div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -802,8 +760,8 @@
         </div>
     </div>
 
-    <!-- Modal 3, Item reject -->
-    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
+    	<!-- Modal 3, Item reject -->
+    	<div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -841,8 +799,8 @@
     </div>
 
 
-    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-    <div class="scroll-top page-scroll visible-xs visible-sm">
+    	<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+	 <div class="scroll-top page-scroll visible-xs visible-sm">
         <a class="btn btn-primary" href="#page-top">
             <i class="fa fa-chevron-up"></i>
         </a>
@@ -850,23 +808,23 @@
 
 
 
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-    <script src="js/classie.js"></script>
-    <script src="js/cbpAnimatedHeader.js"></script>
-
-    <!-- Contact Form JavaScript -->
-    <script src="js/jqBootstrapValidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="js/freelancer.js"></script>
+	    <!-- jQuery -->
+	    <script src="js/jquery.js"></script>
+	
+	    <!-- Bootstrap Core JavaScript -->
+	    <script src="js/bootstrap.min.js"></script>
+	
+	    <!-- Plugin JavaScript -->
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+	    <script src="js/classie.js"></script>
+	    <script src="js/cbpAnimatedHeader.js"></script>
+	
+	    <!-- Contact Form JavaScript -->
+	    <script src="js/jqBootstrapValidation.js"></script>
+	    <script src="js/contact_me.js"></script>
+	
+	    <!-- Custom Theme JavaScript -->
+	    <script src="js/freelancer.js"></script>
 
 </body>
 
