@@ -329,11 +329,38 @@ app.get('/recentitems',function(request, response){
         else{
             var row;
             var tosend =[];
+            var originallat = request.session.latitude;
+            var originallon = request.session.longitude;
             for(i = 0;i<rows.length;i++){
                 row = rows[i];
-                tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem,lon:row.longitude,lat:row.latitude,image:row.image});
+                tosend.push({itemid:row.idItem,description:row.description,username: row.Username,name:row.name,price:row.price,link:"item/"+row.idItem,distance:undefined,lon:row.longitude,lat:row.latitude,image:row.image});
             }
-            response.json(tosend);
+            async.each(tosend, function(item, callback) {
+                  // Perform operation on file here.
+                  console.log('Processing item ' + item.name);
+                  findDistance(originallat,originallon,item.lat,item.lon,function(result){
+                        //console.log("done");
+                        //should not happen, only happened when google went down for some reason
+                        if(result===undefined || result == Number.POSITIVE_INFINITY){
+                            item.distance = Number.MAX_VALUE+ " km";
+                        }
+                        else{
+                            item.distance =result.replace(',','');
+                        }
+                        callback();
+                    });
+
+                }, function(err){
+                    if( err ) {
+                      console.log('A row failed to process');
+                      response.json([]);
+                    } else {
+                      console.log('All rows processsed');
+                        console.log(tosend);
+                        response.json(tosend);
+
+                    }
+                });
         }
     });
 });
@@ -1360,34 +1387,43 @@ app.post("/removeItem", requireLogin, function(request, response) {
   console.log("apples");
   console.log(request.body);
 
-  connection.query("DELETE FROM Borrows WHERE idProduct = ? AND finished = 1", [request.body.idItem], function (err, result) {
+  connection.query("DELETE FROM Borrows WHERE idProduct = ? and ((finished = 1 AND accepted = 1) OR (finished = 0 AND accepted = 0))", [request.body.idItem], function (err, result) {
               if(err){
                   console.log(err);
               } else {
                 console.log("THE RESULTING RESULTS");
                 console.log(result);
-                if(result.affectedRows == 0) {
-                  console.log("Reached SHOULD BE RETURNING NOW");
-                  response.json({status: false});
-                } else {
 
-                  console.log(request.session.user);
-                  console.log(request.body.idItem);
-                  console.log("Successfully removed from db!");
+                connection.query("SELECT idProduct from Borrows where idProduct = ? AND finished = 0", [request.body.idItem], function (err3, results) {
+                  console.log("in second query");
+                  console.log(results);
+                  if(result.affectedRows == 0 && results.length != 0) {
+                    console.log("Reached SHOULD BE RETURNING NOW");
 
-                  connection.query("DELETE FROM Item where idItem = ? ", [request.body.idItem], function (err2) {
-                              if(err){
-                                  console.log(err);
-                              } else {
-                                console.log(request.session.user);
-                                console.log(request.body.idItem);
-                                console.log("Successfully removed from db!");
-                                response.json({status: true});
-                              }
-                  });
+                    response.json({status: false});
+                  } else {
+
+                    console.log(request.session.user);
+                    console.log(request.body.idItem);
+                    console.log("Successfully removed from db!");
+
+                    connection.query("DELETE FROM Item where idItem = ? ", [request.body.idItem], function (err2) {
+                                if(err){
+                                    console.log(err);
+                                } else {
+                                  console.log(request.session.user);
+                                  console.log(request.body.idItem);
+                                  console.log("Successfully removed from db!");
+                                  response.json({status: true});
+                                }
+                    });
 
 
-              	}
+                	}
+                })
+
+
+
 
 
               }
