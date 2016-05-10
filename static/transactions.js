@@ -2,6 +2,7 @@ var acceptreqb;
 var acceptreql;
 var finishreq;
 window.addEventListener('load', function(){
+    window.history.pushState("object or string", "Title", "/transactions");
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
