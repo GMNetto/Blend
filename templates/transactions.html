@@ -363,48 +363,48 @@
                                                 enddate.setMonth(enddate.getMonth()+1);
                                             ;}
                                             
-                                            var n = curdate.getMonth();
+         //                                   var n = curdate.getMonth();
 
-    					    if (n == 0){
-					       n = "Jan"
-					    }
-					    if (n == 1){
-					       n = "Feb"
-					    }
-					    if (n == 2){
-					       n = "March"
-					    }
-					    if (n == 3){
-					       n = "Apr"
-					    }
-					    if (n == 4){
-					       n = "May"
-					    }
-					    if (n == 5){
-					       n = "June"
-					    }
-					    if (n == 6){
-					       n = "July"
-					    }
-					    if (n == 7){
-					       n = "Aug"
-					    }
-					    if (n == 8){
-					       n = "Sept"
-					    }
-					    if (n == 9){
-					       n = "Oct"
-					    }
-					    if (n == 10){
-					       n = "Nov"
-					    }
-					    if (n == 11){
-					       n = "Dec"
-					    }
+    					//     if (n == 0){
+					    //   n = "Jan"
+					    //}
+					    //if (n == 1){
+					    //   n = "Feb"
+					    //}
+					    //if (n == 2){
+					    //   n = "March"
+					    //}
+					    //if (n == 3){
+					    //   n = "Apr"
+					    //}
+					    //if (n == 4){
+					    //   n = "May"
+					    //}
+					    //if (n == 5){
+					    //   n = "June"
+					    //}
+					    //if (n == 6){
+					    //   n = "July"
+					    //}
+					    //if (n == 7){
+					    //   n = "Aug"
+					    //}
+					    //if (n == 8){
+					    //   n = "Sept"
+					    //}
+					    //if (n == 9){
+					    //   n = "Oct"
+					    //}
+					    //if (n == 10){
+					    //   n = "Nov"
+					    //}
+					    //if (n == 11){
+					    //   n = "Dec"
+					    //}
 					    
-					    var m = curdate.getDate();
+					    //var m = curdate.getDate();
                                             
-                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: " + n + ' ' + m;
+                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: " + curdate.toDateString();
                                             document.getElementById("end_dateborrows{{idBorrows}}").innerHTML = "end date: "+ enddate.toDateString();
                                             console.log(enddate.toDateString());
                                         }
