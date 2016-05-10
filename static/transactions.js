@@ -19,12 +19,12 @@ window.addEventListener('load', function(){
       var elem = this.closest('li');
       console.log(elem);
       elem.parentNode.removeChild(elem);
-      alert(this.getAttribute('data-value'));
+      
       var params = {
         idItem: this.getAttribute('data-value')
       };
 
-      alert(params.idItem);
+
 
       $.post("/removeItem", params, function(server_response) {
 
