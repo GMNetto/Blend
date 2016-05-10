@@ -65,11 +65,12 @@ function submitForm(){
     else{
         document.getElementById("7").className="form-group";
     }
+    var image = 
     if(validated){
         console.log("SUCCESS");
         document.getElementById("badusername").style.display="none";
         //var usereq = new XMLHttpRequest();
-        var req = new XMLHttpRequest();
+        /*var req = new XMLHttpRequest();
         //probably should encrypt password or something. This doesn't seem very safe
         var params = 'username='+username+'&email='+email+"&pw="+pw+"&fn="+fn+"&ln="+ln+"&address="+address+"&phone="+phone+"&_csrf="+document.getElementById("csrf").value+"&password_agree="+document.getElementById("password_agree").checked;
         req.open('POST', '/update_user', true);
@@ -89,7 +90,8 @@ function submitForm(){
                 window.location="/my_profile";
             }
         },false);
-        req.send(params);
+        req.send(params);*/
+        document.getElementById("lendform").submit();
         return false;
    }else{
         document.getElementById("badusername").style.display="block";

@@ -16,6 +16,7 @@
 
 	<link href="../css/search.css" rel="stylesheet">
 	<script src="../static/search.js" type="text/javascript"></script>
+    <script src="../static/my_profile.js" type="text/javascript"></script>
 
 
     <title>Blend</title>
@@ -237,14 +238,14 @@
 						<div class="login-form-1">
                             <img src="{{profile_url}}" alt="Profile Image" class="img-responsive"/>
 							<!--<form class="form-lend" id="lendform" action="/update_user" method="POST" enctype="multipart/form-data">-->
-                                <form class="form-lend" id="lendform" enctype="multipart/form-data">
+                                <form class="form-lend" id="lendform" enctype="multipart/form-data" method='POST' action="/update_user">
 								<div class="main-login-form">
 									<div class="login-group">
 
 
                                     <div class="form-group">
 											<br />
-											<input type="text" class="form-control" id="reg_itemname" name="reg_itemname" placeholder="Image">
+											<input type="text" class="form-control" id="reg_itemname" name="reg_itemname" placeholder="Image" readonly>
 											<div class="container4">
 											  <div class="panel panel-default">
 
@@ -300,7 +301,7 @@
                                         <div class="form-group" id="8">
                                             <input type="hidden" id="csrf" name="_csrf" value="{{csrftoken}}"/>                                        
                                         </div>
-                                        </div class="form-group" id="9">
+                                        <div class="form-group" id="9">
 
 											<input type="checkbox" class="" id="password_agree" name="password_agree">
 											<label for="password_agree">Change password</label>
