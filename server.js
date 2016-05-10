@@ -1303,21 +1303,36 @@ function User(idUser, username, password, email, phone, lender_rating, borrow_ra
     this.longitude = longitude
 }
 
-app.post("/removeItem", function(request, response) {
+app.post("/removeItem", requireLogin, function(request, response) {
   console.log("apples");
   console.log(request.body);
 
-  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND ((idItem NOT IN (SELECT idProduct from Borrows)) OR (idItem IN ( SELECT idProduct from Borrows WHERE finished = 1)))", [request.session.user, request.body.idItem], function (err) {
-              if(err){
+  connection.query("DELETE FROM Borrows WHERE idProduct = ? AND finished = 1", [request.body.idItem], function (err) {
+              if(err || require){
                   console.log(err);
               } else {
 
                 console.log(request.session.user);
                 console.log(request.body.idItem);
                 console.log("Successfully removed from db!");
-                response.json({status: "true"});
+
+                connection.query("DELETE FROM Item where idItem = ? ", [request.body.idItem], function (err2) {
+                            if(err){
+                                console.log(err);
+                            } else {
+                              console.log(request.session.user);
+                              console.log(request.body.idItem);
+                              console.log("Successfully removed from db!");
+                              response.json({status: "true"});
+                            }
+                });
+
+
               }
-  });
+    });
+
+
+
 });
 
 function isEmpty(object){
