@@ -290,19 +290,19 @@
 								<li class = "list-group-item" id=borrows{{idBorrows}}>
                                     <meta name="transactionId" value={{idBorrows}}>
  									<!-- Section 1, item image and title -->
-									<div class="footer-col col-md-4">
+									<!--<div class="footer-col col-md-4">-->
 										<!-- Item Image and title, opens up modal when clicked -->
-										<div class="portfolio-item" >
+										<span class="portfolio-item" >
 											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = '{{image}}'>
 												<span id = "item_fade">{{name}}</span>
 											</a>
-										</div>
+										</span>
 
-									</div>
+									<!--</div>-->
 
 									<!-- Section 2, start and end date -->
-									<div class="footer-col " id = "period_contact" style="color:black">
+									<span class="footer-col col-md-4" id = "period_contact" style="color:black">
 
 										<!-- text for start date -->
 										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
@@ -310,6 +310,7 @@
 
 										<!-- text for end date -->
 										<div id = "end_dateborrows{{idBorrows}}">end date: </div>
+									</span>
                                         <script type="text/javascript">
                                         function populateDateField(duration){
                                             //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
