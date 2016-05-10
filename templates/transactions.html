@@ -170,7 +170,7 @@
 								<li class = "list-group-item">
                                     <meta name="transactionId" value={{idBorrows}}>
  									<!-- Section 1, item image and title -->
-									<div class="footer-col col-md-4">
+									<span class="footer-col col-md-4" id = "div3">
 										<!-- Item Image and title, opens up modal when clicked -->
 										<div class="portfolio-item" >
 											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
@@ -179,10 +179,10 @@
 											</a>
 										</div>
 
-									</div>
+									</span>
 
 									<!-- Section 2, User and Rating -->
-									<span class="footer-col col-md-4" >
+									<span class="footer-col col-md-4" id = "div3">
 
 										<!-- Text/Link for user profile -->
 										<a href = "/profile/{{Username}}" >
@@ -197,7 +197,7 @@
 									</span>
 
 									<!-- Section 3, Transaction accept or cancel -->
-									<span class="footer-col col-md-4" >
+									<span class="footer-col col-md-4" id = "div3">
 										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
