@@ -1362,7 +1362,7 @@ app.post("/removeItem", requireLogin, function(request, response) {
               } else {
                 console.log("THE RESULTING RESULTS");
                 console.log(result);
-                if(result.changedRows == 0) {
+                if(result.affectedRows == 0) {
                   console.log("Reached SHOULD BE RETURNING NOW");
                   response.json({status: false});
                 } else {
