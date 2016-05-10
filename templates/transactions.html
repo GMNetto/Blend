@@ -204,7 +204,7 @@
 									</span>
 
 									<!-- Section 3, Transaction accept or cancel -->
-									<span class="footer-col col-md-4" id = "div3" style = "width: 20%; top:10px">
+									<div class="footer-col col-md-4" id = "div3" style = "width: 20%; top:10px">
 										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
@@ -226,7 +226,7 @@
                                         {{#finished}}
                                         <span id = "item_fade">Transaction Finished</span>
                                         {{/finished}}
-									</span>
+									</div>
 								</li>
 
                                 <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
