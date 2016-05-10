@@ -8,7 +8,7 @@ var async = require("async");
 app.use(bodyParser.urlencoded({ extended: false }));
 var mysql = require("mysql");
 var bCrypt = require("bcrypt-nodejs");
-app.use(require('morgan')('dev'));
+app.use(require('morgan')('dev')); 
 var session = require("express-session");
 var MySQLStore = require('express-mysql-session')(session);
 var cloudinary = require('cloudinary');
@@ -1313,7 +1313,7 @@ app.post("/removeItem", requireLogin, function(request, response) {
   console.log(request.body);
 
   connection.query("DELETE FROM Borrows WHERE idProduct = ? AND finished = 1", [request.body.idItem], function (err) {
-              if(err || require){
+              if(err){
                   console.log(err);
               } else {
 
