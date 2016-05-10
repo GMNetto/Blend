@@ -2,6 +2,7 @@ var acceptreqb;
 var acceptreql;
 var finishreq;
 window.addEventListener('load', function(){
+    window.history.pushState("object or string", "Title", "/transactions");
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
     finishreq = new XMLHttpRequest();
@@ -9,11 +10,13 @@ window.addEventListener('load', function(){
     //acceptBorrower(1);
     //finishLender(1);
     //populateDateField(720);
+    /**
     var nums = document.getElementById("curborrows");
     var listItem = nums.getElementsByTagName("li");
     for (var i=0; i < listItem.length; i++) {
         console.log(listItem[i].id);
     }
+    **/
     $('.remove_btn').on('click', function(){
       console.log(this);
       var elem = this.closest('li');

@@ -910,8 +910,8 @@ div.bhoechie-tab div.bhoechie-tab-content:not(.active){
 
 
 .transaction_btn{
-	padding: 5px; 6px;
-  width: 100px;
+	/*padding: 5px; 6px;*/
+ /* width: 100px;*/
 }
 
 #trans_cancel{

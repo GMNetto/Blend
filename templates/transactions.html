@@ -136,7 +136,7 @@
 
 										<!-- Text/Link for user rating-->
 										<a href = "/profile/{{Username}}" >
-											<div id = "trans-rating">rating: {{borrower_rating}}</div>
+											<div id = "trans-rating">borrower rating: {{borrower_rating}}</div>
 										</a>
 
 									</div>
@@ -146,7 +146,7 @@
 										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
-											<img class = "trans_check" src = "../img/check.png">
+											<img class = "trans_check" src = "../img/check2.png">
 										</a>
 
 										<!-- Image/Link for decline transaction, opens up modal when clicked -->
@@ -157,7 +157,7 @@
                                         {{#accepted}}
                                         {{^lender_commented}}
                                         <a href = "/feedback/{{idBorrows}}" >
-											<button type="button" class="btn btn-info" id = "feedback_btn">Finish and Leave Feedback</button>
+											<button type="button" class="btn btn-info" id = "feedback_btn">Feedback</button>
 										</a>
                                         {{/lender_commented}}
                                         {{/accepted}}
@@ -167,7 +167,7 @@
 									</div>
 								</li>
 
-                                <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -178,14 +178,16 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body" style="color:black">
+                                                    <div class="modal-body" style="color:black; bottom:300px !important">
                                                         <h2>{{name}}</h2>
                                                         <hr class="star-primary">
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                                                        <br />
                                                         <ul class="list-inline item-details">
                                                             <li>Price: {{price}}
                                                             </li>
+                                                            <br />
                                                             <li>Lend Period: {{duration}} hours
                                                             </li>
                                                         </ul>
@@ -197,7 +199,7 @@
                                 </div>
                                 </ul>
                                 <!-- Modal 2, Item accept -->
-                                <div class="portfolio-modal modal fade" id="accept{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="portfolio-modal modal fade" id="accept{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white !important">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -208,15 +210,15 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>Are you sure you want to accept this offer?</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px!important">
+                                                        <h2 style = "color:black !important">Are you sure you want to accept this offer?</h2>
                                                         <hr >
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
                                                         <br />
                                                         user: {{Username}}
                                                         <br />
-                                                        user rating: {{borrower_rating}}
+                                                        borrower rating: {{borrower_rating}}
                                                         <br />
                                                         Lend Period: {{duration}} hours
                                                         <br />
@@ -234,8 +236,8 @@
                                     </div>
                                 </div>
                                 <!-- Modal 3, Item reject -->
-                                <div class="portfolio-modal modal fade" id="reject{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-content">
+                                <div class="portfolio-modal modal fade" id="reject{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white !important">
+                                    <div class="modal-content" >
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
                                                 <div class="rl">
@@ -245,15 +247,15 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>Are you sure you want to reject this offer?</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px!important">
+                                                        <h2 style = "color:black !important">Are you sure you want to reject this offer?</h2>
                                                         <hr >
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
                                                         <br />
                                                         user: {{Username}}
                                                         <br />
-                                                        user rating: {{borrower_rating}}
+                                                        borrower rating: {{borrower_rating}}
                                                         <br />
                                                         Lend Period: {{duration}} hours
                                                         <br />
@@ -288,19 +290,19 @@
 								<li class = "list-group-item" id=borrows{{idBorrows}}>
                                     <meta name="transactionId" value={{idBorrows}}>
  									<!-- Section 1, item image and title -->
-									<div class="footer-col col-md-4">
+									<!--<div class="footer-col col-md-4">-->
 										<!-- Item Image and title, opens up modal when clicked -->
-										<div class="portfolio-item" >
+										<span class="portfolio-item" >
 											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = '{{image}}'>
 												<span id = "item_fade">{{name}}</span>
 											</a>
-										</div>
+										</span>
 
-									</div>
+									<!--</div>-->
 
 									<!-- Section 2, start and end date -->
-									<div class="footer-col col-md-4" id = "period_contact" style="color:black">
+									<span class="footer-col col-md-4" id = "period_contact" style="color:grey">
 
 										<!-- text for start date -->
 										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
@@ -308,6 +310,7 @@
 
 										<!-- text for end date -->
 										<div id = "end_dateborrows{{idBorrows}}">end date: </div>
+									</span>
                                         <script type="text/javascript">
                                         function populateDateField(duration){
                                             //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
@@ -343,13 +346,10 @@
                                         }
                                         window.onload = populateDateField({{duration}});
                                         </script>
-										<!-- link for contacting buyer -->
-										<a href = "{{profile_url}}" >
-											<div id = "lender_link"><strong>Contact Lender</strong></div>
-										</a>
 
 
-									</div>
+
+
 
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
@@ -369,7 +369,7 @@
 										</a>
                                         {{/accepted}}
 									</div>
-                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style="color:black">
+                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style="background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -380,17 +380,22 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>{{name}}</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px !important">
+                                                        <h2 style = "color:black !important">{{name}}</h2>
                                                         <hr class="star-primary">
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
                                                         <ul class="list-inline item-details">
                                                             <li>Price:{{price}}
                                                             </li>
-                                                            <li><a href={{profile_url}} style="color:blue">Contact Owner:{{Username}}</a>
+                                                            <br />
+                                                            <li><a href="/profile/{{Username}}" style="color:blue">Contact Owner:{{Username}}</a>
                                                             </li>
+                                                            <br />
                                                             <li>Lend Period: {{duration}} hours
+                                                            </li>
+                                                            <br />
+                                                            <li>Lender rating: {{lender_rating}} 
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -402,7 +407,7 @@
 								</li>
 
                         </ul>
-                        <div class="portfolio-modal modal fade" id="cancel{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="portfolio-modal modal fade" id="cancel{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -413,9 +418,10 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>Are you sure you want to cancel this transaction?</h2>
-                                                        <button type="button" class="btn btn-danger" onclick="cancelTrans({{idBorrows}});window.location.reload();">Reject Offer</button>
+                                                    <div class="modal-body" style = "bottom: 200px">
+                                                        <h2 style = "color:black">Are you sure you want to cancel this request? </h2>
+                                                        <br />
+                                                        <button type="button" class="btn btn-danger" onclick="cancelTrans({{idBorrows}});window.location.reload();">Cancel borrow request</button>
 
 
 
@@ -432,7 +438,7 @@
 
 
 					<div class="footer-col col-md-4" style = "width:100%">
-                        <div class = "logo" style = "text-align:center">All Of My Items: </h3>
+                        <div class = "logo" style = "text-align:center">All Of My Items: </div>
                         <hr />
 
                         	<!-- List for items Lent -->
@@ -443,10 +449,10 @@
     									<div class="footer-col col-md-4">
 
     										<div class="portfolio-item" >
-    											<!--<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">-->
+    											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
     												<img class = "img_fade" src = "{{item_picture}}">
     												<span id = "item_fade">{{item_name}}</span>
-    											<!--</a>-->
+    											</a>
     										</div>
 
     									</div>
@@ -457,14 +463,8 @@
 
     										<div id = "start_date">start date: {{start}}</div>
 
-
-
     										<div id = "end_date">end date: {{end}}</div>
 
-
-    										<a href = "#" >
-    											<div id = "end_date"><strong>Contact Borrower</strong></div>
-    										</a>
 
     									</div>
 
@@ -472,11 +472,8 @@
     									<div class="footer-col col-md-4" id = "div3">
 
 
-    										<a href = "#" >
-    											<button type="button" class="btn btn-info transaction_btn" id = "feedback_btn">Feedback</button>
-    										</a>
                         <a href = "#" >
-    											<button data-value="{{idItem}}"type="button" class="btn btn-info transaction_btn remove_btn">Remove</button>
+    											<button data-value="{{idItem}}"type="button" style="background-image:url('../img/fail.png')" class="transaction_btn remove_btn">Remove</button>
     										</a>
     									</div>
     								</li>
@@ -666,7 +663,7 @@
 	<!-- Portfolio Modals -->
 
 	<!-- Modal 1, Item Preview -->
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -704,7 +701,7 @@
     </div>
 
     <!-- Modal 2, Item accept -->
-    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -730,7 +727,7 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-success">Yes, accept offer</button>
-
+			    <br />
 
 
                         </div>
@@ -742,7 +739,7 @@
     </div>
 
     <!-- Modal 3, Item reject -->
-    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -768,7 +765,7 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-danger">Yes, Reject Offer</button>
-
+			    <br />
 
 
                         </div>

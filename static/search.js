@@ -7,7 +7,7 @@ window.addEventListener('load', function(){
     searchrequest = new XMLHttpRequest();
     borrowrequest = new XMLHttpRequest();
     recentrequest = new XMLHttpRequest();
-    
+
 }, false);
 function hideFilters(){
     $('#portfolioModal').modal('hide');
@@ -24,7 +24,7 @@ function loadRecents(){
                     // list appending code
                     // should be array of message objects
                     var data = JSON.parse(content);
-                    
+
                     var ul = document.getElementById('mod_results');
                     var ul2 = document.getElementById('popup_portfolio');
                     // create a new li element for the message, and append it
@@ -35,29 +35,37 @@ function loadRecents(){
                         var li = document.createElement('li');
                         var li2 = document.createElement('li');
                         //construct list element
-                        
+
                         li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + counter + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'300 em\' width = \'300 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
-                        li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
+                        li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2 class = "logo" style = "color:black">' + data[i].name +'</h2><hr><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description: ' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
                         ul.appendChild(li,ul.childNodes[0]);
                         ul2.appendChild(li2, ul.childNodes[0]);
                         counter++;
-                        
+
 
                     }
 
                 }
              else{
-                 //returned empty result. 
-                
+                 //returned empty result.
+
              }
          }
-    }, false); 
+    }, false);
     recentrequest.send(null);
     return false;
 }
 //now needed
 function submitItem(){
     // specify the HTTP method, URL, and asynchronous flag
+    document.getElementById("recentmessage").innerHTML = "";
+    var query = document.getElementById('itemName').value;
+    document.getElementById("searcherror").style.display = "none";
+    if(query.length===0){
+        console.log("empty");
+        document.getElementById("searcherror").style.display = "block";
+        return false;
+    }
     searchrequest.open('POST', '/searchquery', true);
     searchrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var params = 'itemName='+document.getElementById('itemName').value+"&minRating="+document.getElementById('reg_rating').value+"&priceCeil="+document.getElementById('reg_price').value+"&period="+document.getElementById('periodSelector').value+"&condition="+document.getElementById('conditionSelector').value;
@@ -96,7 +104,7 @@ function submitItem(){
                         //construct list element
                         if(compareDistances(distancefilter,data[i].distance)>=0){
                             li.innerHTML = "<div class='col-sm-4 portfolio-item'><a href='#portfolioModal" + counter + "' class='portfolio-link' data-toggle='modal'><div class='caption'><div class='caption-content'><i class='fa fa-search-plus fa-3x'></i></div></div><img height = \'300 em\' width = \'300 em\' src='" + data[i].image + "' class='img-responsive' alt=''></a></div>"
-                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2>Item</h2><hr class="star-primary"><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description:' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
+                            li2.innerHTML = '<div class="portfolio-modal modal fade" id="portfolioModal' + counter + '" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white"><div class="modal-content"><div class="close-modal" data-dismiss="modal"><div class="lr"><div class="rl"></div></div></div><div class="container"><div class="row"><div class="col-lg-8 col-lg-offset-2"><div style="bottom:300px!important;" class="modal-body"><h2 class = "logo" style = "color:black">' + data[i].name +  '</h2><hr><img src="' + data[i].image + '" class="img-responsive img-centered"> <ul> <li> <div class="logo" style="color: grey!important;"> Username: <a href="profile/' + data[i].username + '">' + data[i].username + '</a></div> <br> <li><div class="logo" style="color: grey!important;"> Price: $' + data[i].price + '</div> <br></li><li><div class="logo" style="color: grey!important;"> Description: ' + data[i].description + '</div> <br></li><li><input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing(' +data[i].itemid +','+counter+ ');return false;"></li></ul></div></div></div></div></div></div>'
                             // li.innerHTML = "<div id =\x22searchresult\x22>"+'<img height = \'150 em\' width = \'150 em\'src='+data[i].image+'>'+'<strong><a href=\x22'+data[i].link+'\x22>' + data[i].name + " price:"+ data[i].price+'</strong> Distance:' + data[i].distance+' username:'+data[i].username+"</div>";
                             //add to list html on frontend
                             ul.appendChild(li,ul.childNodes[0]);
@@ -108,12 +116,12 @@ function submitItem(){
 
                 }
              else{
-                 //returned empty result. 
-                
+                 //returned empty result.
+
              }
             } else {
                //for some reason request didn't succeed. Do nothing
-               
+
             }
     }, false);
 
@@ -172,11 +180,11 @@ function borrowThing(itemId,modalId){
         $('#portfolioModal'+modalId).modal('hide');
         var status = borrowrequest.status;
          if (status=== 200) {
-            //borrowrequest suceeded 
+            //borrowrequest suceeded
              document.getElementById("success").style.display = "block";
-        } 
+        }
         if(status===409){
-            //owner tried to borrow own thing 
+            //owner tried to borrow own thing
             document.getElementById("redundant").style.display = "block";
        }
         if(status===500){
@@ -187,7 +195,7 @@ function borrowThing(itemId,modalId){
             //error on insert
             document.getElementById("error").style.display = "block";
         }
-        
+
     }, false);
 
     // start the request, optionally with a request body for POST requests

@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	  <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 	  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -25,6 +26,7 @@
     <link href="css/freelancer.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
@@ -117,6 +119,9 @@
             <div class="alert alert-danger" id="emptyresult" style="display: none">
             <strong> No item was returned for this search</strong> 
           </div>
+            <div class="alert alert-danger" id="searcherror" style="display: none">
+            <strong> Empty search query. Please input a valid search request</strong> 
+          </div>
 				<div class="col-sm-6 col-sm-offset-3">
 					<div id="imaginary_container">
 						<div class="input-group stylish-input-group">
@@ -138,6 +143,8 @@
 							<button id = "filter">filter search</button>
 						</a>
 					</div>
+					<br /><br /><br /><br />
+                     			<div class = "logo" style = "text-align:center; font-size:15pt" id="recentmessage">Recently Uploaded: </div>
 					<br /><br />
 				</div>
 
@@ -218,11 +225,11 @@
 												<div class="form-group">
 													<br />
 													<label for="reg_distance" class="sr-only">Distance</label>
-													<input type="text" class="form-control" value=3 id="reg_distance" name="reg_distance" placeholder="Distance">
+													<input type="text" class="form-control" value=1000 id="reg_distance" name="reg_distance" placeholder="Distance">
 
 													<select class="form-control" name="unit" id="unitSelector">
-													  <option>m</option>
 													  <option>km</option>
+													  <option>m</option>
 													</select>
 													<br />
 												</div>
