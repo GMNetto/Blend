@@ -44,6 +44,17 @@
     <script src="css/login_info.js" type="text/javascript"></script>
     <link href="static/signin.css" rel="stylesheet">
     <script src="static/index.js" type="text/javascript"></script>
+    
+    <style media="screen">
+    .profile_link{
+      outline: 0;
+      color: #18bc9c!important;
+    }
+
+    .profile_link:hover {
+      text-decoration: underline;
+    }
+    </style>
 
 
 </head>
@@ -181,7 +192,7 @@
                                                     <div class="modal-body" style="color:black; bottom:300px !important">
                                                         <h2>{{name}}</h2>
                                                         <hr class="star-primary">
-                                                        <img src='{{image}}' class="img-responsive img-centered" alt="">
+                                                        <img style="height:350px; width:350px;" src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
                                                         <br />
                                                         <ul class="list-inline item-details">
@@ -216,7 +227,7 @@
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
                                                         <br />
-                                                        user: {{Username}}
+                                                        user: <a class="profile_link" href="/profile/{{Username}}"> {{Username}} </a>
                                                         <br />
                                                         borrower rating: {{borrower_rating}}
                                                         <br />
@@ -253,7 +264,7 @@
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
                                                         <br />
-                                                        user: {{Username}}
+                                                        user: <a class="profile_link" href="/profile/{{Username}}"> {{Username}} </a>
                                                         <br />
                                                         borrower rating: {{borrower_rating}}
                                                         <br />
@@ -305,11 +316,12 @@
 									<span class="footer-col col-md-4" id = "period_contact" style="color:grey">
 
 										<!-- text for start date -->
-										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
-
-
+										<div id = "start_dateborrows{{idBorrows}}">start date: {{inital_date}} </div>
+											
+										
+							
 										<!-- text for end date -->
-										<div id = "end_dateborrows{{idBorrows}}">end date: </div>
+										<div id = "end_dateborrows{{idBorrows}}">end date:  </div>
 									</span>
                                         <script type="text/javascript">
                                         function populateDateField(duration){
@@ -449,10 +461,10 @@
     									<div class="footer-col col-md-4">
 
     										<div class="portfolio-item" >
-    											<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+    											<!--<a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">-->
     												<img class = "img_fade" src = "{{item_picture}}">
     												<span id = "item_fade">{{item_name}}</span>
-    											</a>
+    											<!--</a>-->
     										</div>
 
     									</div>
