@@ -324,7 +324,7 @@ app.post('/searchquery', requireLogin, function(request, response){
 app.get('/recentitems',function(request, response){
     connection.query('select * from Item left join User on Item.owner=User.idUser order by idItem DESC LIMIT 3', function (err,rows) {
         if(err){
-            
+
         }
         else{
             var row;
@@ -733,7 +733,7 @@ function aux(req, res, next){
 
 function update_user_db(query, list_prepared_statements, request, response, res){
     connection.query(query, list_prepared_statements, function (err) {
-                
+
         if(err){
             response.sendStatus(500);
         }else{
@@ -776,9 +776,9 @@ app.post('/update_user', csrfProtection, requireLogin, upload.single("img"), fun
             cloudinary.uploader.upload("static/images/"+image, function(result){
                 console.log("static/images/"+image);
                 console.log("Uploading image");
-                console.log(result); 
+                console.log(result);
                 console.log(request.body.password_agree);
-                
+
                 if(request.body.password_agree === "true"){
                     console.log("UPDATING!!!!!!!!!!!");
                     query = 'UPDATE User SET Username=?, password=?, salt=?, email=?, phone=?, profile_url=?, first_name=?, last_name=?, address=?, latitude=?, longitude=? where idUser=?';
@@ -839,7 +839,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                                             response.render("error.html");
                                                         else
                                                             render_transactions(user, response);
-                                                    });                                                
+                                                    });
                                                 });
                                             }
                                         });
@@ -1304,7 +1304,7 @@ app.post("/removeItem", function(request, response) {
   console.log("apples");
   console.log(request.body);
 
-  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND ((idItem NOT IN (SELECT idProduct from Borrows)) OR (idItem IN ( SELECT idProduct from Borrows WHERE finished = 1)))", [request.session.user, request.body.idItem], function (err) {
+  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND (idItem IN ( SELECT idProduct from Borrows WHERE finished != 0))", [request.session.user, request.body.idItem], function (err) {
               if(err){
                   console.log(err);
               } else {
@@ -1358,7 +1358,7 @@ var io = require('socket.io').listen(server);
 
 function get_ten_transactions(callback){
      connection.query("select Username, name, profile_url, image from Borrows, Item, User where idItem = idProduct and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10",function(err1,transactions) {
-        connection.query("select Username, profile_url from Borrows, Item, User where idItem = idProduct and Item.owner=User.idUser order by Borrows.inital_date desc limit 10",function(err2,lenders) {        
+        connection.query("select Username, profile_url from Borrows, Item, User where idItem = idProduct and Item.owner=User.idUser order by Borrows.inital_date desc limit 10",function(err2,lenders) {
             if(err1){
                 console.log('err1'+err1);
             }else if(err2){
@@ -1377,14 +1377,14 @@ io.sockets.on('connection', function(socket){
         console.log("emiting%%%%%%%%%%%%%%%%%%%5");
         get_ten_transactions(function(transactions, lenders){
             console.log("Calling last 10 items ");
-            callback(transactions, lenders);       
-        });    
+            callback(transactions, lenders);
+        });
     });
 });
 
 function updateFeed(idBorrows, callback){
         connection.query("select Username, name, profile_url, image from Borrows, Item, User where idBorrows = ? and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10", [idBorrows], function(err1,transactions) {
-        connection.query("select Username, profile_url from Borrows, Item, User where idBorrows = ? and Item.owner=User.idUser order by Borrows.inital_date desc limit 10", [idBorrows],function(err2,lenders) {        
+        connection.query("select Username, profile_url from Borrows, Item, User where idBorrows = ? and Item.owner=User.idUser order by Borrows.inital_date desc limit 10", [idBorrows],function(err2,lenders) {
             if(err1){
                 console.log('err1'+err1);
             }else if(err2){
@@ -1395,5 +1395,3 @@ function updateFeed(idBorrows, callback){
      });
     });
 };
-
-
