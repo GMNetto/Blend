@@ -19,7 +19,6 @@ window.addEventListener('load', function(){
     **/
         $('.remove_btn').on('click', function(){
       console.log(this);
-      console.log(elem);
       // alert(params.idItem);
       
       var params = {
