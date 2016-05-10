@@ -21,6 +21,10 @@ window.addEventListener('load', function(){
       console.log(this);
       console.log(elem);
       // alert(params.idItem);
+      
+      var params = {
+        idItem: this.getAttribute('data-value')
+      };
 
       $.post("/removeItem", params, function(server_response) {
         if(server_response.status) {
