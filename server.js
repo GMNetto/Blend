@@ -833,8 +833,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             }
                                             else{
                                                 //done
-                                                /**
-                                                updateFeed(request.body.transactionId, function(){
+                                                updateFeed(idBorrows, function(){
                                                     get_user_by_id(request.session.user, function(err, user){
                                                         if(err)
                                                             response.render("error.html");
@@ -842,7 +841,6 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                                             render_transactions(user, response);
                                                     });
                                                 });
-                                                **/
                                             }
                                         });
                                         }
@@ -1306,7 +1304,7 @@ app.post("/removeItem", function(request, response) {
   console.log("apples");
   console.log(request.body);
 
-  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND (idItem IN ( SELECT idProduct from Borrows WHERE finished != 0))", [request.session.user, request.body.idItem], function (err) {
+  connection.query("DELETE FROM Item WHERE owner = ? AND idItem = ? AND ((idItem NOT IN (SELECT idProduct from Borrows)) OR (idItem IN ( SELECT idProduct from Borrows WHERE finished = 1)))", [request.session.user, request.body.idItem], function (err) {
               if(err){
                   console.log(err);
               } else {
