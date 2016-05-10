@@ -327,7 +327,12 @@
                                         function populateDateField(duration){
                                             //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
                                             //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
-                                            var curdate = new Date(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
+                                            console.log(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
+                                            var array = document.getElementById("start_dateborrows{{idBorrows}}").innerHTML.split(" ");
+                                            var datestring = array[3]+ " "+ array[4]+ " ,"+array[5];
+                                            console.log(new Date(datestring));
+                                            console.log(datestring);
+                                            var curdate = new Date(datestring);
                                             var enddate = new Date(curdate);
                                             console.log(curdate);
                                             if(duration==1){
