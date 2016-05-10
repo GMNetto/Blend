@@ -2,6 +2,7 @@ var acceptreqb;
 var acceptreql;
 var finishreq;
 window.addEventListener('load', function(){
+    //http://stackoverflow.com/questions/3338642/updating-address-bar-with-new-url-without-hash-or-reloading-the-page
     window.history.pushState("object or string", "Title", "/transactions");
     acceptreqb = new XMLHttpRequest();
     acceptreql = new XMLHttpRequest();
