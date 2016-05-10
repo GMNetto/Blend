@@ -58,6 +58,14 @@ function loadRecents(){
 //now needed
 function submitItem(){
     // specify the HTTP method, URL, and asynchronous flag
+    document.getElementById("recentmessage").innerHTML = "";
+    var query = document.getElementById('itemName').value;
+    document.getElementById("searcherror").style.display = "none";
+    if(query.length===0){
+        console.log("empty");
+        document.getElementById("searcherror").style.display = "block";
+        return false;
+    }
     searchrequest.open('POST', '/searchquery', true);
     searchrequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var params = 'itemName='+document.getElementById('itemName').value+"&minRating="+document.getElementById('reg_rating').value+"&priceCeil="+document.getElementById('reg_price').value+"&period="+document.getElementById('periodSelector').value+"&condition="+document.getElementById('conditionSelector').value;
