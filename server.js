@@ -833,7 +833,12 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             }
                                             else{
                                                 //done
-                                                render_transactions(user, response);
+                                                get_user_by_id(request.session.user, function(err, user){
+                                                if(err)
+                                                    response.render("error.html");
+                                                else
+                                                    render_transactions(user, response);
+                                            });
                                                 /**
                                                 updateFeed(idBorrows, function(){
                                                     get_user_by_id(request.session.user, function(err, user){
