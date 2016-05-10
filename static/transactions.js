@@ -17,23 +17,29 @@ window.addEventListener('load', function(){
         console.log(listItem[i].id);
     }
     **/
-    $('.remove_btn').on('click', function(){
+        $('.remove_btn').on('click', function(){
       console.log(this);
-      var elem = this.closest('li');
       console.log(elem);
-      elem.parentNode.removeChild(elem);
-      alert(this.getAttribute('data-value'));
-      var params = {
-        idItem: this.getAttribute('data-value')
-      };
-
-      alert(params.idItem);
+      // alert(params.idItem);
 
       $.post("/removeItem", params, function(server_response) {
+        if(server_response.status) {
+          alert("Your item is successfully removed!")
 
+          var elem = this.closest('li');
+
+          elem.parentNode.removeChild(elem);
+          // alert(this.getAttribute('data-value'));
+          var params = {
+            idItem: this.getAttribute('data-value')
+          };
+        } else {
+          alert("Cannot remove an item currently in a transaction!");
+        }
       });
 
     });
+    
 }, false);
 
 
