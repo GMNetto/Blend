@@ -833,6 +833,8 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             }
                                             else{
                                                 //done
+                                                render_transactions(user, response);
+                                                /**
                                                 updateFeed(idBorrows, function(){
                                                     get_user_by_id(request.session.user, function(err, user){
                                                         if(err)
@@ -841,6 +843,7 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                                             render_transactions(user, response);
                                                     });
                                                 });
+                                                **/
                                             }
                                         });
                                         }
