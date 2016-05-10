@@ -834,11 +834,32 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                             else{
                                                 //done
                                                 get_user_by_id(request.session.user, function(err, user){
-                                                if(err)
-                                                    response.render("error.html");
-                                                else
-                                                    render_transactions(user, response);
-                                            });
+                                                    if(err)
+                                                        response.render("error.html");
+                                                    else {
+                                                      get_items_from_user(request.session.user, function(err, result) {
+                                                        if(err) {
+                                                          response.render("error.html");
+                                                        } else {
+
+                                                            var row;
+                                                            var items = [];
+                                                            console.log("length of result");
+                                                            console.log(result.length);
+                                                            for (var i = 0; i < result.length; i++) {
+                                                              console.log("wihtin for loop");
+                                                              row = result[i];
+                                                              items.push({item_name:row.name, item_picture:row.image, idItem:row.idItem});
+                                                            }
+
+                                                            // Should I send JSON.parse(tosend) or response.json?
+                                                            render_transactions(user, response, items);
+
+                                                          }
+                                                      });
+                                                    }
+
+                                                });
                                                 /**
                                                 updateFeed(idBorrows, function(){
                                                     get_user_by_id(request.session.user, function(err, user){
@@ -884,8 +905,29 @@ app.post('/newfeedback', requireLogin, function(request, response){
                                              get_user_by_id(request.session.user, function(err, user){
                                                 if(err)
                                                     response.render("error.html");
-                                                else
-                                                    render_transactions(user, response);
+                                                else {
+                                                  get_items_from_user(request.session.user, function(err, result) {
+                                                    if(err) {
+                                                      response.render("error.html");
+                                                    } else {
+
+                                                        var row;
+                                                        var items = [];
+                                                        console.log("length of result");
+                                                        console.log(result.length);
+                                                        for (var i = 0; i < result.length; i++) {
+                                                          console.log("wihtin for loop");
+                                                          row = result[i];
+                                                          items.push({item_name:row.name, item_picture:row.image, idItem:row.idItem});
+                                                        }
+
+                                                        // Should I send JSON.parse(tosend) or response.json?
+                                                        render_transactions(user, response, items);
+
+                                                      }
+                                                  });
+                                                }
+
                                             });
                                         }
                                         });
