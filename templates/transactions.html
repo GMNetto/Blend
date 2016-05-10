@@ -182,7 +182,7 @@
 									</div>
 
 									<!-- Section 2, User and Rating -->
-									<div class="footer-col col-md-4" id = "div2">
+									<span class="footer-col col-md-4" >
 
 										<!-- Text/Link for user profile -->
 										<a href = "/profile/{{Username}}" >
@@ -194,10 +194,10 @@
 											<div id = "trans-rating">borrower rating: {{borrower_rating}}</div>
 										</a>
 
-									</div>
+									</span>
 
 									<!-- Section 3, Transaction accept or cancel -->
-									<div class="footer-col col-md-4" id = "div3">
+									<span class="footer-col col-md-4" >
 										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
@@ -219,7 +219,7 @@
                                         {{#finished}}
                                         <span id = "item_fade">Transaction Finished</span>
                                         {{/finished}}
-									</div>
+									</span>
 								</li>
 
                                 <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
