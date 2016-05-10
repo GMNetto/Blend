@@ -181,9 +181,9 @@
 												<span id = "item_fade">
 													<img class = "img_fade" src = '{{image}}'>
 												</span>
-												
+												<span id = "item_fade">{{name}}</span>
 											</a>
-											<span id = "item_fade">{{name}}</span>
+											
 										<!--</div>-->
 
 									</span>
@@ -383,11 +383,11 @@
 									
                                         {{#accepted}}
                                         {{^borrower_commented}}
-										<span style = "color:grey">completed</span>
+										<span id = "div3" style = "color:grey">completed</span>
                                         {{/borrower_commented}}
 										{{/accepted}}
                                         {{^accepted}}
-										<span style = "color:grey">processing</span>
+										<span id = "div3" style = "color:grey">processing</span>
                                         {{/accepted}}
 									</span>
                                         
