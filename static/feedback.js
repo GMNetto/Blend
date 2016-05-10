@@ -8,6 +8,7 @@ window.addEventListener('load', function(){
 function populateDateField(duration){
     //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
     var curdate = new Date(initial_date);
+    document.getElementById("start_date").innerHTML = "start date: "+curdate.toDateString();
     var enddate = new Date(curdate);
     if(duration==1){
         //console.log("hour");
@@ -34,7 +35,8 @@ function populateDateField(duration){
     //console.log(enddate);
     //http://stackoverflow.com/questions/2554149/html-javascript-change-div-content
     //document.getElementById("start_date").innerHTML = "start date:"+curdate;
-    document.getElementById("end_date").innerHTML = "end date:"+enddate;
+    //console.log(enddate.toDateString());
+    document.getElementById("end_date").innerHTML = "end date:"+enddate.toDateString();
 }
 function meta(name) {
     var tag = document.querySelector('meta[name=' + name + ']');

@@ -73,22 +73,22 @@
                          <a href="#page-top"></a>
                      </li>
                      <li class="page-scroll">
-                        <a href="feed">Feed</a>
+                        <a href="../feed">Feed</a>
                     </li>
                      <li class="page-scroll">
-                         <a href="search">Borrow</a>
+                         <a href="../search">Borrow</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="lend">Lend</a>
+                         <a href="../lend">Lend</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="transactions">Activity</a>
+                         <a href="../transactions">Activity</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="my_profile">Profile</a>
+                         <a href="../my_profile">Profile</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="logout">Logout</a>
+                         <a href="../logout">Logout</a>
                      </li>
                  </ul>
              </div>
@@ -107,7 +107,7 @@
             <div class="container">
                 <div class="row">
                     <div class="footer-col col-md-4">
-                        <h3>Recently Borrowed:</h3>
+                        <div class = "logo" style = "text-align:center">Recently Borrowed:</div>
                         <hr />
                         <p></p>
                         <!---<section id="portfolio">-->
@@ -136,8 +136,8 @@
                             {{#has_borrow}}
                             {{#borrow}}
                             <li>
-                            <div class="portfolio-modal modal fade" id="portfolioModal{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
-                                <div style="bottom:300px!important;" class="modal-content"><div class="close-modal" data-dismiss="modal">
+                            <div class="portfolio-modal modal fade" id="portfolioModal{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" >
+                                <div style="" class="modal-content"><div class="close-modal" data-dismiss="modal">
                                     <div class="lr">
                                         <div class="rl"></div>
                                     </div>
@@ -145,7 +145,7 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-lg-8 col-lg-offset-2">
-                                            <div class="modal-body">
+                                            <div class="modal-body" style = "bottom:300px!important;">
                                                 <h2>Item</h2>
                                                 <hr class="star-primary">
                                                 <img src="{{image}}" class="img-responsive img-centered">
@@ -153,10 +153,10 @@
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>
                                                     <li>
-                                                    <div class="logo" style="color: grey!important;"> Price: $"{{price}}"</div><br>
+                                                    <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
                                                     </li>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> Description:"{{description}}"</div><br>
+                                                        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
                                                     </li>
                                                     <li>
                                                         <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">
@@ -176,7 +176,7 @@
                     </div>
                     <div class="footer-col col-md-4">
                         {{#user}}
-                        <h3>{{Username}}</h3>
+                        <div class = "logo" style = "text-align:center">{{Username}}</div>
                         <hr class="vertical"/>
 
                         <!--<div class="text-center" >-->
@@ -218,7 +218,7 @@
                     {{/user}}
                     </div>
                     <div class="footer-col col-md-4">
-                        <h3>Recently Lend:</h3>
+                        <div class = "logo" style = "text-align:center">Recently Lent:</div>
                         <hr />
                         <p></p>
                         <!---<section id="portfolio">-->
@@ -247,8 +247,8 @@
                             {{#has_lend}}
                             {{#lend}}
                             <li>
-                            <div class="portfolio-modal modal fade" id="portfolioModal{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
-                                <div style="bottom:300px!important;" class="modal-content"><div class="close-modal" data-dismiss="modal">
+                            <div class="portfolio-modal modal fade" id="portfolioModal{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-content"><div class="close-modal" data-dismiss="modal">
                                     <div class="lr">
                                         <div class="rl"></div>
                                     </div>
@@ -256,7 +256,7 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-lg-8 col-lg-offset-2">
-                                            <div class="modal-body">
+                                            <div class="modal-body" style = "bottom:300px!important;">
                                                 <h2>Item</h2>
                                                 <hr class="star-primary">
                                                 <img src="{{image}}" class="img-responsive img-centered">
@@ -264,10 +264,10 @@
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>
                                                     <li>
-                                                    <div class="logo" style="color: grey!important;"> Price: $"{{price}}"</div><br>
+                                                    <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
                                                     </li>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> Description:"{{description}}"</div><br>
+                                                        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
                                                     </li>
                                                     <li>
                                                         <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">

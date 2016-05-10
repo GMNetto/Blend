@@ -16,6 +16,7 @@
 
 	<link href="static/search.css" rel="stylesheet">
 	<script src="static/transactions.js" type="text/javascript"></script>
+	<script src="static/search.js" type="text/javascript"></script>
 
 
     <title>Blend</title>
@@ -103,7 +104,7 @@
             <div class="container">
                 <div class="row">
                     <div class="footer-col col-md-4" style = "width:50%">
-                        <div class="logo" style = "text-align:center">Lend An Item</div>
+                        <div class="logo" style = "text-align:center">Currently Lending out:</div>
                         <hr />
 
                         	<!-- List for items Lent -->
@@ -134,7 +135,7 @@
 										</a>
 
 										<!-- Text/Link for user rating-->
-										<a href = "#" >
+										<a href = "/profile/{{Username}}" >
 											<div id = "trans-rating">rating: {{borrower_rating}}</div>
 										</a>
 
@@ -145,7 +146,7 @@
 										{{^accepted}}
 										<!-- Image/Link for check transaction, opens up modal -->
 										<a href = "#accept{{idBorrows}}" class="portfolio-link" data-toggle="modal"id = "trans_accept" >
-											<img class = "trans_check" src = "../img/check.png">
+											<img class = "trans_check" src = "../img/check2.png">
 										</a>
 
 										<!-- Image/Link for decline transaction, opens up modal when clicked -->
@@ -166,7 +167,7 @@
 									</div>
 								</li>
 
-                                <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -177,23 +178,17 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
+                                                    <div class="modal-body" style="color:black; bottom:300px !important">
                                                         <h2>{{name}}</h2>
                                                         <hr class="star-primary">
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                                                        <br />
                                                         <ul class="list-inline item-details">
-                                                            <li>Client:
-                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
-                                                                </strong>
+                                                            <li>Price: {{price}}
                                                             </li>
-                                                            <li>Date:
-                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
-                                                                </strong>
-                                                            </li>
-                                                            <li>Service:
-                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
-                                                                </strong>
+                                                            <br />
+                                                            <li>Lend Period: {{duration}} hours
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -204,7 +199,7 @@
                                 </div>
                                 </ul>
                                 <!-- Modal 2, Item accept -->
-                                <div class="portfolio-modal modal fade" id="accept{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="portfolio-modal modal fade" id="accept{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white !important">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -215,8 +210,8 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>Are you sure you want to accept this offer?</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px!important">
+                                                        <h2 style = "color:black !important">Are you sure you want to accept this offer?</h2>
                                                         <hr >
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
@@ -241,8 +236,8 @@
                                     </div>
                                 </div>
                                 <!-- Modal 3, Item reject -->
-                                <div class="portfolio-modal modal fade" id="reject{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-content">
+                                <div class="portfolio-modal modal fade" id="reject{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white !important">
+                                    <div class="modal-content" >
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
                                                 <div class="rl">
@@ -252,8 +247,8 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>Are you sure you want to reject this offer?</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px!important">
+                                                        <h2 style = "color:black !important">Are you sure you want to reject this offer?</h2>
                                                         <hr >
                                                         <img src="{{image}}" class="img-responsive img-centered" alt="">
                                                         item: {{name}}
@@ -285,44 +280,76 @@
                    	</div>
 
                     <div class="footer-col col-md-4" style = "width:50%; margin-right:0px;" >
-                        <div class="logo" style = "text-align:center">Borrowing:</div>
+                        <div class="logo" style = "text-align:center">Currently Borrowing:</div>
                         <hr class="vertical"/>
 
-                        	<ul style = "list-style:none; color:black" class = "list-group">
+                        	<ul style = "list-style:none; color:black" class = "list-group" id="curborrows">
                                 {{#has_borrows}}
                                 {{#borrows}}
                             	<!-- Item 1 -->
-								<li class = "list-group-item">
+								<li class = "list-group-item" id=borrows{{idBorrows}}>
                                     <meta name="transactionId" value={{idBorrows}}>
  									<!-- Section 1, item image and title -->
-									<div class="footer-col col-md-4">
+									<!--<div class="footer-col col-md-4">-->
 										<!-- Item Image and title, opens up modal when clicked -->
-										<div class="portfolio-item" >
+										<span class="portfolio-item" >
 											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = '{{image}}'>
 												<span id = "item_fade">{{name}}</span>
 											</a>
-										</div>
+										</span>
 
-									</div>
+									<!--</div>-->
 
 									<!-- Section 2, start and end date -->
-									<div class="footer-col col-md-4" id = "period_contact">
+									<span class="footer-col col-md-4" id = "period_contact" style="color:grey">
 
 										<!-- text for start date -->
-										<div id = "start_date">start date:{{inital_date}} </div>
+										<div id = "start_dateborrows{{idBorrows}}">start date:{{inital_date}} </div>
 
 
 										<!-- text for end date -->
-										<div id = "end_date">end date: </div>
+										<div id = "end_dateborrows{{idBorrows}}">end date: </div>
+									</span>
+                                        <script type="text/javascript">
+                                        function populateDateField(duration){
+                                            //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
+                                            //http://stackoverflow.com/questions/3818193/how-to-add-number-of-days-to-todays-date
+                                            var curdate = new Date(document.getElementById("start_dateborrows{{idBorrows}}").innerHTML);
+                                            var enddate = new Date(curdate);
+                                            console.log(curdate);
+                                            if(duration==1){
+                                                //console.log("hour");
+                                                //console.log(curdate.getTime());
+                                                enddate.setHours(curdate.getHours()+1);
+                                                enddate.setDate(curdate.getDay()-7);
 
-										<!-- link for contacting buyer -->
-										<a href = "{{profile_url}}" >
-											<div id = "lender_link"><strong>Contact Lender</strong></div>
-										</a>
+                                            }
+                                            if(duration==24){
+                                                //console.log("day");
+                                                //enddate.setHours(curdate.getHours()+24);
+                                                enddate.setDate(curdate.getDate()+1);
+                                                enddate.setMonth(curdate.getMonth()-1);
+                                            }
+                                            if(duration==148){
+                                                //console.log("week");
+                                                enddate.setDate(enddate.getDate()+7);
+
+                                            }
+                                            else
+                                            {//duration is 720, which is a month
+                                                enddate.setMonth(enddate.getMonth()+1);
+                                            ;}
+                                            document.getElementById("start_dateborrows{{idBorrows}}").innerHTML = "start date: "+curdate.toDateString();
+                                             document.getElementById("end_dateborrows{{idBorrows}}").innerHTML = "end date: "+enddate.toDateString();
+                                            console.log(enddate.toDateString());
+                                        }
+                                        window.onload = populateDateField({{duration}});
+                                        </script>
 
 
-									</div>
+
+									
 
 									<!-- Section 3, Transaction accept or cancel -->
 									<div class="footer-col col-md-4" id = "div3">
@@ -342,7 +369,7 @@
 										</a>
                                         {{/accepted}}
 									</div>
-                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="portfolio-modal modal fade" id="{{idItem}}" tabindex="-1" role="dialog" aria-hidden="true" style="background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -353,23 +380,19 @@
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-lg-8 col-lg-offset-2">
-                                                    <div class="modal-body">
-                                                        <h2>{{name}}</h2>
+                                                    <div class="modal-body" style = "color:grey; bottom:300px !important">
+                                                        <h2 style = "color:black !important">{{name}}</h2>
                                                         <hr class="star-primary">
                                                         <img src='{{image}}' class="img-responsive img-centered" alt="">
                                                         <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
                                                         <ul class="list-inline item-details">
-                                                            <li>Client:
-                                                                <strong><a href="http://startbootstrap.com">Start Bootstrap</a>
-                                                                </strong>
+                                                            <li>Price:{{price}}
                                                             </li>
-                                                            <li>Date:
-                                                                <strong><a href="http://startbootstrap.com">April 2014</a>
-                                                                </strong>
+                                                            <br />
+                                                            <li><a href={{profile_url}} style="color:blue">Contact Owner:{{Username}}</a>
                                                             </li>
-                                                            <li>Service:
-                                                                <strong><a href="http://startbootstrap.com">Web Development</a>
-                                                                </strong>
+                                                            <br />
+                                                            <li>Lend Period: {{duration}} hours
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -381,7 +404,7 @@
 								</li>
 
                         </ul>
-                        <div class="portfolio-modal modal fade" id="cancel{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="portfolio-modal modal fade" id="cancel{{idBorrows}}" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
                                     <div class="modal-content">
                                         <div class="close-modal" data-dismiss="modal">
                                             <div class="lr">
@@ -411,7 +434,7 @@
 
 
 					<div class="footer-col col-md-4" style = "width:100%">
-                        <div class = "logo" style = "text-align:center">All items: </h3>
+                        <div class = "logo" style = "text-align:center">All Of My Items: </div>
                         <hr />
 
                         	<!-- List for items Lent -->
@@ -435,15 +458,9 @@
 
 
     										<div id = "start_date">start date: {{start}}</div>
-
-
-
+    										
     										<div id = "end_date">end date: {{end}}</div>
-
-
-    										<a href = "#" >
-    											<div id = "end_date"><strong>Contact Borrower</strong></div>
-    										</a>
+    										
 
     									</div>
 
@@ -456,6 +473,11 @@
     										</a>
                         <a href = "#" >
     											<button data-value="{{idItem}}"type="button" class="btn btn-info transaction_btn remove_btn">Remove</button>
+    											
+    											
+    							<!--				<a href = "{{idItem}}" class="portfolio-link" data-toggle="modal" id = "trans_reject" class="btn btn-info transaction_btn remove_btn">-->
+											<!--	<img class = "trans_x" src = "../img/fail.png">-->
+											<!--</a>-->
     										</a>
     									</div>
     								</li>
@@ -645,7 +667,7 @@
 	<!-- Portfolio Modals -->
 
 	<!-- Modal 1, Item Preview -->
-    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -683,7 +705,7 @@
     </div>
 
     <!-- Modal 2, Item accept -->
-    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -709,7 +731,7 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-success">Yes, accept offer</button>
-
+			    <br />
 
 
                         </div>
@@ -721,7 +743,7 @@
     </div>
 
     <!-- Modal 3, Item reject -->
-    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true" style = "background-color:white">
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
@@ -747,7 +769,7 @@
                             <br />
                             <hr >
                             <button type="button" class="btn btn-danger">Yes, Reject Offer</button>
-
+			    <br />
 
 
                         </div>

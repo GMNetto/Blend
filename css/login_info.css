@@ -31,9 +31,12 @@ a {
   opacity: 0.8;
 }
 a:hover {
-  color: #333333;
+  color: #5b5b5b;
   text-decoration: none;
 }
+
+
+
 /*=== 3. Text Outside the Box ===*/
 .etc-login-form {
   color: white;
