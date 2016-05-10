@@ -302,26 +302,26 @@
  									<!-- Section 1, item image and title -->
 									<!--<div class="footer-col col-md-4">-->
 										<!-- Item Image and title, opens up modal when clicked -->
-										<span class="portfolio-item" >
+										<div class="portfolio-item" style = "width:100%">
 											<a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
 												<img class = "img_fade" src = '{{image}}'>
 												<span id = "item_fade">{{name}}</span>
 											</a>
-										</span>
+										</div>
 
 									<!--</div>-->
 
 									<!-- Section 2, start and end date -->
-									<span class="footer-col col-md-4" id = "period_contact" style="color:grey">
+									<!--<span class="footer-col col-md-4" id = "period_contact" style="color:grey">-->
 
 										<!-- text for start date -->
 										<!--<div id = "start_dateborrows{{idBorrows}}">start date: {{inital_date}} </div>-->
 											
-										<div>Lend Period: {{duration}}</div>
+									<!--	<div>Lend Period: {{duration}}</div>-->
 							
 										<!-- text for end date -->
 										<!--<div id = "end_dateborrows{{idBorrows}}">end date:  </div>-->
-									</span>
+									<!--</span>-->
                                         <script type="text/javascript">
                                         function populateDateField(duration){
                                             //http://stackoverflow.com/questions/15910761/add-5-days-to-the-current-date-using-javascript
@@ -367,7 +367,7 @@
 
 
 									<!-- Section 3, Transaction accept or cancel -->
-									<div class="footer-col col-md-4" id = "div3">
+									<div class="footer-col col-md-4" id = "div3" style = "width:50%">
 
 										<!-- Image/Link for check transaction, opens up modal -->
                                         {{#accepted}}
