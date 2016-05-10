@@ -1137,6 +1137,8 @@ function render_profile(user, res){
             var list_items_borrow_has_items = (list_items_borrow.length > 0)
             var list_items_lend_has_items = (list_items_lend.length > 0)
             console.log("rendering profile");
+            user["lender_ratings"] = parseFloat(user.lender_rating)
+            user["borrower_ratings"] = parseFloat(user.borrower_rating)
             res.render("profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend});
         });
     });
@@ -1156,6 +1158,8 @@ function render_my_profile(user, req, res){
                     console.log(user.address);
                     user.address = String(user.address)
                     user.password = "11111111111111";
+                    user["lender_ratings"] = parseFloat(user.lender_rating)
+                    user["borrower_ratings"] = parseFloat(user.borrower_rating)
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken:""});
             });
         });
@@ -1356,25 +1360,34 @@ app.post("/removeItem", requireLogin, function(request, response) {
   console.log("apples");
   console.log(request.body);
 
-  connection.query("DELETE FROM Borrows WHERE idProduct = ? AND finished = 1", [request.body.idItem], function (err) {
+  connection.query("DELETE FROM Borrows WHERE idProduct = ? AND finished = 1", [request.body.idItem], function (err, result) {
               if(err){
                   console.log(err);
               } else {
+                console.log("THE RESULTING RESULTS");
+                console.log(result);
+                if(result.affectedRows == 0) {
+                  console.log("Reached SHOULD BE RETURNING NOW");
+                  response.json({status: false});
+                } else {
 
-                console.log(request.session.user);
-                console.log(request.body.idItem);
-                console.log("Successfully removed from db!");
+                  console.log(request.session.user);
+                  console.log(request.body.idItem);
+                  console.log("Successfully removed from db!");
 
-                connection.query("DELETE FROM Item where idItem = ? ", [request.body.idItem], function (err2) {
-                            if(err){
-                                console.log(err);
-                            } else {
-                              console.log(request.session.user);
-                              console.log(request.body.idItem);
-                              console.log("Successfully removed from db!");
-                              response.json({status: "true"});
-                            }
-                });
+                  connection.query("DELETE FROM Item where idItem = ? ", [request.body.idItem], function (err2) {
+                              if(err){
+                                  console.log(err);
+                              } else {
+                                console.log(request.session.user);
+                                console.log(request.body.idItem);
+                                console.log("Successfully removed from db!");
+                                response.json({status: true});
+                              }
+                  });
+
+
+              	}
 
 
               }
@@ -1422,6 +1435,7 @@ var server = https.createServer({
 
 
 var io = require('socket.io').listen(serverhttp);
+var ios = require('socket.io').listen(server);
 
 function get_ten_transactions(callback){
      connection.query("select Username, name, profile_url, image from Borrows, Item, User where idItem = idProduct and Borrows.idUser=User.idUser order by Borrows.inital_date desc limit 10",function(err1,transactions) {
@@ -1440,6 +1454,17 @@ function get_ten_transactions(callback){
 };
 
 io.sockets.on('connection', function(socket){
+    socket.on('join', function(callback){
+        console.log("emiting%%%%%%%%%%%%%%%%%%%5");
+        get_ten_transactions(function(transactions, lenders){
+            console.log("Calling last 10 items ");
+            callback(transactions, lenders);
+        });
+    });
+});
+
+
+ios.sockets.on('connection', function(socket){
     socket.on('join', function(callback){
         console.log("emiting%%%%%%%%%%%%%%%%%%%5");
         get_ten_transactions(function(transactions, lenders){

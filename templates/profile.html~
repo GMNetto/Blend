@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -73,22 +73,22 @@
                          <a href="#page-top"></a>
                      </li>
                      <li class="page-scroll">
-                        <a href="feed">Feed</a>
+                        <a href="../feed">Feed</a>
                     </li>
                      <li class="page-scroll">
-                         <a href="search">Borrow</a>
+                         <a href="../search">Borrow</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="lend">Lend</a>
+                         <a href="../lend">Lend</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="transactions">Activity</a>
+                         <a href="../transactions">Activity</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="my_profile">Profile</a>
+                         <a href="../my_profile">Profile</a>
                      </li>
                      <li class="page-scroll">
-                         <a href="logout">Logout</a>
+                         <a href="../logout">Logout</a>
                      </li>
                  </ul>
              </div>
@@ -151,16 +151,16 @@
                                                 <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>
+                                                        <div class="logo" style="color: grey !important;"> Username: {{Username}}</div><br>
                                                     <li>
-                                                    <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
+                                                    	<div class="logo" style="color: grey !important;"> Price: ${{price}}</div><br>
                                                     </li>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
+                                                        <div class="logo" style="color: grey !important;"> Description: {{description}}</div><br>
                                                     </li>
-                                                    <li>
-                                                        <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">
-                                                    </li>
+                                                    <!--<li>-->
+                                                    <!--    <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">-->
+                                                    <!--</li>-->
                                                 </ul>
                                             </div>
                                         </div>
@@ -205,12 +205,14 @@
                                         </div>
                                         <div class="form-group link_maps" id="6">
                                             <label>Address: </label>
-                                            <a href="http://maps.google.com/?q={{address}}" target="_blank"><label>{{address}}</label></a>
+                                            <a href="http://maps.google.com/?q={{address}}" target="_blank" style="color:blue"><label>{{address}}</label></a>
                                         </div>
                                         <div class="form-group" id="7">
                                             <label>Phone: </label>
                                             <label>{{phone}}</label>
                                         </div>
+                                        <label>Rating lender: {{lender_ratings}}</label>
+                                        <label>Rating borrower: {{borrower_ratings}}</label>    
                                     </div>
 								</div>
 						</div>
@@ -269,9 +271,9 @@
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
                                                     </li>
-                                                    <li>
-                                                        <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">
-                                                    </li>
+                                                    <!--<li>-->
+                                                    <!--    <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">-->
+                                                    <!--</li>-->
                                                 </ul>
                                             </div>
                                         </div>

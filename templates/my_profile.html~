@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="..//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -147,7 +147,7 @@
                                     <div class="row">
                                         <div class="col-lg-8 col-lg-offset-2">
                                             <div class="modal-body" style = "bottom:300px!important;">
-                                                <h2>Item</h2>
+                                                <h2 style = "color:black">{{name}}</h2>
                                                 <hr class="star-primary">
                                                 <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
@@ -159,9 +159,9 @@
                                                     <li>
                                                         <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
                                                     </li>
-                                                    <li>
-                                                        <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">
-                                                    </li>
+                                                    <!--<li>-->
+                                                    <!--    <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">-->
+                                                    <!--</li>-->
                                                 </ul>
                                             </div>
                                         </div>
@@ -253,14 +253,14 @@
 
 												  <!-- Standars Form -->
 
-												  <form action="" method="post" enctype="multipart/form-data" id="js-upload-form">
+												  <!--<form action="" method="post" enctype="multipart/form-data" id="js-upload-form">-->
 													<div class="form-inline">
 													  <div class="form-group2">
 														<input type="file" class="form-control-file" id="imgFile" name="img">
 													  </div>
 													  <!-- <button type="submit" class="btn btn-sm btn-primary" id="js-upload-submit">Upload files</button> -->
 													</div>
-												  </form>
+												  <!--</form>-->
 
 
 												</div>
@@ -268,7 +268,8 @@
 											</div> <!-- /container -->
 											<br />
 										</div>
-
+                                        <label>Rating lender: {{lender_ratings}}</label>
+                                        <label>Rating lender: {{borrower_ratings}}</label>    
 										<div class="form-group" id="1">
                                             <label for="username" class="sr-only">Username</label>
                                             <input type="text" name="username" id="username" class="form-control"  value="{{Username}}" required>
@@ -306,13 +307,20 @@
 											<input type="checkbox" class="" id="password_agree" name="password_agree">
 											<label for="password_agree">Change password</label>
 										</div>
+                                        
 									</div>                                     
                                        <button type="submit" class="btn-submit" onclick="submitForm();return false;" style="color:black">Update</button>
 								</div>
 
 							</form>
 							
-							<div class="footer-col col-md-4">
+		
+						</div>
+
+                    {{/user}}
+                    
+                    </div>
+                    	<div class="footer-col col-md-4">
                         <div class = "logo" style = "text-align:center">Recently Lent:</div>
                         <hr />
                         <p></p>
@@ -352,7 +360,7 @@
                                     <div class="row">
                                         <div class="col-lg-8 col-lg-offset-2">
                                             <div class="modal-body" style = "bottom:300px!important;">
-                                                <h2>Item</h2>
+                                                <h2 style = "color:black">{{name}}</h2>
                                                 <hr class="star-primary">
                                                 <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
@@ -362,11 +370,11 @@
                                                     <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
                                                     </li>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
+                                                        <div class="logo" style="color: grey!important;"> Description: {{description}}</div><br>
                                                     </li>
-                                                    <li>
-                                                        <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">
-                                                    </li>
+                                                    <!--<li>-->
+                                                    <!--    <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">-->
+                                                    <!--</li>-->
                                                 </ul>
                                             </div>
                                         </div>
@@ -381,13 +389,8 @@
 
 
                         </div>
-						</div>
-
-                    {{/user}}
-                    
                     </div>
                     
-                    </div>
                 </div>
             </div>
         </div>

@@ -268,7 +268,8 @@
 											</div> <!-- /container -->
 											<br />
 										</div>
-
+                                        <label>Rating lender: {{lender_ratings}}</label>
+                                        <label>Rating borrower: {{borrower_ratings}}</label>    
 										<div class="form-group" id="1">
                                             <label for="username" class="sr-only">Username</label>
                                             <input type="text" name="username" id="username" class="form-control"  value="{{Username}}" required>
@@ -306,6 +307,7 @@
 											<input type="checkbox" class="" id="password_agree" name="password_agree">
 											<label for="password_agree">Change password</label>
 										</div>
+                                        
 									</div>                                     
                                        <button type="submit" class="btn-submit" onclick="submitForm();return false;" style="color:black">Update</button>
 								</div>

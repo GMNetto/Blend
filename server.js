@@ -1137,6 +1137,8 @@ function render_profile(user, res){
             var list_items_borrow_has_items = (list_items_borrow.length > 0)
             var list_items_lend_has_items = (list_items_lend.length > 0)
             console.log("rendering profile");
+            user["lender_ratings"] = user.lender_rating
+            user["borrower_ratings"] = user.borrower_rating
             res.render("profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend});
         });
     });
@@ -1156,6 +1158,8 @@ function render_my_profile(user, req, res){
                     console.log(user.address);
                     user.address = String(user.address)
                     user.password = "11111111111111";
+                    user["lender_ratings"] = user.lender_rating
+                    user["borrower_ratings"] = user.borrower_rating
                     res.render("my_profile.html", {user: user, has_borrow: list_items_borrow_has_items, borrow: list_items_borrow, has_lend: list_items_lend_has_items, lend: list_items_lend, items: list_items, csrftoken:""});
             });
         });
