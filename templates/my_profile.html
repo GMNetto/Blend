@@ -50,6 +50,15 @@
       ul#popup_portfolio {
         list-style: none;
       }
+      
+      .profile_link{
+         outline: 0;
+         color: #18bc9c!important;
+         }
+         .profile_link:hover {
+         text-decoration: underline;
+         }
+      
     </style>
 </head>
 
@@ -152,7 +161,7 @@
                                                 <img src="{{image}}" class="img-responsive img-centered">
                                                 <ul>
                                                     <li>
-                                                        <div class="logo" style="color: grey!important;"> <a href="profile/{{Username}}">Username: {{Username}}</a></div><br>
+                                                        <div class="logo" style="color: grey!important;"> Username:  <a class="profile_link" href="profile/{{Username}}">{{Username}}</a></div><br>
                                                     <li>
                                                     <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
                                                     </li>
