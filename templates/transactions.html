@@ -131,7 +131,7 @@
             <div class="container">
                <div class="row">
                   <div class="footer-col col-md-4" style = "width:50%">
-                     <div class="logo" style = "text-align:center">Currently Lending out:</div>
+                     <div class="logo" style = "text-align:center">Currently Lending/Lend Requests:</div>
                      <hr />
                      <!-- List for items Lent -->
                      <ul style = "list-style:none;" class = "list-group">
@@ -286,7 +286,7 @@
                      {{/haslend}}
                   </div>
                   <div class="footer-col col-md-4" style = "width:50%" >
-                     <div class="logo" style = "text-align:center">Currently Borrowing:</div>
+                     <div class="logo" style = "text-align:center">Currently Borrowing/Borrow Requests</div>
                      <hr class="vertical"/>
                      <ul style = "list-style:none; color:black" class = "list-group" id="curborrows">
                         {{#has_borrows}}
@@ -298,11 +298,24 @@
                            <!--<div class="footer-col col-md-4">-->
                            <!-- Item Image and title, opens up modal when clicked -->
                            <!--<div class="portfolio-item" >-->
-                           <div class = "footer-col col-md-4" id = "div3" style = "width:50%">
+                           <div class = "footer-col col-md-4" id = "div3" style = "width:40%">
                               <a href="#{{idItem}}" class="portfolio-link" data-toggle="modal">
                               <img class = "img_fade" src = '{{image}}'>
                               <span id = "item_fade">{{name}}</span>
                               </a>
+                           </div>
+                           
+                           <div class="footer-col col-md-4" id = "div3" style = "width:20%">
+                              <!-- Image/Link for check transaction, opens up modal -->
+                              {{#accepted}}
+                              {{^borrower_commented}}
+                                 <div id = "div3">completed</div>
+                              {{/borrower_commented}}
+                              {{/accepted}}
+                              {{^accepted}}
+                              <!-- Image/Link for decline transaction, opens up modal when clicked -->
+                                 <div id = "div3">processing</div>
+                              {{/accepted}}
                            </div>
                            <!--</div>-->
                            <!-- Section 2, start and end date -->
@@ -314,7 +327,7 @@
                            <!--<div id = "end_dateborrows{{idBorrows}}">end date:  </div>-->
                            <!--</span>-->
                            <!-- Section 3, Transaction accept or cancel -->
-                           <div class="footer-col col-md-4" id = "div3" style = "width:50%">
+                           <div class="footer-col col-md-4" id = "div3" style = "width:40%">
                               <!-- Image/Link for check transaction, opens up modal -->
                               {{#accepted}}
                               {{^borrower_commented}}
