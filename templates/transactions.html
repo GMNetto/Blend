@@ -200,16 +200,25 @@
                                           <h2>{{name}}</h2>
                                           <hr class="star-primary">
                                           <img style="height:350px; width:350px;" src='{{image}}' class="img-responsive img-centered" alt="">
-                                          <p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>
+                                          <!--<p>{{description}}<a href="https://sellfy.com/p/8Q9P/jV3VZ/"></a>.</p>-->
+                                          <!--<br />-->
+                                          <!--<ul class="list-inline item-details">-->
+                                          <!--   <li>Price: {{price}}-->
+                                          <!--   </li>-->
+                                          <!--   <br />-->
+                                          <!--   <li>Lend Period: {{duration}} hours-->
+                                          <!--   </li>-->
+                                          <!--</ul>-->
+                                          item: {{name}}
                                           <br />
-                                          <ul class="list-inline item-details">
-                                             <li>Price: {{price}}
-                                             </li>
-                                             <br />
-                                             <li>Lend Period: {{duration}} hours
-                                             </li>
-                                          </ul>
-                                       </div>
+                                          user: <a class="profile_link" href="/profile/{{Username}}"> {{Username}} </a>
+                                          <br />
+                                          borrower rating: {{borrower_rating}}
+                                          <br />
+                                          Lend Period: {{duration}} hours
+                                          <br />
+                                          <br />
+                                          <hr >
                                     </div>
                                  </div>
                               </div>
