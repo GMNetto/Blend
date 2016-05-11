@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `blend_db`.`User` (
   `profile_url` VARCHAR(100) NULL,
   `first_name` VARCHAR(45) NOT NULL,
   `last_name` VARCHAR(45) NOT NULL,
-  `address` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(120) NOT NULL,
   `latitude` FLOAT NULL,
   `longitude` FLOAT NULL,
   PRIMARY KEY (`idUser`),
