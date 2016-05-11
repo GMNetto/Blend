@@ -1114,7 +1114,7 @@ function getItem(item_id, callback){
 };
 
 function getRecentBorrow(username, limit, callback){
-    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
+    connection.query('select * from Item left join User on owner=User.idUser where Item.idItem in (select idProduct from Borrows as B, User as U where B.idUser=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
@@ -1125,7 +1125,7 @@ function getRecentBorrow(username, limit, callback){
 };
 
 function getRecentLend(username, limit, callback){
-    connection.query('select * from Item where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
+    connection.query('select * from Item left join User on owner=User.idUser where Item.idItem in (select idProduct from Borrows as B, User as U, Item as I where B.idProduct=I.idItem and I.owner=U.idUser and U.username=? order by B.inital_date) limit ?', [username, limit], function(err, result){
         if(err/* || isEmpty(result)*/){
             console.log("No item");
             callback(true, undefined);
