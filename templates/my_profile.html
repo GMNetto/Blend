@@ -150,19 +150,32 @@
                                                 <h2 style = "color:black">{{name}}</h2>
                                                 <hr class="star-primary">
                                                 <img src="{{image}}" class="img-responsive img-centered">
-                                                <ul>
-                                                    <li>
-                                                        <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>
-                                                    <li>
-                                                    <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>
-                                                    </li>
-                                                    <li>
-                                                        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>
-                                                    </li>
+                                                <!--<ul>-->
+                                                <!--    <li>-->
+                                                <!--        <div class="logo" style="color: grey!important;"> Username: {{Username}}</div><br>-->
+                                                <!--    <li>-->
+                                                <!--    <div class="logo" style="color: grey!important;"> Price: ${{price}}</div><br>-->
+                                                <!--    </li>-->
+                                                <!--    <li>-->
+                                                <!--        <div class="logo" style="color: grey!important;"> Description:{{description}}</div><br>-->
+                                                <!--    </li>-->
                                                     <!--<li>-->
                                                     <!--    <input type="button" class="btn btn-success" value="Borrow!" onclick="borrowThing({{idItem}});return false;">-->
                                                     <!--</li>-->
-                                                </ul>
+                                                <!--</ul>-->
+	                                     item: {{name}}
+	                                     <br />
+	                                     description: {{description}}
+	                                     <br />
+	                                     <br />
+	                                     user: <a class="profile_link" href="/profile/{{Username}}"> {{Username}} </a>
+	                                     <br />
+	                                     borrower rating: {{borrower_rating}}
+	                                     <br />
+	                                     Lend Period: {{duration}} hours
+	                                     <br />
+	                                     <br />
+	                                     <hr >
                                             </div>
                                         </div>
                                     </div>
